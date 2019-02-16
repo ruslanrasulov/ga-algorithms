@@ -23,7 +23,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             return Task.FromResult(id);
         }
 
-        public Task<MainBoard> GetCurrentStateAsync(Guid id)
+        public Task<MainBoard> GetCurrentStateAsync(string id)
         {
             //TODO: implement main algorithm
             return Task.FromResult(new MainBoard());

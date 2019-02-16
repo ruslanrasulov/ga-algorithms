@@ -7,6 +7,6 @@ namespace GaVisualizer.BusinessLogic.Processing
     public interface IGeneticAlgorithmProcessor
     {
         Task<Guid> AddNewAlgorithmAsync(BoardSettings settings);
-        Task<MainBoard> GetCurrentStateAsync(Guid id);
+        Task<MainBoard> GetCurrentStateAsync(string id);
     }
 }
