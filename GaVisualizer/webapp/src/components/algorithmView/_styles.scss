@@ -1,0 +1,14 @@
+.alg-container {
+    margin: 5px;
+    border: 1px solid black;
+    border-radius: 5px;
+    height: 450px;
+    width: 100%;
+    padding: 10px;
+
+    &__board {
+        margin: 25px auto;
+        border: 1px solid green;
+        display: block;
+    }
+}
