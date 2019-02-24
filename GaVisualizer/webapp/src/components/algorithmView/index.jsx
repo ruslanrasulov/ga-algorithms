@@ -37,6 +37,9 @@ class AlgorithmView extends Component {
             <canvas className='alg-container__board' width={400} height={400} ref={this.board}>
 
             </canvas>
+            <div className='alg-container__panel'>
+                <div className='btn btn-start'>Start</div>
+            </div>
         </div>
     );
 }
