@@ -5,12 +5,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace GaVisualizer.WebApi.Controllers
 {
+    [Route("api/[controller]")]
     [ApiController]
-    public class AlgorithmController : ControllerBase
+    public class AlgorithmsController : ControllerBase
     {
         private readonly IGeneticAlgorithmProcessor geneticAlgorithmProcessor;
 
-        public AlgorithmController(IGeneticAlgorithmProcessor geneticAlgorithmProcessor)
+        public AlgorithmsController(IGeneticAlgorithmProcessor geneticAlgorithmProcessor)
         {
             this.geneticAlgorithmProcessor = geneticAlgorithmProcessor;
         }
