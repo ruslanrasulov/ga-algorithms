@@ -15,6 +15,8 @@ module.exports = {
         "react/jsx-uses-react": "error",   
         "react/jsx-uses-vars":"error",
         "react/jsx-uses-react": "error",
+        "no-empty-pattern": "off",
+        "no-undef": "off",
         "no-console": 1
     },
     "parser": "babel-eslint",

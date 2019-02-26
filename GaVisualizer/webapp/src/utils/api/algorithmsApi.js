@@ -1,10 +1,10 @@
 import axios from 'axios';
 
 export default class AlgorithmsApi {
-    static getApiUrl = (path) => process.env.API_URL + 'api/algorithms/' + path || '';
+    static getApiUrl = (path) => process.env.API_URL + 'api/algorithms/' + (path || '');
 
-    static postNewAlgorithm = () => {
-        return AlgorithmsApi.post();
+    static postNewAlgorithm = ({}) => {
+        return AlgorithmsApi.post(null, {});
     }
 
     static getCurrentState = (id) => {

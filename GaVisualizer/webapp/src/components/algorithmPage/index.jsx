@@ -1,5 +1,8 @@
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import AlgorithmView from '../algorithmView';
+import { getAlgorithms } from '../../selectors/algorithmsSelectors';
+import { createNewAlgorithm, getCurrentState } from '../../actions/algorithmsActions';
 import './_styles.scss';
 
 class AlgorithmPage extends Component {
@@ -7,22 +10,20 @@ class AlgorithmPage extends Component {
         this.super(props);
     }
 
-    state = {
-        algorithmCount: 1
+    onAddAlgorithm = () => {
+        this.props.createNewAlgorithm();
     }
 
-    onAddAlgorithm = () => {
-        this.setState((prevState) => ({
-            algorithmCount: prevState.algorithmCount + 1
-        }));
+    onAlgorithmStart = id => {
+        this.props.getCurrentState(id);
     }
 
     renderAlgorithms = () => {
+        const { algorithms } = this.props;
         const elements = [];
-        const { algorithmCount } = this.state;
 
-        for (let i = 0; i < algorithmCount; i++) {
-            elements.push(<AlgorithmView key={i}/>);
+        for (let i = 0; i < algorithms.length; i++) {
+            elements.push(<AlgorithmView key={i} algorithmInfo={algorithms[i]} onAlgorithmStart={this.onAlgorithmStart} />);
         }
 
         return elements;
@@ -36,4 +37,13 @@ class AlgorithmPage extends Component {
     );
 }
 
-export default AlgorithmPage;
+const mapStateToProps = state => ({
+    algorithms: getAlgorithms(state)
+});
+
+const mapDispatchToProps = dispatch => ({
+    createNewAlgorithm: () => dispatch(createNewAlgorithm()),
+    getCurrentState: (id) => dispatch(getCurrentState(id))
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(AlgorithmPage);

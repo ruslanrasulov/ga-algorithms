@@ -7,7 +7,7 @@ namespace GaVisualizer.BusinessLogic
     {
         public static IServiceCollection AddBusinessLogic(this IServiceCollection services)
         {
-            services.AddScoped<IGeneticAlgorithmProcessor, GeneticAlgorithmProcessor>();
+            services.AddSingleton<IGeneticAlgorithmProcessor, GeneticAlgorithmProcessor>();
 
             return services;
         }

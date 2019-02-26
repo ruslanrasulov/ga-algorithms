@@ -27,20 +27,27 @@ namespace GaVisualizer.BusinessLogic.Processing
 
         public Task<MainBoard> GetCurrentStateAsync(string id)
         {
+            var guid = new Guid(id);
             //TODO: implement main algorithm
-            if (algorithms.TryGetValue(new Guid(id), out GeneticAlgorithm ga))
+            if (algorithms.TryGetValue(guid, out GeneticAlgorithm ga))
             {
                 //returning random state by each call
-                ga.Board = GetRandomBoard();
+                ga.Board = GetRandomBoard(guid);
                 return Task.FromResult(ga.Board);
             }
 
-            return null;
+            return Task.FromResult((MainBoard)null);
         }
 
-        private MainBoard GetRandomBoard()
+        private MainBoard GetRandomBoard(Guid? id = null)
         {
-            var board = new MainBoard() { Cells = new IBoardElement[20, 20] };
+            var algorithmId = id ?? Guid.NewGuid();
+
+            var board = new MainBoard()
+            {
+                AlgorithmId = algorithmId,
+                Cells = new IBoardElement[20, 20]
+            };
 
             for (int i = 0; i < board.Cells.GetLength(0); i++)
             {
