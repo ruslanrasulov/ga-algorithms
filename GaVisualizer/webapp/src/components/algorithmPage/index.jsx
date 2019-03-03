@@ -2,7 +2,14 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AlgorithmView from '../algorithmView';
 import { getAlgorithms } from '../../selectors/algorithmsSelectors';
-import { createNewAlgorithm, getCurrentState } from '../../actions/algorithmsActions';
+import { 
+    createNewAlgorithm,
+    getCurrentState,
+    pauseAlgorithm,
+    startAlgorithm,
+    resumeAlgorithm,
+    updateTimeout
+} from '../../actions/algorithmsActions';
 import './_styles.scss';
 
 class AlgorithmPage extends Component {
@@ -14,8 +21,24 @@ class AlgorithmPage extends Component {
         this.props.createNewAlgorithm();
     }
 
-    onAlgorithmStart = id => {
+    onAlgorithmStart = (id, callback) => {
+        this.props.startAlgorithm(id, callback);
+    }
+
+    onAlgorithmUpdate = id => {
         this.props.getCurrentState(id);
+    }
+
+    onAlgorithmPause = id => {
+        this.props.pauseAlgorithm(id);
+    }
+
+    onAlgorithmResume = id => {
+        this.props.resumeAlgorithm(id);
+    }
+
+    onTimeoutUpdate = (id, value, callback) => {
+        this.props.updateTimeout(id, value, callback);
     }
 
     renderAlgorithms = () => {
@@ -23,7 +46,14 @@ class AlgorithmPage extends Component {
         const elements = [];
 
         for (let i = 0; i < algorithms.length; i++) {
-            elements.push(<AlgorithmView key={i} algorithmInfo={algorithms[i]} onAlgorithmStart={this.onAlgorithmStart} />);
+            elements.push(<AlgorithmView 
+                key={i}
+                algorithmInfo={algorithms[i]}
+                onAlgorithmStart={this.onAlgorithmStart}
+                onAlgorithmPause={this.onAlgorithmPause}
+                onAlgorithmUpdate={this.onAlgorithmUpdate}
+                onAlgorithmResume={this.onAlgorithmResume}
+                onTimeoutUpdate={this.onTimeoutUpdate} />);
         }
 
         return elements;
@@ -43,7 +73,11 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     createNewAlgorithm: () => dispatch(createNewAlgorithm()),
-    getCurrentState: (id) => dispatch(getCurrentState(id))
+    getCurrentState: id => dispatch(getCurrentState(id)),
+    startAlgorithm: (id, callback) => dispatch(startAlgorithm(id, callback)),
+    pauseAlgorithm: id => dispatch(pauseAlgorithm(id)),
+    resumeAlgorithm: id => dispatch(resumeAlgorithm(id)),
+    updateTimeout: (id, value) => dispatch(updateTimeout(id, value))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AlgorithmPage);

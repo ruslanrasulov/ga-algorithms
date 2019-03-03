@@ -6,20 +6,26 @@ const reducer = (state = [], action) => {
             const { algorithmId } = action.payload;
             return state.concat([{ algorithmId }]);
         }
-        case actionTypes.FETCH_CURRENT_STATE_COMPLETE: {
-            const algorithmState = action.payload.state;
-
-            return state.map(item => {
-                if (item.algorithmId === algorithmState.algorithmId) {
-                    return Object.assign(item, algorithmState);
-                }
-
-                return item;
-            });
+        case actionTypes.FETCH_CURRENT_STATE_COMPLETE:
+        case actionTypes.START_ALGORITHM:
+        case actionTypes.PAUSE_ALGORITHM:
+        case actionTypes.RESUME_ALGORITHM:
+        case actionTypes.UPDATE_TIMEOUT: {
+            return updateAlgorithms(state, action.payload);
         }
         default:
             return state;
     }
 };
+
+const updateAlgorithms = (state, newState) => {
+    return state.map(item => {
+        if (item.algorithmId === newState.algorithmId) {
+            Object.assign(item, newState);
+        }
+
+        return item;
+    });
+}
 
 export default reducer;

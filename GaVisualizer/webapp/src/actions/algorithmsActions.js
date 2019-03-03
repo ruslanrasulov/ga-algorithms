@@ -24,7 +24,7 @@ export const getCurrentStateStart = () => ({
 
 export const getCurrentStateComplete = state => ({
     type: actionTypes.FETCH_CURRENT_STATE_COMPLETE,
-    payload: { state }
+    payload: state
 });
 
 export const getCurrentState = id => dispatch => {
@@ -34,3 +34,27 @@ export const getCurrentState = id => dispatch => {
         dispatch(getCurrentStateComplete(result.data));
     });
 }
+
+export const startAlgorithm = (algorithmId, callback) => dispatch => {
+    dispatch({
+        type: actionTypes.START_ALGORITHM,
+        payload: { algorithmId, isPaused: false }
+    });
+
+    callback();
+};
+
+export const pauseAlgorithm = algorithmId => ({
+    type: actionTypes.PAUSE_ALGORITHM,
+    payload: { algorithmId, isPaused: true }
+});
+
+export const resumeAlgorithm = algorithmId => ({
+    type: actionTypes.RESUME_ALGORITHM,
+    payload: { algorithmId, isPaused: false }
+});
+
+export const updateTimeout = (algorithmId, timeout) => ({
+    type: actionTypes.UPDATE_TIMEOUT,
+    payload: { algorithmId,  timeout }
+});
