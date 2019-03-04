@@ -8,32 +8,27 @@ class AlgorithmView extends Component {
         this.timeoutRange = React.createRef();
     }
 
-    renderCanvas() {
-        if (!this.props.algorithmInfo.cells) return;
-
-        const { cells } = this.props.algorithmInfo;
-        const ctx = this.board.current.getContext('2d');
-        const width = this.board.current.width;
-        const height = this.board.current.height;
-        const lineCount = cells.length;
-        const cellWidth = this.board.current.width / lineCount;
-        const cellHeight = this.board.current.height / lineCount;
-
+    drawGrid(ctx, cells, boardWidth, boardHeight, cellWidth, cellHeight) {
         ctx.strokeStyle = '#000000';
 
-        for (let i = 0; i < cells.length; i++) {
-            for (let j = 0; j < cells[0].length; j++) {
-
+        for (let i = 0; i < cells.length + 1; i++) {
+            for (let j = 0; j < cells[0].length + 1; j++) {
                 ctx.beginPath();
                 ctx.moveTo(cellWidth * i, 0);
-                ctx.lineTo(cellWidth * i, width);
+                ctx.lineTo(cellWidth * i, boardWidth);
                 ctx.stroke();
                 
                 ctx.beginPath();
                 ctx.moveTo(0, cellHeight * j);
-                ctx.lineTo(height, cellHeight * j);
+                ctx.lineTo(boardHeight, cellHeight * j);
                 ctx.stroke();
+            }
+        }
+    }
 
+    fillGrid(ctx, cells, cellWidth, cellHeight) {
+        for (let i = 0; i < cells.length; i++) {
+            for (let j = 0; j < cells[0].length; j++) {
                 if (cells[i][j].virusImmunity !== undefined) {
                     ctx.fillStyle = '#00ff00';
                 }
@@ -44,6 +39,25 @@ class AlgorithmView extends Component {
                 ctx.fillRect(cellWidth * i, cellHeight * j, cellWidth, cellHeight);
             }
         }
+    }
+
+    renderCanvas() {
+        if (!this.props.algorithmInfo.cells) return;
+
+        const { cells } = this.props.algorithmInfo;
+        const canvas = this.board.current;
+        const ctx = canvas.getContext('2d');
+
+        const lineCount = cells.length;
+        const boardWidth = this.board.current.width;
+        const boardHeight = this.board.current.height;
+        const cellWidth = this.board.current.width / lineCount;
+        const cellHeight = this.board.current.height / lineCount;
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        this.fillGrid(ctx, cells, cellWidth, cellHeight);
+        this.drawGrid(ctx, cells, boardWidth, boardHeight, cellWidth, cellHeight);
     }
 
     onStart = () => {
