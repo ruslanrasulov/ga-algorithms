@@ -4,6 +4,7 @@ import './_styles.scss';
 class AlgorithmView extends Component {
     constructor(props) {
         super(props);
+
         this.board = React.createRef();
         this.timeoutRange = React.createRef();
     }
@@ -49,46 +50,69 @@ class AlgorithmView extends Component {
         const ctx = canvas.getContext('2d');
 
         const lineCount = cells.length;
-        const boardWidth = this.board.current.width;
-        const boardHeight = this.board.current.height;
-        const cellWidth = this.board.current.width / lineCount;
-        const cellHeight = this.board.current.height / lineCount;
+        const cellWidth = canvas.width / lineCount;
+        const cellHeight = canvas.height / lineCount;
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         this.fillGrid(ctx, cells, cellWidth, cellHeight);
-        this.drawGrid(ctx, cells, boardWidth, boardHeight, cellWidth, cellHeight);
+        this.drawGrid(ctx, cells, canvas.width, canvas.height, cellWidth, cellHeight);
     }
 
     onStart = () => {
-        this.props.onAlgorithmStart(this.props.algorithmInfo.algorithmId, () => { 
-            this.startIntervalUpdating();
-        });
+        const { 
+            onAlgorithmStart,
+            algorithmInfo: { algorithmId } 
+        } = this.props;
+
+        onAlgorithmStart(algorithmId, () => {  this.startIntervalUpdating(); });
     }
 
     onUpdate = () => {
-        if (!this.props.algorithmInfo.isPaused) {
-            this.props.onAlgorithmUpdate(this.props.algorithmInfo.algorithmId);
+        const { 
+            onAlgorithmUpdate,
+            algorithmInfo: { algorithmId, isPaused } 
+        } = this.props;
+
+        if (!isPaused) {
+            onAlgorithmUpdate(algorithmId);
         }
     }
 
     onPause = () => {
-        this.props.onAlgorithmPause(this.props.algorithmInfo.algorithmId);
+        const { 
+            onAlgorithmPause,
+            algorithmInfo: { algorithmId } 
+        } = this.props;
+
+        onAlgorithmPause(algorithmId);
     }
 
     onResume = () => {
-        this.props.onAlgorithmResume(this.props.algorithmInfo.algorithmId);
+        const { 
+            onAlgorithmResume,
+            algorithmInfo: { algorithmId } 
+        } = this.props;
+
+        onAlgorithmResume(algorithmId);
     }
 
     updateTimeout = () => {
-        this.props.onTimeoutUpdate(this.props.algorithmInfo.algorithmId, this.timeoutRange.current.value);
+        const { 
+            onTimeoutUpdate,
+            algorithmInfo: { algorithmId } 
+        } = this.props;
+
+        onTimeoutUpdate(algorithmId, this.timeoutRange.current.value);
     }
 
     startIntervalUpdating = () => {
+        const { timeout } = this.props.algorithmInfo;
+
         setTimeout(() => {
             this.onUpdate();
             this.startIntervalUpdating();
-        }, this.props.algorithmInfo.timeout || 1000);
+        }, timeout || 1000);
     }
 
     componentDidMount() {
@@ -101,9 +125,8 @@ class AlgorithmView extends Component {
 
     render = () => (
         <div className='alg-container'>
-            <canvas className='alg-container__board' width={400} height={400} ref={this.board}>
+            <canvas className='alg-container__board' width={400} height={400} ref={this.board} />
 
-            </canvas>
             <div className='alg-container__panel'>
                 <div className='btn btn-start alg-container__panel__panel-element' onClick={this.onStart}>Start</div>
                 {!this.props.algorithmInfo.isPaused 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import AlgorithmView from '../algorithmView';
 import { getAlgorithms as selectAlgorithms } from '../../selectors/algorithmsSelectors';
 import { 
@@ -11,6 +12,7 @@ import {
     updateTimeout,
     getAlgorithms
 } from '../../actions/algorithmsActions';
+
 import './_styles.scss';
 
 class AlgorithmPage extends Component {
