@@ -105,12 +105,19 @@ class AlgorithmView extends Component {
 
             </canvas>
             <div className='alg-container__panel'>
-                <div className='btn btn-start' onClick={this.onStart}>Start</div>
+                <div className='btn btn-start alg-container__panel__panel-element' onClick={this.onStart}>Start</div>
                 {!this.props.algorithmInfo.isPaused 
-                    ? <div className='btn btn-pause' onClick={this.onPause}>Pause</div>
-                    : <div className='btn btn-resume' onClick={this.onResume}>Resume</div>}
+                    ? <div className='btn btn-pause alg-container__panel__panel-element' onClick={this.onPause}>Pause</div>
+                    : <div className='btn btn-resume alg-container__panel__panel-element' onClick={this.onResume}>Resume</div>}
 
-                <input type="range" min="500" max="5000" defaultValue={1000} ref={this.timeoutRange} onMouseUp={this.updateTimeout} />
+                <input 
+                    type='range'
+                    min='500'
+                    max='5000'
+                    className='alg-container__panel__input-timeout alg-container__panel__panel-element'
+                    defaultValue={1000}
+                    ref={this.timeoutRange}
+                    onMouseUp={this.updateTimeout} />
             </div>
         </div>
     );

@@ -1,9 +1,11 @@
+* {
+    box-sizing: border-box;
+}
+
 .btn {
     padding: 5px;
     background-color: #f0f0f0;
     border: 1px black solid;
     border-radius: 3px;
-    display: inline-block;
-    height: 25px;
-    line-height: 25px;
+    line-height: 15px;
 }
