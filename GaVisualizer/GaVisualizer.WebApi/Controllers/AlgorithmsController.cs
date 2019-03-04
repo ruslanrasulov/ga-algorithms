@@ -35,5 +35,12 @@ namespace GaVisualizer.WebApi.Controllers
 
             return Ok(currentState);
         }
+        
+        [HttpGet]
+        public async Task<IActionResult> GetAlgorithmsAsync()
+        {
+            var algorithms = await geneticAlgorithmProcessor.GetAlgorithmsAsync();
+            return Ok(algorithms);
+        }
     }
 }

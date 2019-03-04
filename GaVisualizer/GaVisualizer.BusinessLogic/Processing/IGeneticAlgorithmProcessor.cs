@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using GaVisualizer.Domain.Board;
 
@@ -8,5 +9,6 @@ namespace GaVisualizer.BusinessLogic.Processing
     {
         Task<Guid> AddNewAlgorithmAsync(BoardSettings settings);
         Task<MainBoard> GetCurrentStateAsync(string id);
+        Task<IEnumerable<MainBoard>> GetAlgorithmsAsync();
     }
 }

@@ -13,6 +13,9 @@ const reducer = (state = [], action) => {
         case actionTypes.UPDATE_TIMEOUT: {
             return updateAlgorithms(state, action.payload);
         }
+        case actionTypes.FETCH_ALGORITHMS_COMPLETE: {
+            return action.payload;
+        }
         default:
             return state;
     }

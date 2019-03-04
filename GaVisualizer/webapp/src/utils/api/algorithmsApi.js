@@ -11,6 +11,10 @@ export default class AlgorithmsApi {
         return AlgorithmsApi.get(`${id}/state`);
     }
 
+    static getAlgorithms = () => {
+        return AlgorithmsApi.get();
+    }
+
     static get = (url) => {
         return AlgorithmsApi.call((url) => axios.get(url), url);
     }

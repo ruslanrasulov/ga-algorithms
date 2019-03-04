@@ -58,3 +58,20 @@ export const updateTimeout = (algorithmId, timeout) => ({
     type: actionTypes.UPDATE_TIMEOUT,
     payload: { algorithmId,  timeout }
 });
+
+export const getAlgorithmsStart = () => ({
+    type: actionTypes.FETCH_ALGORITHMS_START
+});
+
+export const getAlgorithmsComplete = algorithms => ({
+    type: actionTypes.FETCH_ALGORITHMS_COMPLETE,
+    payload: algorithms
+});
+
+export const getAlgorithms = () => dispatch => {
+    dispatch(getAlgorithmsStart());
+
+    algorithmsApi.getAlgorithms().then(result => {
+        dispatch(getAlgorithmsComplete(result.data));
+    });
+}

@@ -77,6 +77,10 @@ class AlgorithmView extends Component {
         }, this.props.algorithmInfo.timeout || 1000);
     }
 
+    componentDidMount() {
+        this.renderCanvas();
+    }
+
     componentDidUpdate() {
         this.renderCanvas();
     }

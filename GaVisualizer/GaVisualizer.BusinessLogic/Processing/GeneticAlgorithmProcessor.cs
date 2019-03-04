@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using GaVisualizer.BusinessLogic.Algorithm;
 using GaVisualizer.Domain.Board;
@@ -37,6 +38,11 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
 
             return Task.FromResult((MainBoard)null);
+        }
+
+        public Task<IEnumerable<MainBoard>> GetAlgorithmsAsync()
+        {
+            return Task.FromResult(algorithms.Values.Select(v => v.Board));
         }
 
         private MainBoard GetRandomBoard(Guid? id = null)

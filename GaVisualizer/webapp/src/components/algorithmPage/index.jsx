@@ -1,20 +1,25 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import AlgorithmView from '../algorithmView';
-import { getAlgorithms } from '../../selectors/algorithmsSelectors';
+import { getAlgorithms as selectAlgorithms } from '../../selectors/algorithmsSelectors';
 import { 
     createNewAlgorithm,
     getCurrentState,
     pauseAlgorithm,
     startAlgorithm,
     resumeAlgorithm,
-    updateTimeout
+    updateTimeout,
+    getAlgorithms
 } from '../../actions/algorithmsActions';
 import './_styles.scss';
 
 class AlgorithmPage extends Component {
     constuctor(props) {
         this.super(props);
+    }
+
+    componentDidMount = () => {
+        this.props.getAlgorithms();
     }
 
     onAddAlgorithm = () => {
@@ -68,7 +73,7 @@ class AlgorithmPage extends Component {
 }
 
 const mapStateToProps = state => ({
-    algorithms: getAlgorithms(state)
+    algorithms: selectAlgorithms(state)
 });
 
 const mapDispatchToProps = dispatch => ({
@@ -77,7 +82,8 @@ const mapDispatchToProps = dispatch => ({
     startAlgorithm: (id, callback) => dispatch(startAlgorithm(id, callback)),
     pauseAlgorithm: id => dispatch(pauseAlgorithm(id)),
     resumeAlgorithm: id => dispatch(resumeAlgorithm(id)),
-    updateTimeout: (id, value) => dispatch(updateTimeout(id, value))
+    updateTimeout: (id, value) => dispatch(updateTimeout(id, value)),
+    getAlgorithms: () => dispatch(getAlgorithms())
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AlgorithmPage);
