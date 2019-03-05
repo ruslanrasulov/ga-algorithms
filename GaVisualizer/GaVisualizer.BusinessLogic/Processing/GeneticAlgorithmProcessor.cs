@@ -52,6 +52,18 @@ namespace GaVisualizer.BusinessLogic.Processing
             return Task.CompletedTask;
         }
 
+        public Task StopAsync(string id)
+        {
+            var guid = new Guid(id);
+
+            if (algorithms.TryGetValue(guid, out var algorithm))
+            {
+                algorithm.Board.Cells = null;
+            }
+
+            return Task.CompletedTask;
+        }
+
         private MainBoard GetRandomBoard(Guid? id = null, bool fillBoard = true)
         {
             var algorithmId = id ?? Guid.NewGuid();

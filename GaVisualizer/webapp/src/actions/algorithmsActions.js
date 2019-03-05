@@ -39,7 +39,7 @@ export const getCurrentState = (id, callback) => dispatch => {
 export const startAlgorithm = (algorithmId, callback) => dispatch => {
     dispatch({
         type: actionTypes.START_ALGORITHM,
-        payload: { algorithmId, isPaused: false }
+        payload: { algorithmId, isPaused: false, isStarted: true, isStopped: false }
     });
 
     callback();
@@ -98,5 +98,23 @@ export const removeAlgorithm = id => dispatch => {
         if (result.status === 200) {
             dispatch(removeAlgorirthmComplete(id));
         }
+    });
+}
+
+export const stopAlgorithmStart = algorithmId => ({
+    type: actionTypes.STOP_ALGORITHM_START,
+    payload: { algorithmId }
+});
+
+export const stopAlgorithmComplete = algorithmId => ({
+    type: actionTypes.STOP_ALGORITHM_COMPLETE,
+    payload: { algorithmId, isStopped: true, isPaused: false, isStarted: false, cells: null }
+});
+
+export const stopAlgorithm = algorithmId => dispatch => {
+    dispatch(stopAlgorithmStart(algorithmId));
+
+    algorithmsApi.stopAlgorithm(algorithmId).then(() => {
+        dispatch(stopAlgorithmComplete(algorithmId));
     });
 }

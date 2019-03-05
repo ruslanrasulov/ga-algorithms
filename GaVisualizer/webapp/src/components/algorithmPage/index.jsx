@@ -11,7 +11,8 @@ import {
     resumeAlgorithm,
     updateTimeout,
     getAlgorithms,
-    removeAlgorithm
+    removeAlgorithm,
+    stopAlgorithm
 } from '../../actions/algorithmsActions';
 
 import './_styles.scss';
@@ -49,6 +50,10 @@ class AlgorithmPage extends Component {
         this.props.removeAlgorithm(id);
     }
 
+    onAlgorithmStop = id => {
+        this.props.stopAlgorithm(id);
+    }
+
     onTimeoutUpdate = (id, value, callback) => {
         this.props.updateTimeout(id, value, callback);
     }
@@ -66,7 +71,8 @@ class AlgorithmPage extends Component {
                 onAlgorithmUpdate={this.onAlgorithmUpdate}
                 onAlgorithmResume={this.onAlgorithmResume}
                 onTimeoutUpdate={this.onTimeoutUpdate}
-                onAlgorithmRemove={this.onAlgorithmRemove} />);
+                onAlgorithmRemove={this.onAlgorithmRemove} 
+                onAlgorithmStop={this.onAlgorithmStop} />);
         }
 
         return elements;
@@ -92,7 +98,8 @@ const mapDispatchToProps = dispatch => ({
     resumeAlgorithm: (id, callback) => dispatch(resumeAlgorithm(id, callback)),
     updateTimeout: (id, value) => dispatch(updateTimeout(id, value)),
     getAlgorithms: () => dispatch(getAlgorithms()),
-    removeAlgorithm: id => dispatch(removeAlgorithm(id))
+    removeAlgorithm: id => dispatch(removeAlgorithm(id)),
+    stopAlgorithm: id => dispatch(stopAlgorithm(id))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AlgorithmPage);

@@ -19,6 +19,12 @@ export default class AlgorithmsApi {
         return AlgorithmsApi.delete(id);
     }
 
+    static stopAlgorithm = id => {
+        const body = { isStopped: true };
+
+        return AlgorithmsApi.patch(id, body);
+    }
+
     static get = (url) => {
         return AlgorithmsApi.call((url) => axios.get(url), url);
     }
@@ -33,6 +39,10 @@ export default class AlgorithmsApi {
 
     static delete = (url) => {
         return AlgorithmsApi.call((url) => axios.delete(url), url);
+    }
+
+    static patch = (url, body) => {
+        return AlgorithmsApi.call((url, body) => axios.patch(url, body), url, body);
     }
 
     static call = (action, url, body) => {

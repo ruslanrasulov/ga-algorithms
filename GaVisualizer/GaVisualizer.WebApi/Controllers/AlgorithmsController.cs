@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GaVisualizer.BusinessLogic.Processing;
 using GaVisualizer.Domain.Board;
+using GaVisualizer.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace GaVisualizer.WebApi.Controllers
@@ -17,10 +18,22 @@ namespace GaVisualizer.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> PostNewAlgorithm([FromBody]BoardSettings settings = null)
+        public async Task<IActionResult> AddNewAlgorithmAsync([FromBody]BoardSettings settings = null)
         {
             var id = await geneticAlgorithmProcessor.AddNewAlgorithmAsync(settings ?? new BoardSettings());
-            return Ok(new { AlgorithmId = id });
+
+            return Created($"api/algorithms/{id}", new { AlgorithmId = id });
+        }
+
+        [HttpPatch("{id}")]
+        public async Task<IActionResult> UpdateAlgorithmAsync(string id, [FromBody]AlgorithmUpdateModel updateModel)
+        {
+            if (updateModel.IsStopped)
+            {
+                await geneticAlgorithmProcessor.StopAsync(id);
+            }
+
+            return Ok();
         }
 
         [HttpGet("{id}/state")]
@@ -40,6 +53,7 @@ namespace GaVisualizer.WebApi.Controllers
         public async Task<IActionResult> GetAlgorithmsAsync()
         {
             var algorithms = await geneticAlgorithmProcessor.GetAlgorithmsAsync();
+
             return Ok(algorithms);
         }
 

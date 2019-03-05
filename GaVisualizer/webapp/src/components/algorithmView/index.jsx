@@ -45,17 +45,20 @@ class AlgorithmView extends Component {
     }
 
     renderCanvas() {
-        if (!this.props.algorithmInfo.cells) return;
-
-        const { cells } = this.props.algorithmInfo;
+        
         const canvas = this.board.current;
         const ctx = canvas.getContext('2d');
+
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        if (!this.props.algorithmInfo.cells) return;
+        
+        const { cells } = this.props.algorithmInfo;
 
         const lineCount = cells.length;
         const cellWidth = canvas.width / lineCount;
         const cellHeight = canvas.height / lineCount;
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
 
         this.fillGrid(ctx, cells, cellWidth, cellHeight);
         this.drawGrid(ctx, cells, canvas.width, canvas.height, cellWidth, cellHeight);
@@ -109,8 +112,13 @@ class AlgorithmView extends Component {
         onAlgorithmRemove(algorithmId);
     }
 
-    onStop() {
-        this.setState({ isStopped: true });
+    onStop = () => {
+        const { 
+            onAlgorithmStop,
+            algorithmInfo: { algorithmId } 
+        } = this.props;
+
+        onAlgorithmStop(algorithmId);
     }
 
     updateTimeout = () => {
@@ -123,9 +131,9 @@ class AlgorithmView extends Component {
     }
 
     startIntervalUpdating = () => {
-        const { timeout } = this.props.algorithmInfo;
+        const { timeout, isStopped } = this.props.algorithmInfo;
         
-        if (this.state.isStopped) return;
+        if (isStopped) return;
 
         setTimeout(() => {
             this.onUpdate();
@@ -145,10 +153,13 @@ class AlgorithmView extends Component {
             <canvas className='alg-container__board' width={400} height={400} ref={this.board} />
 
             <div className='alg-container__panel'>
-                <div className='btn btn-start alg-container__panel__panel-element' onClick={this.onStart}>Start</div>
-                {!this.props.algorithmInfo.isPaused 
-                    ? <div className='btn btn-pause alg-container__panel__panel-element' onClick={this.onPause}>Pause</div>
-                    : <div className='btn btn-resume alg-container__panel__panel-element' onClick={this.onResume}>Resume</div>}
+                {this.props.algorithmInfo.isStarted
+                    ? <div className='btn btn-stop alg-container__panel__panel-element' onClick={this.onStop}>Stop</div>
+                    : <div className='btn btn-start alg-container__panel__panel-element' onClick={this.onStart}>Start</div> }
+
+                {this.props.algorithmInfo.isPaused 
+                    ? <div className='btn btn-resume alg-container__panel__panel-element' onClick={this.onResume}>Resume</div>
+                    : <div className='btn btn-pause alg-container__panel__panel-element' onClick={this.onPause}>Pause</div> }
 
                 <input 
                     type='range'
