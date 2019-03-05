@@ -10,7 +10,8 @@ import {
     startAlgorithm,
     resumeAlgorithm,
     updateTimeout,
-    getAlgorithms
+    getAlgorithms,
+    removeAlgorithm
 } from '../../actions/algorithmsActions';
 
 import './_styles.scss';
@@ -32,16 +33,20 @@ class AlgorithmPage extends Component {
         this.props.startAlgorithm(id, callback);
     }
 
-    onAlgorithmUpdate = id => {
-        this.props.getCurrentState(id);
+    onAlgorithmUpdate = (id, callback) => {
+        this.props.getCurrentState(id, callback);
     }
 
     onAlgorithmPause = id => {
         this.props.pauseAlgorithm(id);
     }
 
-    onAlgorithmResume = id => {
-        this.props.resumeAlgorithm(id);
+    onAlgorithmResume = (id, callback) => {
+        this.props.resumeAlgorithm(id, callback);
+    }
+
+    onAlgorithmRemove = id => {
+        this.props.removeAlgorithm(id);
     }
 
     onTimeoutUpdate = (id, value, callback) => {
@@ -60,7 +65,8 @@ class AlgorithmPage extends Component {
                 onAlgorithmPause={this.onAlgorithmPause}
                 onAlgorithmUpdate={this.onAlgorithmUpdate}
                 onAlgorithmResume={this.onAlgorithmResume}
-                onTimeoutUpdate={this.onTimeoutUpdate} />);
+                onTimeoutUpdate={this.onTimeoutUpdate}
+                onAlgorithmRemove={this.onAlgorithmRemove} />);
         }
 
         return elements;
@@ -80,12 +86,13 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     createNewAlgorithm: () => dispatch(createNewAlgorithm()),
-    getCurrentState: id => dispatch(getCurrentState(id)),
+    getCurrentState: (id, callback) => dispatch(getCurrentState(id, callback)),
     startAlgorithm: (id, callback) => dispatch(startAlgorithm(id, callback)),
     pauseAlgorithm: id => dispatch(pauseAlgorithm(id)),
-    resumeAlgorithm: id => dispatch(resumeAlgorithm(id)),
+    resumeAlgorithm: (id, callback) => dispatch(resumeAlgorithm(id, callback)),
     updateTimeout: (id, value) => dispatch(updateTimeout(id, value)),
-    getAlgorithms: () => dispatch(getAlgorithms())
+    getAlgorithms: () => dispatch(getAlgorithms()),
+    removeAlgorithm: id => dispatch(removeAlgorithm(id))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AlgorithmPage);

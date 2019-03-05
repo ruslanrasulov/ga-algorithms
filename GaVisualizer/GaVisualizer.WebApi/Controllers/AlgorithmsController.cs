@@ -42,5 +42,13 @@ namespace GaVisualizer.WebApi.Controllers
             var algorithms = await geneticAlgorithmProcessor.GetAlgorithmsAsync();
             return Ok(algorithms);
         }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> RemoveAsync(string id)
+        {
+            await geneticAlgorithmProcessor.RemoveAsync(id);
+
+            return Ok();
+        }
     }
 }

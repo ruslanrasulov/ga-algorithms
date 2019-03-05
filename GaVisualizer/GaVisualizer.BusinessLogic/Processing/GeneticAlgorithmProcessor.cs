@@ -21,7 +21,7 @@ namespace GaVisualizer.BusinessLogic.Processing
         public Task<Guid> AddNewAlgorithmAsync(BoardSettings settings)
         {
             var id = Guid.NewGuid();
-            algorithms.Add(id, new GeneticAlgorithm() { Board = GetRandomBoard() });
+            algorithms.Add(id, new GeneticAlgorithm() { Board = GetRandomBoard(id, false) });
 
             return Task.FromResult(id);
         }
@@ -45,9 +45,18 @@ namespace GaVisualizer.BusinessLogic.Processing
             return Task.FromResult(algorithms.Values.Select(v => v.Board));
         }
 
-        private MainBoard GetRandomBoard(Guid? id = null)
+        public Task RemoveAsync(string id)
+        {
+            algorithms.Remove(new Guid(id));
+
+            return Task.CompletedTask;
+        }
+
+        private MainBoard GetRandomBoard(Guid? id = null, bool fillBoard = true)
         {
             var algorithmId = id ?? Guid.NewGuid();
+
+            if (!fillBoard) return new MainBoard() { AlgorithmId = algorithmId };
 
             var board = new MainBoard()
             {

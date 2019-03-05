@@ -9,6 +9,7 @@ namespace GaVisualizer.BusinessLogic.Processing
     {
         Task<Guid> AddNewAlgorithmAsync(BoardSettings settings);
         Task<MainBoard> GetCurrentStateAsync(string id);
+        Task RemoveAsync(string id);
         Task<IEnumerable<MainBoard>> GetAlgorithmsAsync();
     }
 }

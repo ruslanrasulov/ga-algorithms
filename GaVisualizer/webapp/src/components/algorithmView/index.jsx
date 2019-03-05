@@ -5,6 +5,8 @@ class AlgorithmView extends Component {
     constructor(props) {
         super(props);
 
+        this.state = {};
+
         this.board = React.createRef();
         this.timeoutRange = React.createRef();
     }
@@ -65,7 +67,7 @@ class AlgorithmView extends Component {
             algorithmInfo: { algorithmId } 
         } = this.props;
 
-        onAlgorithmStart(algorithmId, () => {  this.startIntervalUpdating(); });
+        onAlgorithmStart(algorithmId, this.startIntervalUpdating);
     }
 
     onUpdate = () => {
@@ -75,7 +77,7 @@ class AlgorithmView extends Component {
         } = this.props;
 
         if (!isPaused) {
-            onAlgorithmUpdate(algorithmId);
+            onAlgorithmUpdate(algorithmId, this.startIntervalUpdating);
         }
     }
 
@@ -94,7 +96,21 @@ class AlgorithmView extends Component {
             algorithmInfo: { algorithmId } 
         } = this.props;
 
-        onAlgorithmResume(algorithmId);
+        onAlgorithmResume(algorithmId, this.startIntervalUpdating);
+    }
+
+    onRemove = () => {
+        const { 
+            onAlgorithmRemove,
+            algorithmInfo: { algorithmId } 
+        } = this.props;
+        
+        this.onStop();
+        onAlgorithmRemove(algorithmId);
+    }
+
+    onStop() {
+        this.setState({ isStopped: true });
     }
 
     updateTimeout = () => {
@@ -108,10 +124,11 @@ class AlgorithmView extends Component {
 
     startIntervalUpdating = () => {
         const { timeout } = this.props.algorithmInfo;
+        
+        if (this.state.isStopped) return;
 
         setTimeout(() => {
             this.onUpdate();
-            this.startIntervalUpdating();
         }, timeout || 1000);
     }
 
@@ -141,6 +158,8 @@ class AlgorithmView extends Component {
                     defaultValue={1000}
                     ref={this.timeoutRange}
                     onMouseUp={this.updateTimeout} />
+
+                <div className='btn btn-remove alg-container__panel__panel-element' onClick={this.onRemove}>Remove</div>
             </div>
         </div>
     );

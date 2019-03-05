@@ -27,11 +27,12 @@ export const getCurrentStateComplete = state => ({
     payload: state
 });
 
-export const getCurrentState = id => dispatch => {
+export const getCurrentState = (id, callback) => dispatch => {
     dispatch(getCurrentStateStart());
 
     algorithmsApi.getCurrentState(id).then(result => {
         dispatch(getCurrentStateComplete(result.data));
+        callback();
     });
 }
 
@@ -49,10 +50,14 @@ export const pauseAlgorithm = algorithmId => ({
     payload: { algorithmId, isPaused: true }
 });
 
-export const resumeAlgorithm = algorithmId => ({
-    type: actionTypes.RESUME_ALGORITHM,
-    payload: { algorithmId, isPaused: false }
-});
+export const resumeAlgorithm = (algorithmId, callback) => dispatch => {
+    dispatch({
+        type: actionTypes.RESUME_ALGORITHM,
+        payload: { algorithmId, isPaused: false }
+    });
+
+    callback();
+};
 
 export const updateTimeout = (algorithmId, timeout) => ({
     type: actionTypes.UPDATE_TIMEOUT,
@@ -73,5 +78,25 @@ export const getAlgorithms = () => dispatch => {
 
     algorithmsApi.getAlgorithms().then(result => {
         dispatch(getAlgorithmsComplete(result.data));
+    });
+}
+
+export const removeAlgorirthmStart = algorithmId => ({
+    type: actionTypes.REMOVE_ALGORITHM_START,
+    payload: { algorithmId }
+});
+
+export const removeAlgorirthmComplete = algorithmId => ({
+    type: actionTypes.REMOVE_ALGORITHM_COMPLETE,
+    payload: { algorithmId }
+});
+
+export const removeAlgorithm = id => dispatch => {
+    dispatch(removeAlgorirthmStart(id));
+
+    algorithmsApi.removeAlgorithm(id).then(result => {
+        if (result.status === 200) {
+            dispatch(removeAlgorirthmComplete(id));
+        }
     });
 }

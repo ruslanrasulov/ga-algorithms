@@ -15,6 +15,10 @@ export default class AlgorithmsApi {
         return AlgorithmsApi.get();
     }
 
+    static removeAlgorithm = id => {
+        return AlgorithmsApi.delete(id);
+    }
+
     static get = (url) => {
         return AlgorithmsApi.call((url) => axios.get(url), url);
     }

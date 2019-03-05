@@ -16,6 +16,11 @@ const reducer = (state = [], action) => {
         case actionTypes.FETCH_ALGORITHMS_COMPLETE: {
             return action.payload;
         }
+        case actionTypes.REMOVE_ALGORITHM_COMPLETE: {
+            const { algorithmId } = action.payload;
+
+            return state.filter(a => a.algorithmId !== algorithmId);
+        }
         default:
             return state;
     }
