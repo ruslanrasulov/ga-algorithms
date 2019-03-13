@@ -10,6 +10,7 @@ namespace GaVisualizer.Domain.Elements
 
         public double VirusImmunity { get; set; }
         public double ReproductivityRate { get; set; }
+        public double FitnessValue { get; set; }
 
         public TimeSpan LifeTime { get; set; }
     }

@@ -2,5 +2,6 @@
 {
     public interface IBoardElement
     {
+        double FitnessValue { get; set; }
     }
 }

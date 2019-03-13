@@ -95,5 +95,70 @@ namespace GaVisualizer.BusinessLogic.Processing
 
             return board;
         }
+
+        //todo: please, find more adequate name
+        private void KillNotSatisfiedElements(IBoardElement[,] cells)
+        {
+            var orderedElements = cells.Cast<IBoardElement>().OrderBy(e => e.FitnessValue);
+            var survivalsCount = (cells.GetLength(0) * cells.GetLength(1)) / 2;
+
+            foreach (var elementToKill in orderedElements)
+            {
+                for (int i = 0; i < cells.GetLength(0); i++)
+                {
+                    for (int j = 0; j < cells.GetLength(1); j++)
+                    {
+                        if (cells[i, j] == elementToKill)
+                        {
+                            cells[i, j] = null;
+                        }
+                    }
+                }
+            }
+        }
+
+        private void CalculateFitnessValue(IBoardElement[,] cells)
+        {
+            const int elementsRange = 3;
+            const double elementMatchRate = 0.5;
+
+            for (int i = 0; i < cells.GetLength(0); i++)
+            {
+                for (int j = 0; j < cells.GetLength(1); j++)
+                {
+                    var currentElement = cells[i, j];
+                    var elementType = currentElement.GetType();
+                    var nearSimilarElementsCount = GetNearSimilarELementsCount(cells, i, j, elementType, elementsRange);
+
+                    currentElement.FitnessValue = nearSimilarElementsCount * elementMatchRate;
+                }
+            }
+        }
+
+        private int GetNearSimilarELementsCount(IBoardElement[,] cells, int indexX, int indexY, Type elementType, int elemensRange)
+        {
+            var count = 0;
+
+            for (int i = -indexX; i < indexX; i++)
+            {
+                for (int j = -indexY; j < indexY; j++)
+                {
+                    var currentIndexX = indexX - i;
+                    var currentIndexY = indexY - j;
+
+                    if (currentIndexX > 0 && currentIndexX > cells.GetLength(0) && currentIndexY > 0 && currentIndexY > cells.GetLength(1))
+                    {
+                        var currentElement = cells[currentIndexX, currentIndexY];
+
+                        if (currentElement.GetType() == elementType)
+                        {
+                            count++;
+                        }
+                    }
+                }
+            }
+
+            return count;
+        }
     }
 }

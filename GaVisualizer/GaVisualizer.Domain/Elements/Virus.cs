@@ -8,6 +8,7 @@ namespace GaVisualizer.Domain.Elements
         public double Speed { get; set; }
         public double InfectionChanse { get; set; }
         public double InfectionRange { get; set; }
+        public double FitnessValue { get; set; }
         public Bacteria InfectedBacteria { get; set; }
     }
 }
