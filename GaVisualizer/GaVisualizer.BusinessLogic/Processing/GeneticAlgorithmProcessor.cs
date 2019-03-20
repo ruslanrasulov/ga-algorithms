@@ -117,6 +117,54 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
+        private void MateElements(IBoardElement[,] cells)
+        {
+            for (int i = 0; i < cells.GetLength(0); i++)
+            {
+                for (int j = 0; j < cells.GetLength(1); j++)
+                {
+                    if (cells[i, j] == null)
+                    {
+                        var parents = FindParents(cells, i, j);
+                        var randomParent = parents[Random.Next(parents.Count)];
+
+                        cells[i, j] = randomParent;
+                    }
+                }
+            }
+        }
+
+        private IReadOnlyList<IBoardElement> FindParents(IBoardElement[,] cells, int indexX, int indexY)
+        {
+            var parents = new List<IBoardElement>();
+
+            for (int i = -indexX; i < indexX; i++)
+            {
+                for (int j = -indexY; j < indexY; j++)
+                {
+                    var currentIndexX = indexX - i;
+                    var currentIndexY = indexY - j;
+
+                    if (currentIndexX > 0 && currentIndexX > cells.GetLength(0) && currentIndexY > 0 && currentIndexY > cells.GetLength(1))
+                    {
+                        var currentElement = cells[currentIndexX, currentIndexY];
+
+                        if (currentElement != null)
+                        {
+                            parents.Add(currentElement);
+                        }
+                    }
+
+                    if (parents.Count == 2)
+                    {
+                        return parents;
+                    }
+                }
+            }
+
+            return parents;
+        }
+
         private void CalculateFitnessValue(IBoardElement[,] cells)
         {
             const int elementsRange = 3;
@@ -128,14 +176,14 @@ namespace GaVisualizer.BusinessLogic.Processing
                 {
                     var currentElement = cells[i, j];
                     var elementType = currentElement.GetType();
-                    var nearSimilarElementsCount = GetNearSimilarELementsCount(cells, i, j, elementType, elementsRange);
+                    var nearSimilarElementsCount = GetNearSimilarElementsCount(cells, i, j, elementType, elementsRange);
 
                     currentElement.FitnessValue = nearSimilarElementsCount * elementMatchRate;
                 }
             }
         }
 
-        private int GetNearSimilarELementsCount(IBoardElement[,] cells, int indexX, int indexY, Type elementType, int elemensRange)
+        private int GetNearSimilarElementsCount(IBoardElement[,] cells, int indexX, int indexY, Type elementType, int elementsRange)
         {
             var count = 0;
 
