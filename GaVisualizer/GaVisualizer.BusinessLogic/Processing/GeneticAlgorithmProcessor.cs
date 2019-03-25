@@ -21,7 +21,7 @@ namespace GaVisualizer.BusinessLogic.Processing
         public Task<Guid> AddNewAlgorithmAsync(BoardSettings settings)
         {
             var id = Guid.NewGuid();
-            algorithms.Add(id, new GeneticAlgorithm() { Board = GetRandomBoard(id, false) });
+            algorithms.Add(id, new GeneticAlgorithm() { Board = GetRandomBoard(id, fillBoard: false) });
 
             return Task.FromResult(id);
         }
@@ -29,11 +29,16 @@ namespace GaVisualizer.BusinessLogic.Processing
         public Task<MainBoard> GetCurrentStateAsync(string id)
         {
             var guid = new Guid(id);
+
             //TODO: implement main algorithm
             if (algorithms.TryGetValue(guid, out GeneticAlgorithm ga))
             {
-                //returning random state by each call
-                ga.Board = GetRandomBoard(guid);
+                if (ga.Board.Cells == null)
+                {
+                    ga.Board = GetRandomBoard(guid, fillBoard: true);
+                }
+
+                ProcessAlgorithm(ga.Board.Cells);
                 return Task.FromResult(ga.Board);
             }
 
@@ -96,11 +101,20 @@ namespace GaVisualizer.BusinessLogic.Processing
             return board;
         }
 
+        private void ProcessAlgorithm(IBoardElement[,] cells)
+        {
+            CalculateFitnessValue(cells);
+            KillNotSatisfiedElements(cells);
+            MateElements(cells);
+        }
+
         //todo: please, find more adequate name
         private void KillNotSatisfiedElements(IBoardElement[,] cells)
         {
             var orderedElements = cells.Cast<IBoardElement>().OrderBy(e => e.FitnessValue);
             var survivalsCount = (cells.GetLength(0) * cells.GetLength(1)) / 2;
+
+            var killCount = 0;
 
             foreach (var elementToKill in orderedElements)
             {
@@ -108,8 +122,14 @@ namespace GaVisualizer.BusinessLogic.Processing
                 {
                     for (int j = 0; j < cells.GetLength(1); j++)
                     {
+                        if (killCount > survivalsCount)
+                        {
+                            return;
+                        }
+
                         if (cells[i, j] == elementToKill)
                         {
+                            killCount++;
                             cells[i, j] = null;
                         }
                     }
@@ -136,33 +156,21 @@ namespace GaVisualizer.BusinessLogic.Processing
 
         private IReadOnlyList<IBoardElement> FindParents(IBoardElement[,] cells, int indexX, int indexY)
         {
-            var parents = new List<IBoardElement>();
+            var parents = new List<(IBoardElement element, int range)>();
 
-            for (int i = -indexX; i < indexX; i++)
+            for (int i = 0; i < cells.GetLength(0); i++)
             {
-                for (int j = -indexY; j < indexY; j++)
+                for (int j = 0; j < cells.GetLength(1); j++)
                 {
-                    var currentIndexX = indexX - i;
-                    var currentIndexY = indexY - j;
-
-                    if (currentIndexX > 0 && currentIndexX > cells.GetLength(0) && currentIndexY > 0 && currentIndexY > cells.GetLength(1))
+                    if (i != indexX && j != indexY && cells[i, j] != null)
                     {
-                        var currentElement = cells[currentIndexX, currentIndexY];
-
-                        if (currentElement != null)
-                        {
-                            parents.Add(currentElement);
-                        }
-                    }
-
-                    if (parents.Count == 2)
-                    {
-                        return parents;
+                        var range = Math.Abs(i - indexX) + Math.Abs(j - indexY);
+                        parents.Add((cells[i, j], range));
                     }
                 }
             }
 
-            return parents;
+            return parents.OrderBy(p => p.range).Select(p => p.element).Take(2).ToList();
         }
 
         private void CalculateFitnessValue(IBoardElement[,] cells)
@@ -187,14 +195,14 @@ namespace GaVisualizer.BusinessLogic.Processing
         {
             var count = 0;
 
-            for (int i = -indexX; i < indexX; i++)
+            for (int i = -indexX - elementsRange; i < indexX + elementsRange; i++)
             {
                 for (int j = -indexY; j < indexY; j++)
                 {
                     var currentIndexX = indexX - i;
                     var currentIndexY = indexY - j;
 
-                    if (currentIndexX > 0 && currentIndexX > cells.GetLength(0) && currentIndexY > 0 && currentIndexY > cells.GetLength(1))
+                    if (currentIndexX > 0 && currentIndexX < cells.GetLength(0) && currentIndexY > 0 && currentIndexY < cells.GetLength(1))
                     {
                         var currentElement = cells[currentIndexX, currentIndexY];
 
