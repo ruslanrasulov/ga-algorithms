@@ -7,9 +7,9 @@
     transform-style: preserve-3d;
 
     &__board {
-        margin: 25px auto;
+        margin-left: 40px;
+        display: inline-block;
         border: 1px solid green;
-        display: block;
     }
 
     &__panel {
@@ -29,6 +29,13 @@
 
     &__panel__panel-element:first-child {
         margin-left: 0;
+    }
+
+    &__chart {
+        width: 700px;
+        height: 400px;
+        margin-left: 100px;
+        display: inline-block;
     }
 }
 

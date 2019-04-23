@@ -37,8 +37,11 @@ namespace GaVisualizer.BusinessLogic.Processing
                 {
                     ga.Board = GetRandomBoard(guid, fillBoard: true);
                 }
+                else
+                {
+                    ProcessAlgorithm(ga.Board.Cells);
+                }
 
-                ProcessAlgorithm(ga.Board.Cells);
                 return Task.FromResult(ga.Board);
             }
 

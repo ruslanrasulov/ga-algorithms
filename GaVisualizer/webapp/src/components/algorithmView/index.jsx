@@ -1,4 +1,7 @@
 import React, { Component } from 'react';
+
+import AlgorithmChart from '../algorithmChart';
+
 import './_styles.scss';
 
 class AlgorithmView extends Component {
@@ -151,6 +154,10 @@ class AlgorithmView extends Component {
     render = () => (
         <div className='alg-container'>
             <canvas className='alg-container__board' width={400} height={400} ref={this.board} />
+
+            <div className='alg-container__chart'>
+                <AlgorithmChart />
+            </div>
 
             <div className='alg-container__panel'>
                 {this.props.algorithmInfo.isStarted
