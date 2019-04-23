@@ -9,7 +9,7 @@ import {
     pauseAlgorithm,
     startAlgorithm,
     resumeAlgorithm,
-    updateTimeout,
+    updateInterval,
     getAlgorithms,
     removeAlgorithm,
     stopAlgorithm
@@ -54,8 +54,8 @@ class AlgorithmPage extends Component {
         this.props.stopAlgorithm(id);
     }
 
-    onTimeoutUpdate = (id, value, callback) => {
-        this.props.updateTimeout(id, value, callback);
+    onIntervalUpdate = (id, value, callback) => {
+        this.props.updateInterval(id, value, callback);
     }
 
     renderAlgorithms = () => {
@@ -70,7 +70,7 @@ class AlgorithmPage extends Component {
                 onAlgorithmPause={this.onAlgorithmPause}
                 onAlgorithmUpdate={this.onAlgorithmUpdate}
                 onAlgorithmResume={this.onAlgorithmResume}
-                onTimeoutUpdate={this.onTimeoutUpdate}
+                onIntervalUpdate={this.onIntervalUpdate}
                 onAlgorithmRemove={this.onAlgorithmRemove} 
                 onAlgorithmStop={this.onAlgorithmStop} />);
         }
@@ -96,7 +96,7 @@ const mapDispatchToProps = dispatch => ({
     startAlgorithm: (id, callback) => dispatch(startAlgorithm(id, callback)),
     pauseAlgorithm: id => dispatch(pauseAlgorithm(id)),
     resumeAlgorithm: (id, callback) => dispatch(resumeAlgorithm(id, callback)),
-    updateTimeout: (id, value) => dispatch(updateTimeout(id, value)),
+    updateInterval: (id, value) => dispatch(updateInterval(id, value)),
     getAlgorithms: () => dispatch(getAlgorithms()),
     removeAlgorithm: id => dispatch(removeAlgorithm(id)),
     stopAlgorithm: id => dispatch(stopAlgorithm(id))

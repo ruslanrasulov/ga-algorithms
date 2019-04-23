@@ -8,10 +8,10 @@ class AlgorithmView extends Component {
     constructor(props) {
         super(props);
 
-        this.state = {};
+        this.state = { updateIntervalValue: 1000 };
 
         this.board = React.createRef();
-        this.timeoutRange = React.createRef();
+        this.intervalRange = React.createRef();
     }
 
     drawGrid(ctx, cells, boardWidth, boardHeight, cellWidth, cellHeight) {
@@ -124,13 +124,16 @@ class AlgorithmView extends Component {
         onAlgorithmStop(algorithmId);
     }
 
-    updateTimeout = () => {
-        const { 
-            onTimeoutUpdate,
+    updateInterval = () => {
+        const currentValue = this.intervalRange.current.value;
+        const {
+            onIntervalUpdate,
             algorithmInfo: { algorithmId } 
         } = this.props;
 
-        onTimeoutUpdate(algorithmId, this.timeoutRange.current.value);
+        this.setState({ updateIntervalValue: currentValue });
+
+        onIntervalUpdate(algorithmId, currentValue);
     }
 
     startIntervalUpdating = () => {
@@ -173,9 +176,10 @@ class AlgorithmView extends Component {
                     min='500'
                     max='5000'
                     className='alg-container__panel__input-timeout alg-container__panel__panel-element'
-                    defaultValue={1000}
-                    ref={this.timeoutRange}
-                    onMouseUp={this.updateTimeout} />
+                    defaultValue={this.state.updateIntervalValue}
+                    ref={this.intervalRange}
+                    onMouseUp={this.updateInterval} />
+                <label>Update interval ({this.state.updateIntervalValue} ms)</label>
 
                 <div className='btn btn-remove alg-container__panel__panel-element' onClick={this.onRemove}>Remove</div>
             </div>

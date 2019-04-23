@@ -10,7 +10,7 @@ const reducer = (state = [], action) => {
         case actionTypes.START_ALGORITHM:
         case actionTypes.PAUSE_ALGORITHM:
         case actionTypes.RESUME_ALGORITHM:
-        case actionTypes.UPDATE_TIMEOUT:
+        case actionTypes.UPDATE_INTERVAL:
         case actionTypes.STOP_ALGORITHM_COMPLETE: {
             return updateAlgorithms(state, action.payload);
         }

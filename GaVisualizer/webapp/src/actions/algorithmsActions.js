@@ -59,8 +59,8 @@ export const resumeAlgorithm = (algorithmId, callback) => dispatch => {
     callback();
 };
 
-export const updateTimeout = (algorithmId, timeout) => ({
-    type: actionTypes.UPDATE_TIMEOUT,
+export const updateInterval = (algorithmId, timeout) => ({
+    type: actionTypes.UPDATE_INTERVAL,
     payload: { algorithmId,  timeout }
 });
 
