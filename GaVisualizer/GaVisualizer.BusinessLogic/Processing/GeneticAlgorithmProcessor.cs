@@ -89,7 +89,8 @@ namespace GaVisualizer.BusinessLogic.Processing
                 for (int j = 0; j < board.Cells.GetLength(1); j++)
                 {
                     var chance = Random.Next(2);
-                    
+                    var socialValue = Random.NextDouble() * 100;
+
                     if (chance == 1)
                     {
                         board.Cells[i, j] = new Bacteria();
@@ -98,6 +99,8 @@ namespace GaVisualizer.BusinessLogic.Processing
                     {
                         board.Cells[i, j] = new Virus();
                     }
+
+                    board.Cells[i, j].SocialValue = socialValue;
                 }
             }
 
@@ -189,7 +192,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                     var elementType = currentElement.GetType();
                     var nearSimilarElementsCount = GetNearSimilarElementsCount(cells, i, j, elementType, elementsRange);
 
-                    currentElement.FitnessValue = nearSimilarElementsCount * elementMatchRate;
+                    currentElement.FitnessValue = nearSimilarElementsCount * elementMatchRate * currentElement.SocialValue;
                 }
             }
         }

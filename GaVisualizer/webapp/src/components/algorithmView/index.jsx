@@ -1,7 +1,5 @@
 import React, { Component } from 'react';
-
 import AlgorithmChart from '../algorithmChart';
-
 import './_styles.scss';
 
 class AlgorithmView extends Component {
