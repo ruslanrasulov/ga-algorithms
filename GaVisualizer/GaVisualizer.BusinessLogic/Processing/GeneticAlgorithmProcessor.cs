@@ -93,7 +93,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
                     if (chance == 1)
                     {
-                        board.Cells[i, j] = new Bacteria();
+                        board.Cells[i, j] = new Bacterium();
                     }
                     else
                     {

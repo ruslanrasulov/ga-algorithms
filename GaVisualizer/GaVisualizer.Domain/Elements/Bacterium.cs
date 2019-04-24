@@ -3,7 +3,7 @@ using GaVisualizer.Domain.Board;
 
 namespace GaVisualizer.Domain.Elements
 {
-    public class Bacteria : IBoardElement
+    public class Bacterium : IBoardElement
     {
         public int Height { get; set; }
         public int Width { get; set; }
@@ -12,6 +12,7 @@ namespace GaVisualizer.Domain.Elements
         public double ReproductivityRate { get; set; }
         public double FitnessValue { get; set; }
         public double SocialValue { get; set; }
+        public ElementType ElementType => ElementType.Bacteria;
 
         public TimeSpan LifeTime { get; set; }
     }

@@ -33,10 +33,10 @@ class AlgorithmView extends Component {
     fillGrid(ctx, cells, cellWidth, cellHeight) {
         for (let i = 0; i < cells.length; i++) {
             for (let j = 0; j < cells[0].length; j++) {
-                if (cells[i][j].virusImmunity !== undefined) {
+                if (cells[i][j].elementType === 0) { //bacterium
                     ctx.fillStyle = '#00ff00';
                 }
-                else {
+                else if (cells[i][j].elementType === 1){ //virus
                     ctx.fillStyle = '#ff0000';
                 }
 

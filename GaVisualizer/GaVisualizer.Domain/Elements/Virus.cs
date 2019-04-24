@@ -10,6 +10,7 @@ namespace GaVisualizer.Domain.Elements
         public double InfectionRange { get; set; }
         public double FitnessValue { get; set; }
         public double SocialValue { get; set; }
-        public Bacteria InfectedBacteria { get; set; }
+        public Bacterium InfectedBacteria { get; set; }
+        public ElementType ElementType => ElementType.Virus;
     }
 }
