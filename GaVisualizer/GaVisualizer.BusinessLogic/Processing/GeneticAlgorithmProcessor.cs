@@ -90,17 +90,23 @@ namespace GaVisualizer.BusinessLogic.Processing
                 {
                     var chance = Random.Next(2);
                     var socialValue = Random.NextDouble() * 100;
+                    var selectivity = Random.NextDouble();
+
+                    IBoardElement element;
 
                     if (chance == 1)
                     {
-                        board.Cells[i, j] = new Bacterium();
+                        element = new Bacterium();
                     }
                     else
                     {
-                        board.Cells[i, j] = new Virus();
+                        element = new Virus();
                     }
 
-                    board.Cells[i, j].SocialValue = socialValue;
+                    element.SocialValue = socialValue;
+                    element.Selectivity = selectivity;
+
+                    board.Cells[i, j] = element;
                 }
             }
 
@@ -118,7 +124,7 @@ namespace GaVisualizer.BusinessLogic.Processing
         private void KillNotSatisfiedElements(IBoardElement[,] cells)
         {
             var orderedElements = cells.Cast<IBoardElement>().OrderBy(e => e.FitnessValue);
-            var survivalsCount = (cells.GetLength(0) * cells.GetLength(1)) / 2;
+            var survivalsCount = cells.GetLength(0) * cells.GetLength(1) / 2;
 
             var killCount = 0;
 
@@ -179,7 +185,12 @@ namespace GaVisualizer.BusinessLogic.Processing
                 }
             }
 
-            return parents.OrderBy(p => p.range).Select(p => p.element).Take(2).ToList();
+            return parents
+                .OrderBy(p => p.range)
+                .ThenBy(p => p.element.Selectivity)
+                .Select(p => p.element)
+                .Take(2)
+                .ToList();
         }
 
         private void CalculateFitnessValue(IBoardElement[,] cells)

@@ -6,6 +6,7 @@ namespace GaVisualizer.Domain.Board
     {
         double FitnessValue { get; set; }
         double SocialValue { get; set; }
+        double Selectivity { get; set; }
         ElementType ElementType { get; }
     }
 }
