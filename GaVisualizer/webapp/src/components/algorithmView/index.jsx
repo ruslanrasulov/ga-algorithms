@@ -65,6 +65,22 @@ class AlgorithmView extends Component {
         this.drawGrid(ctx, cells, canvas.width, canvas.height, cellWidth, cellHeight);
     }
 
+    showTooltip = (e) => {
+        if (!this.props.algorithmInfo.cells) return;
+        
+        const { cells } = this.props.algorithmInfo;
+        const canvas = this.board.current;
+        
+        const lineCount = cells.length;
+        const cellWidth = canvas.width / lineCount;
+        const cellHeight = canvas.height / lineCount;
+
+        const x = Math.floor(e.layerX / cellWidth);
+        const y = Math.floor(e.layerY / cellHeight);
+
+        console.log(cells[x][y]);
+    }
+
     onStart = () => {
         const { 
             onAlgorithmStart,
@@ -146,6 +162,7 @@ class AlgorithmView extends Component {
 
     componentDidMount() {
         this.renderCanvas();
+        this.board.current.addEventListener('mousemove', this.showTooltip);
     }
 
     componentDidUpdate() {
