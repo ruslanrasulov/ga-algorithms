@@ -15,5 +15,10 @@ namespace GaVisualizer.Domain.Elements
         public ElementType ElementType => ElementType.Bacteria;
 
         public TimeSpan LifeTime { get; set; }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 }

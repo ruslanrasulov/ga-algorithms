@@ -154,6 +154,9 @@ namespace GaVisualizer.BusinessLogic.Processing
                         var parents = FindParents(cells, i, j);
                         var randomParent = parents[Random.Next(parents.Count)];
 
+                        var child = (IBoardElement)randomParent.Clone();
+                        child.SocialValue = (parents[0].SocialValue + parents[1].SocialValue) / 2;
+
                         cells[i, j] = randomParent;
                     }
                 }
