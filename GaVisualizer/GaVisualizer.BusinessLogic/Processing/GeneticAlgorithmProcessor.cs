@@ -10,6 +10,8 @@ namespace GaVisualizer.BusinessLogic.Processing
 {
     internal class GeneticAlgorithmProcessor : IGeneticAlgorithmProcessor
     {
+        private const double MutationChance = 0.9;
+
         private static readonly Random Random = new Random();
         private readonly IDictionary<Guid, GeneticAlgorithm> algorithms;
 
@@ -89,7 +91,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                 for (int j = 0; j < board.Cells.GetLength(1); j++)
                 {
                     var chance = Random.Next(2);
-                    var socialValue = Random.NextDouble() * 100;
+                    var socialValue = Random.NextDouble();
                     var selectivity = Random.NextDouble();
 
                     IBoardElement element;
@@ -118,6 +120,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             CalculateFitnessValue(cells);
             KillNotSatisfiedElements(cells);
             MateElements(cells);
+            ProcessMutation(cells);
         }
 
         //todo: please, find more adequate name
@@ -235,6 +238,21 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
 
             return count;
+        }
+
+        public void ProcessMutation(IBoardElement[,] cells)
+        {
+            for (int i = 0; i < cells.GetLength(0); i++)
+            {
+                for (int j = 0; j < cells.GetLength(1); j++)
+                {
+                    if (Random.NextDouble() > MutationChance)
+                    {
+                        cells[i, j].Selectivity = Random.NextDouble();
+                        cells[i, j].SocialValue = Random.NextDouble();
+                    }
+                }
+            }
         }
     }
 }
