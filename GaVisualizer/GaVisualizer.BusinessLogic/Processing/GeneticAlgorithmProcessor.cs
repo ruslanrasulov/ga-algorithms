@@ -20,17 +20,21 @@ namespace GaVisualizer.BusinessLogic.Processing
             algorithms = new Dictionary<Guid, GeneticAlgorithm>();
         }
 
-        public Task<Guid> AddNewAlgorithmAsync(BoardSettings settings)
+        public Task<GeneticAlgorithm> AddNewAlgorithmAsync(BoardSettings settings)
         {
             var id = Guid.NewGuid();
+
+            settings.Board = settings.Board ?? GetRandomBoard(fillBoard: false);
+            settings.Board.AlgorithmId = id;
+
             var algorithm = new GeneticAlgorithm
             {
-                Board = settings.Board ?? GetRandomBoard(id, fillBoard: false)
+                Board = settings.Board
             };
 
             algorithms.Add(id, algorithm);
 
-            return Task.FromResult(id);
+            return Task.FromResult(algorithm);
         }
 
         public Task<MainBoard> GetCurrentStateAsync(string id)
@@ -42,7 +46,8 @@ namespace GaVisualizer.BusinessLogic.Processing
             {
                 if (ga.Board.Cells == null)
                 {
-                    ga.Board = GetRandomBoard(guid, fillBoard: true);
+                    ga.Board = GetRandomBoard(fillBoard: true);
+                    ga.Board.AlgorithmId = guid;
                 }
                 else
                 {
@@ -79,15 +84,12 @@ namespace GaVisualizer.BusinessLogic.Processing
             return Task.CompletedTask;
         }
 
-        private MainBoard GetRandomBoard(Guid? id = null, bool fillBoard = true)
+        private MainBoard GetRandomBoard(bool fillBoard = true)
         {
-            var algorithmId = id ?? Guid.NewGuid();
-
-            if (!fillBoard) return new MainBoard() { AlgorithmId = algorithmId };
+            if (!fillBoard) return new MainBoard();
 
             var board = new MainBoard()
             {
-                AlgorithmId = algorithmId,
                 Cells = new IBoardElement[20, 20]
             };
 

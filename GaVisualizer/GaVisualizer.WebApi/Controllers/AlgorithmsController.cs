@@ -1,6 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GaVisualizer.BusinessLogic.Processing;
 using GaVisualizer.Domain.Board;
+using GaVisualizer.Domain.Elements;
 using GaVisualizer.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -18,11 +19,12 @@ namespace GaVisualizer.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewAlgorithmAsync([FromBody]BoardSettings settings = null)
+        public async Task<IActionResult> AddNewAlgorithmAsync([FromBody]BoardSettingsVm settingsVm = null)
         {
-            var id = await geneticAlgorithmProcessor.AddNewAlgorithmAsync(settings ?? new BoardSettings());
+            var settings = GetSettings(settingsVm);
+            var algorithm = await geneticAlgorithmProcessor.AddNewAlgorithmAsync(settings ?? new BoardSettings());
 
-            return Created($"api/algorithms/{id}", new { AlgorithmId = id });
+            return Created($"api/algorithms/{algorithm.Board.AlgorithmId}", algorithm.Board);
         }
 
         [HttpPatch("{id}")]
@@ -63,6 +65,36 @@ namespace GaVisualizer.WebApi.Controllers
             await geneticAlgorithmProcessor.RemoveAsync(id);
 
             return Ok();
+        }
+
+        private BoardSettings GetSettings(BoardSettingsVm settingsVm)
+        {
+            var width = settingsVm.Board.Cells.GetLength(0);
+            var height = settingsVm.Board.Cells.GetLength(1);
+            var elements = new IBoardElement[width, height];
+
+            for (int i = 0; i < width; i++)
+            {
+                for (int j = 0; j < height; j++)
+                {
+                    if (settingsVm.Board.Cells[i, j].ElementType == ElementType.Bacteria)
+                    {
+                        elements[i, j] = new Bacterium();
+                    }
+                    else if (settingsVm.Board.Cells[i, j].ElementType == ElementType.Virus)
+                    {
+                        elements[i, j] = new Virus();
+                    }
+                }
+            }
+
+            return new BoardSettings
+            {
+                Board = new MainBoard
+                {
+                    Cells = elements
+                }
+            };
         }
     }
 }

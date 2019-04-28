@@ -3,8 +3,8 @@ import * as actionTypes from '../actions/actionTypes';
 const reducer = (state = [], action) => {
     switch(action.type) {
         case actionTypes.ADD_NEW_ALGORITHM_COMPLETE: {
-            const { algorithmId } = action.payload;
-            return state.concat([{ algorithmId }]);
+            const algorithmInfo = action.payload;
+            return state.concat([algorithmInfo]);
         }
         case actionTypes.FETCH_CURRENT_STATE_COMPLETE:
         case actionTypes.START_ALGORITHM:

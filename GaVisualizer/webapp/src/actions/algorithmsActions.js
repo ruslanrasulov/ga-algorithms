@@ -5,16 +5,16 @@ export const createNewAlgorithmStart = () => ({
     type: actionTypes.ADD_NEW_ALGORITHM_START
 });
 
-export const createNewAlgorithmComplete = algorithmId => ({
+export const createNewAlgorithmComplete = algorithmInfo => ({
     type: actionTypes.ADD_NEW_ALGORITHM_COMPLETE,
-    payload: { algorithmId }
+    payload: algorithmInfo
 });
 
-export const createNewAlgorithm = () => dispatch => {
+export const createNewAlgorithm = algorithmInfo => dispatch => {
     dispatch(createNewAlgorithmStart());
 
-    algorithmsApi.postNewAlgorithm({}).then(result => {
-        dispatch(createNewAlgorithmComplete(result.data.algorithmId));
+    algorithmsApi.postNewAlgorithm({ board: algorithmInfo }).then(result => {
+        dispatch(createNewAlgorithmComplete(result.data));
     });
 }
 
@@ -118,3 +118,8 @@ export const stopAlgorithm = algorithmId => dispatch => {
         dispatch(stopAlgorithmComplete(algorithmId));
     });
 }
+
+export const setNewAlgorithm = algorithmInfo => ({
+    type: actionTypes.SET_NEW_ALGORITHM,
+    payload: algorithmInfo
+});

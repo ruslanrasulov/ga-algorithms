@@ -3,8 +3,8 @@ import axios from 'axios';
 export default class AlgorithmsApi {
     static getApiUrl = (path) => process.env.API_URL + 'api/algorithms/' + (path || '');
 
-    static postNewAlgorithm = ({}) => {
-        return AlgorithmsApi.post(null, {});
+    static postNewAlgorithm = (body) => {
+        return AlgorithmsApi.post(null, body);
     }
 
     static getCurrentState = (id) => {

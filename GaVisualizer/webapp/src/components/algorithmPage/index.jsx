@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import AlgorithmView from '../algorithmView';
-import { getAlgorithms as selectAlgorithms } from '../../selectors/algorithmsSelectors';
+import Board from '../board';
+import { getAlgorithms as selectAlgorithms, getNewAlgorithm } from '../../selectors/algorithmsSelectors';
 import { 
     createNewAlgorithm,
     getCurrentState,
@@ -29,9 +30,13 @@ class AlgorithmPage extends Component {
         this.props.getAlgorithms();
     }
 
-    onAddAlgorithm = () => {
+    showModal = () => {
         this.setState({ showModal: true });
-        //this.props.createNewAlgorithm();
+    }
+
+    onAddAlgorithm = () => {
+        this.setState({ showModal: false });
+        this.props.createNewAlgorithm(this.props.newAlgorithm);
     }
 
     onAlgorithmStart = (id, callback) => {
@@ -84,10 +89,12 @@ class AlgorithmPage extends Component {
 
     render = () => (
         <div>
-            <div className='btn btn-add' onClick={this.onAddAlgorithm}>Add a new algorithm</div>
+            <div className='btn btn-add' onClick={this.showModal}>Add a new algorithm</div>
             {this.renderAlgorithms()}
             {this.state.showModal
-                ? <Modal title="Add a new algorithm" onClick={() => console.log('onclick!!')} onClose={() => this.setState({ showModal: false })}></Modal>
+                ? <Modal title="Add a new algorithm" onClick={this.onAddAlgorithm} onClose={() => this.setState({ showModal: false })}>
+                    <Board editMode={true} />
+                  </Modal>
                 : null
             }
         </div>
@@ -95,11 +102,12 @@ class AlgorithmPage extends Component {
 }
 
 const mapStateToProps = state => ({
-    algorithms: selectAlgorithms(state)
+    algorithms: selectAlgorithms(state),
+    newAlgorithm: getNewAlgorithm(state)
 });
 
 const mapDispatchToProps = dispatch => ({
-    createNewAlgorithm: () => dispatch(createNewAlgorithm()),
+    createNewAlgorithm: (newAlgorithm) => dispatch(createNewAlgorithm(newAlgorithm)),
     getCurrentState: (id, callback) => dispatch(getCurrentState(id, callback)),
     startAlgorithm: (id, callback) => dispatch(startAlgorithm(id, callback)),
     pauseAlgorithm: id => dispatch(pauseAlgorithm(id)),

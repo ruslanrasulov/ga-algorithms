@@ -1,1 +1,1 @@
-export default { algorithms: [] };
+export default { algorithms: [], newAlgorithm: {} };

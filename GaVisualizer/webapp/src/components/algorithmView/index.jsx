@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import AlgorithmChart from '../algorithmChart';
 import './_styles.scss';
+import Board from '../board';
 
 class AlgorithmView extends Component {
     constructor(props) {
@@ -10,75 +11,6 @@ class AlgorithmView extends Component {
 
         this.board = React.createRef();
         this.intervalRange = React.createRef();
-    }
-
-    drawGrid(ctx, cells, boardWidth, boardHeight, cellWidth, cellHeight) {
-        ctx.strokeStyle = '#000000';
-
-        for (let i = 0; i < cells.length + 1; i++) {
-            for (let j = 0; j < cells[0].length + 1; j++) {
-                ctx.beginPath();
-                ctx.moveTo(cellWidth * i, 0);
-                ctx.lineTo(cellWidth * i, boardWidth);
-                ctx.stroke();
-                
-                ctx.beginPath();
-                ctx.moveTo(0, cellHeight * j);
-                ctx.lineTo(boardHeight, cellHeight * j);
-                ctx.stroke();
-            }
-        }
-    }
-
-    fillGrid(ctx, cells, cellWidth, cellHeight) {
-        for (let i = 0; i < cells.length; i++) {
-            for (let j = 0; j < cells[0].length; j++) {
-                if (cells[i][j].elementType === 0) { //bacterium
-                    ctx.fillStyle = '#00ff00';
-                }
-                else if (cells[i][j].elementType === 1){ //virus
-                    ctx.fillStyle = '#ff0000';
-                }
-
-                ctx.fillRect(cellWidth * i, cellHeight * j, cellWidth, cellHeight);
-            }
-        }
-    }
-
-    renderCanvas() {
-        
-        const canvas = this.board.current;
-        const ctx = canvas.getContext('2d');
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (!this.props.algorithmInfo.cells) return;
-        
-        const { cells } = this.props.algorithmInfo;
-
-        const lineCount = cells.length;
-        const cellWidth = canvas.width / lineCount;
-        const cellHeight = canvas.height / lineCount;
-        
-
-        this.fillGrid(ctx, cells, cellWidth, cellHeight);
-        this.drawGrid(ctx, cells, canvas.width, canvas.height, cellWidth, cellHeight);
-    }
-
-    showTooltip = (e) => {
-        if (!this.props.algorithmInfo.cells) return;
-        
-        const { cells } = this.props.algorithmInfo;
-        const canvas = this.board.current;
-        
-        const lineCount = cells.length;
-        const cellWidth = canvas.width / lineCount;
-        const cellHeight = canvas.height / lineCount;
-
-        const x = Math.floor(e.layerX / cellWidth);
-        const y = Math.floor(e.layerY / cellHeight);
-
-        console.log(cells[x][y]);
     }
 
     onStart = () => {
@@ -160,18 +92,11 @@ class AlgorithmView extends Component {
         }, timeout || 1000);
     }
 
-    componentDidMount() {
-        this.renderCanvas();
-        this.board.current.addEventListener('mousemove', this.showTooltip);
-    }
-
-    componentDidUpdate() {
-        this.renderCanvas();
-    }
-
     render = () => (
         <div className='alg-container'>
-            <canvas className='alg-container__board' width={400} height={400} ref={this.board} />
+            <div className="alg-container__board">
+                <Board algorithmId={this.props.algorithmInfo.algorithmId} width={400} height={400} />
+            </div>
 
             <div className='alg-container__chart'>
                 <AlgorithmChart />
