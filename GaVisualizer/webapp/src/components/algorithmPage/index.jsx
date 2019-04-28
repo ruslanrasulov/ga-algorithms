@@ -16,18 +16,22 @@ import {
 } from '../../actions/algorithmsActions';
 
 import './_styles.scss';
+import Modal from '../modal';
 
 class AlgorithmPage extends Component {
     constuctor(props) {
         this.super(props);
     }
 
+    state = {}
+
     componentDidMount = () => {
         this.props.getAlgorithms();
     }
 
     onAddAlgorithm = () => {
-        this.props.createNewAlgorithm();
+        this.setState({ showModal: true });
+        //this.props.createNewAlgorithm();
     }
 
     onAlgorithmStart = (id, callback) => {
@@ -82,6 +86,10 @@ class AlgorithmPage extends Component {
         <div>
             <div className='btn btn-add' onClick={this.onAddAlgorithm}>Add a new algorithm</div>
             {this.renderAlgorithms()}
+            {this.state.showModal
+                ? <Modal title="Add a new algorithm" onClick={() => console.log('onclick!!')} onClose={() => this.setState({ showModal: false })}></Modal>
+                : null
+            }
         </div>
     );
 }
