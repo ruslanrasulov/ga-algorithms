@@ -106,7 +106,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                     }
 
                     element.SocialValue = socialValue;
-                    element.Selectivity = selectivity;
+                    element.Productivity = selectivity;
 
                     board.Cells[i, j] = element;
                 }
@@ -190,7 +190,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
             return parents
                 .OrderBy(p => p.range)
-                .ThenBy(p => p.element.Selectivity)
+                .ThenBy(p => p.element.Productivity) //change to productivity
                 .Select(p => p.element)
                 .Take(2)
                 .ToList();
@@ -248,7 +248,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                 {
                     if (Random.NextDouble() > MutationChance)
                     {
-                        cells[i, j].Selectivity = Random.NextDouble();
+                        cells[i, j].Productivity = Random.NextDouble();
                         cells[i, j].SocialValue = Random.NextDouble();
                     }
                 }

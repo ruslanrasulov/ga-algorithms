@@ -12,7 +12,7 @@ namespace GaVisualizer.Domain.Elements
         public double ReproductivityRate { get; set; }
         public double FitnessValue { get; set; }
         public double SocialValue { get; set; }
-        public double Selectivity { get; set; }
+        public double Productivity { get; set; }
         public ElementType ElementType => ElementType.Bacteria;
 
         public TimeSpan LifeTime { get; set; }
