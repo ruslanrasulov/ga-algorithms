@@ -23,7 +23,12 @@ namespace GaVisualizer.BusinessLogic.Processing
         public Task<Guid> AddNewAlgorithmAsync(BoardSettings settings)
         {
             var id = Guid.NewGuid();
-            algorithms.Add(id, new GeneticAlgorithm() { Board = GetRandomBoard(id, fillBoard: false) });
+            var algorithm = new GeneticAlgorithm
+            {
+                Board = settings.Board ?? GetRandomBoard(id, fillBoard: false)
+            };
+
+            algorithms.Add(id, algorithm);
 
             return Task.FromResult(id);
         }
