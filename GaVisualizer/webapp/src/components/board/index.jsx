@@ -50,7 +50,7 @@ class Board extends Component {
                 ctx.moveTo(cellWidth * i, 0);
                 ctx.lineTo(cellWidth * i, boardWidth);
                 ctx.stroke();
-                
+
                 ctx.beginPath();
                 ctx.moveTo(0, cellHeight * j);
                 ctx.lineTo(boardHeight, cellHeight * j);
@@ -60,16 +60,36 @@ class Board extends Component {
     }
 
     fillGrid(ctx, cells, cellWidth, cellHeight) {
+        ctx.font = "15px Impact";
+
         for (let i = 0; i < cells.length; i++) {
             for (let j = 0; j < cells[0].length; j++) {
+                let rectFillStyle;
+                let textFillStyle;
+
                 if (cells[i][j].elementType === 0) { //bacterium
-                    ctx.fillStyle = '#00ff00';
+                    rectFillStyle = '#00ff00';
+                    textFillStyle = '#000000';
                 }
                 else if (cells[i][j].elementType === 1){ //virus
-                    ctx.fillStyle = '#ff0000';
+                    rectFillStyle = '#ff0000';
+                    textFillStyle = '#ffffff';
                 }
 
-                ctx.fillRect(cellWidth * i, cellHeight * j, cellWidth, cellHeight);
+                const x = cellWidth * i;
+                const y = cellHeight * j;
+
+                ctx.fillStyle = rectFillStyle;
+                ctx.fillRect(x, y, cellWidth, cellHeight);
+
+                if (!this.props.editMode) {
+                    const age = cells[i][j].age || 0;
+                    const textX = x  + 6;
+                    const textY = y + 15;
+
+                    ctx.fillStyle = textFillStyle;
+                    ctx.fillText(age, textX, textY);
+                }
             }
         }
     }
@@ -137,7 +157,7 @@ const mapStateToProps = (state, ownProps) => {
     const cells = ownProps.editMode
         ? getNewAlgorithm(state).cells
         : getAlgorithmById(state, ownProps.algorithmId).cells;
-    console.log(ownProps, cells);
+
     return { cells: cells }
 };
 

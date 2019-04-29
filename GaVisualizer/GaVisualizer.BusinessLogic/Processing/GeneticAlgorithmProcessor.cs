@@ -114,6 +114,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
                     element.SocialValue = socialValue;
                     element.Productivity = selectivity;
+                    element.Age = 0;
 
                     board.Cells[i, j] = element;
                 }
@@ -126,6 +127,7 @@ namespace GaVisualizer.BusinessLogic.Processing
         {
             CalculateFitnessValue(cells);
             KillNotSatisfiedElements(cells);
+            IncreaseAge(cells);
             MateElements(cells);
             ProcessMutation(cells);
         }
@@ -159,6 +161,20 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
+        private void IncreaseAge(IBoardElement[,] cells)
+        {
+            for (int i = 0; i < cells.GetLength(0); i++)
+            {
+                for (int j = 0; j < cells.GetLength(1); j++)
+                {
+                    if (cells[i, j] != null)
+                    {
+                        cells[i, j].Age++;
+                    }
+                }
+            }
+        }
+
         private void MateElements(IBoardElement[,] cells)
         {
             for (int i = 0; i < cells.GetLength(0); i++)
@@ -172,8 +188,9 @@ namespace GaVisualizer.BusinessLogic.Processing
 
                         var child = (IBoardElement)randomParent.Clone();
                         child.SocialValue = (parents[0].SocialValue + parents[1].SocialValue) / 2;
+                        child.Age = 0;
 
-                        cells[i, j] = randomParent;
+                        cells[i, j] = child;
                     }
                 }
             }

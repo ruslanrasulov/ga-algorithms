@@ -8,5 +8,6 @@ namespace GaVisualizer.Domain.Board
         double SocialValue { get; set; }
         double Productivity { get; set; }
         ElementType ElementType { get; }
+        int? Age { get; set; }
     }
 }

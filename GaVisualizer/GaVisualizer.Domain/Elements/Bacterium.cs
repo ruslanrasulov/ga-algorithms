@@ -13,6 +13,7 @@ namespace GaVisualizer.Domain.Elements
         public double FitnessValue { get; set; }
         public double SocialValue { get; set; }
         public double Productivity { get; set; }
+        public int? Age { get; set; }
         public ElementType ElementType => ElementType.Bacteria;
 
         public TimeSpan LifeTime { get; set; }
