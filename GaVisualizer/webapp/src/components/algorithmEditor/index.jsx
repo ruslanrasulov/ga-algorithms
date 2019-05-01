@@ -28,7 +28,7 @@ class AlgorithmEdtor extends Component {
     }
 
     saveBoard = () => {
-        const content = JSON.stringify(this.props.algorithmInfo)
+        const content = JSON.stringify(this.props.algorithmInfo, null, 2);
         this.saveFile(content);
     }
 
@@ -59,7 +59,6 @@ class InputFile extends Component {
 
     onChange = e => {
         this.handleFile(e.target.files[0]);
-        console.log(e);
         e.target.value = '';
     }
 
