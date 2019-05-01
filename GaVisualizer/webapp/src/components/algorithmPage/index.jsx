@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 
 import AlgorithmView from '../algorithmView';
-import Board from '../board';
+import AlgorithmEditor from '../algorithmEditor';
 import { getAlgorithms as selectAlgorithms, getNewAlgorithm } from '../../selectors/algorithmsSelectors';
 import { 
     createNewAlgorithm,
@@ -17,7 +17,6 @@ import {
 } from '../../actions/algorithmsActions';
 
 import './_styles.scss';
-import Modal from '../modal';
 
 class AlgorithmPage extends Component {
     constuctor(props) {
@@ -92,9 +91,7 @@ class AlgorithmPage extends Component {
             <div className='btn btn-add' onClick={this.showModal}>Add a new algorithm</div>
             {this.renderAlgorithms()}
             {this.state.showModal
-                ? <Modal title="Add a new algorithm" onClick={this.onAddAlgorithm} onClose={() => this.setState({ showModal: false })}>
-                    <Board editMode={true} />
-                  </Modal>
+                ? <AlgorithmEditor onClick={this.onAddAlgorithm} onClose={() => this.setState({ showModal: false })}/>
                 : null
             }
         </div>
