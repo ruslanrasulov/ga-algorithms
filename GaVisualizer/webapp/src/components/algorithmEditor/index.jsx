@@ -19,10 +19,10 @@ class AlgorithmEdtor extends Component {
             const link = window.document.createElement('a');
 
             link.href = window.URL.createObjectURL(blob);
-            link.download = filename;        
+            link.download = filename;
             
             document.body.appendChild(link);
-            link.click();        
+            link.click();
             document.body.removeChild(link);
         }
     }
@@ -33,11 +33,13 @@ class AlgorithmEdtor extends Component {
     }
 
     render() {
+        const { onClick, onClose, setNewAlgorithm } = this.props;
+
         return (
-            <Modal title='Add a new algorithm' onClick={this.props.onClick} onClose={this.props.onClose}>
+            <Modal title='Add a new algorithm' onClick={onClick} onClose={onClose}>
                 <Board editMode={true} />
                 
-                <InputFile label='Upload board' onUpload={algorithmInfo => this.props.setNewAlgorithm(algorithmInfo)} />
+                <InputFile label='Upload board' onUpload={algorithmInfo => setNewAlgorithm(algorithmInfo)} />
                 <button type='button' onClick={this.saveBoard}>Download board</button>
             </Modal>
         );  

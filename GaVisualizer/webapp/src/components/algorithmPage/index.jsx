@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import AlgorithmView from '../algorithmView';
 import AlgorithmEditor from '../algorithmEditor';
+
 import { getAlgorithms as selectAlgorithms, getNewAlgorithm } from '../../selectors/algorithmsSelectors';
 import { 
     createNewAlgorithm,
@@ -79,7 +80,7 @@ class AlgorithmPage extends Component {
                 onAlgorithmUpdate={this.onAlgorithmUpdate}
                 onAlgorithmResume={this.onAlgorithmResume}
                 onIntervalUpdate={this.onIntervalUpdate}
-                onAlgorithmRemove={this.onAlgorithmRemove} 
+                onAlgorithmRemove={this.onAlgorithmRemove}
                 onAlgorithmStop={this.onAlgorithmStop} />);
         }
 

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+
 import { getAlgorithmById, getNewAlgorithm } from '../../selectors/algorithmsSelectors';
 import { setNewAlgorithm, setElementInfo } from '../../actions/algorithmsActions';
 
@@ -13,13 +14,17 @@ class Board extends Component {
     }
 
     componentDidMount() {
+        const { editMode, setNewAlgorithm } = this.props;
+        const canvas = this.board.current;
+
         this.renderCanvas();
-        if (this.props.editMode) {
-            this.props.setNewAlgorithm({ cells: this.getInitialCells(20, 20) });
-            this.board.current.addEventListener('click', this.setupBoard);
+
+        if (editMode) {
+            setNewAlgorithm({ cells: this.getInitialCells(20, 20) });
+            canvas.addEventListener('click', this.setupBoard);
         }
         else {
-            this.board.current.addEventListener('dblclick', this.showTooltip);
+            canvas.addEventListener('dblclick', this.showTooltip);
         }
     }
 
@@ -28,8 +33,9 @@ class Board extends Component {
     }
 
     setupBoard = (e) => {
+        const { setNewAlgorithm, cells } = this.props;
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
-        const newCells = this.props.cells.map(c => c.slice());
+        const newCells = cells.map(c => c.slice());
 
         if (newCells[x][y].elementType === 0) {
             newCells[x][y].elementType = 1;
@@ -38,7 +44,7 @@ class Board extends Component {
             newCells[x][y].elementType = 0;
         }
 
-        this.props.setNewAlgorithm({ cells: newCells });
+        setNewAlgorithm({ cells: newCells });
     }
 
     drawGrid(ctx, cells, boardWidth, boardHeight, cellWidth, cellHeight) {
@@ -103,10 +109,7 @@ class Board extends Component {
         if (!this.props.cells) return;
         
         const { cells } = this.props;
-
-        const lineCount = cells.length;
-        const cellWidth = canvas.width / lineCount;
-        const cellHeight = canvas.height / lineCount;
+        const { cellWidth, cellHeight } = this.getBoardSize();
 
         this.fillGrid(ctx, cells, cellWidth, cellHeight);
         this.drawGrid(ctx, cells, canvas.width, canvas.height, cellWidth, cellHeight);
@@ -118,23 +121,29 @@ class Board extends Component {
         const { cells, algorithmId, setElementInfo } = this.props;
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
 
-        if (x < cells.length && y < cells[0].length) {
+        if (x < cells.length && cells.length > 0 && y < cells[0].length) {
             setElementInfo(algorithmId, cells[x][y]);
         }
     }
 
     getCellPosition = (layerX, layerY) => {
-        const { cells } = this.props;
-        const canvas = this.board.current;
-        
-        const lineCount = cells.length;
-        const cellWidth = canvas.width / lineCount;
-        const cellHeight = canvas.height / lineCount;
+        const { cellWidth, cellHeight } = this.getBoardSize();
 
         return {
             x: Math.floor(layerX / cellWidth),
             y: Math.floor(layerY / cellHeight)
         };
+    }
+
+    getBoardSize = () => {
+        const { cells } = this.props;
+        const canvas = this.board.current;
+
+        const lineCount = cells.length;
+        const cellWidth = canvas.width / lineCount;
+        const cellHeight = canvas.height / lineCount;
+
+        return { cellWidth, cellHeight };
     }
 
     getInitialCells(x, y) {

@@ -41,7 +41,7 @@ const reducer = (state = [], action) => {
 const updateAlgorithms = (state, newState) => {
     return state.map(item => {
         if (item.algorithmId === newState.algorithmId) {
-            Object.assign(item, newState);
+            return { ...item, ...newState };
         }
 
         return item;
