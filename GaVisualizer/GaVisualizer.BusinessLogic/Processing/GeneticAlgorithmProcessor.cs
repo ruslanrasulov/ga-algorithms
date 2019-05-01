@@ -204,6 +204,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
                         var child = (IBoardElement)randomParent.Clone();
                         child.SocialValue = (parents[0].SocialValue + parents[1].SocialValue) / 2;
+                        child.FitnessValue = 0;
                         child.Age = 0;
 
                         cells[i, j] = child;
