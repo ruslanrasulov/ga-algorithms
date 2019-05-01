@@ -22,6 +22,17 @@ const reducer = (state = [], action) => {
 
             return state.filter(a => a.algorithmId !== algorithmId);
         }
+        case actionTypes.SET_ELEMENT_INFO: {
+            const { algorithmId, elementInfo } = action.payload;
+
+            return state.map(a => {
+                if (a.algorithmId === algorithmId) {
+                    return { ...a, elementInfo };
+                }
+
+                return a;
+            })
+        }
         default:
             return state;
     }

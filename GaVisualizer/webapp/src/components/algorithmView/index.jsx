@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
-import AlgorithmChart from '../algorithmChart';
 import './_styles.scss';
+
+import AlgorithmChart from '../algorithmChart';
 import Board from '../board';
+import ElementInfo from '../elementInfo';
 
 class AlgorithmView extends Component {
     constructor(props) {
@@ -100,6 +102,18 @@ class AlgorithmView extends Component {
 
             <div className='alg-container__chart'>
                 <AlgorithmChart />
+            </div>
+
+            <div className="alg-container__element-info">
+                {
+                    this.props.algorithmInfo.elementInfo
+                        ? <ElementInfo 
+                            elementType={this.props.algorithmInfo.elementInfo.elementType}
+                            socialValue={this.props.algorithmInfo.elementInfo.socialValue}
+                            productivity={this.props.algorithmInfo.elementInfo.productivity}
+                            fitnessValue={this.props.algorithmInfo.elementInfo.fitnessValue} />
+                        : null
+                }
             </div>
 
             <div className='alg-container__panel'>

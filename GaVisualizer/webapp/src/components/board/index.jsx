@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { getAlgorithmById, getNewAlgorithm } from '../../selectors/algorithmsSelectors';
-import { setNewAlgorithm } from '../../actions/algorithmsActions';
+import { setNewAlgorithm, setElementInfo } from '../../actions/algorithmsActions';
 
 import './_styles.scss';
 
@@ -115,11 +115,11 @@ class Board extends Component {
     showTooltip = (e) => {
         if (!this.props.cells) return;
         
-        const { cells } = this.props;
+        const { cells, algorithmId, setElementInfo } = this.props;
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
 
         if (x < cells.length && y < cells[0].length) {
-            console.log(cells[x][y]);
+            setElementInfo(algorithmId, cells[x][y]);
         }
     }
 
@@ -165,7 +165,8 @@ const mapStateToProps = (state, ownProps) => {
 };
 
 const mapDispatchToProps = dispatch => ({
-    setNewAlgorithm: (algorithmInfo) => dispatch(setNewAlgorithm(algorithmInfo))
+    setNewAlgorithm: (algorithmInfo) => dispatch(setNewAlgorithm(algorithmInfo)),
+    setElementInfo: (algorithmId, elementInfo) => dispatch(setElementInfo(algorithmId, elementInfo))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);

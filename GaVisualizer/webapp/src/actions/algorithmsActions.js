@@ -123,3 +123,11 @@ export const setNewAlgorithm = algorithmInfo => ({
     type: actionTypes.SET_NEW_ALGORITHM,
     payload: algorithmInfo
 });
+
+export const setElementInfo = (algorithmId, elementInfo) => ({
+    type: actionTypes.SET_ELEMENT_INFO,
+    payload: {
+        algorithmId,
+        elementInfo
+    }
+})
