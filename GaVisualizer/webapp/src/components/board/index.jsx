@@ -115,9 +115,12 @@ class Board extends Component {
     showTooltip = (e) => {
         if (!this.props.cells) return;
         
+        const { cells } = this.props;
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
 
-        console.log(cells[x][y]);
+        if (x < cells.length && y < cells[0].length) {
+            console.log(cells[x][y]);
+        }
     }
 
     getCellPosition = (layerX, layerY) => {
