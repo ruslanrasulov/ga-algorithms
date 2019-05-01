@@ -2,7 +2,7 @@
 
 namespace GaVisualizer.Domain.Board
 {
-    public class MainBoard
+    public class MainBoard : ICloneable
     {
         public Guid AlgorithmId { get; set; }
 
@@ -10,5 +10,10 @@ namespace GaVisualizer.Domain.Board
         public int Height { get; set; }
 
         public IBoardElement[,] Cells { get; set; }
+
+        public object Clone()
+        {
+            return MemberwiseClone();
+        }
     }
 }

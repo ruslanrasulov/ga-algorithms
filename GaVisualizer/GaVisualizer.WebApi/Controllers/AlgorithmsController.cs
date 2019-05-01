@@ -32,7 +32,7 @@ namespace GaVisualizer.WebApi.Controllers
         {
             if (updateModel.IsStopped)
             {
-                await geneticAlgorithmProcessor.StopAsync(id);
+                return Ok(await geneticAlgorithmProcessor.StopAsync(id));
             }
 
             return Ok();

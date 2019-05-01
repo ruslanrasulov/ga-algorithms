@@ -6,7 +6,6 @@ const reducer = (state = [], action) => {
             const algorithmInfo = action.payload;
             return state.concat([algorithmInfo]);
         }
-        case actionTypes.FETCH_CURRENT_STATE_COMPLETE:
         case actionTypes.START_ALGORITHM:
         case actionTypes.PAUSE_ALGORITHM:
         case actionTypes.RESUME_ALGORITHM:
@@ -14,6 +13,17 @@ const reducer = (state = [], action) => {
         case actionTypes.STOP_ALGORITHM_COMPLETE: {
             return updateAlgorithms(state, action.payload);
         }
+        case actionTypes.FETCH_CURRENT_STATE_COMPLETE: {
+            const { algorithmId } = action.payload;
+            const algorithm = state.find(a => a.algorithmId === algorithmId);
+
+            if (!algorithm.isPaused && !algorithm.isStopped) {
+                return updateAlgorithms(state, action.payload);
+            }
+
+            return state;
+        }
+
         case actionTypes.FETCH_ALGORITHMS_COMPLETE: {
             return action.payload;
         }

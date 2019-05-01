@@ -87,7 +87,7 @@ class AlgorithmView extends Component {
 
     startIntervalUpdating = () => {
         const { timeout, isStopped } = this.props.algorithmInfo;
-        
+
         if (isStopped) return;
 
         setTimeout(() => {
@@ -97,8 +97,8 @@ class AlgorithmView extends Component {
 
     render = () => {
         const { algorithmInfo } = this.props;
-        const { elementInfo } = algorithmInfo;
         const { updateIntervalValue } = this.state;
+        const elementInfo = algorithmInfo ? algorithmInfo.elementInfo : null;
 
         return (
             <div className='alg-container'>

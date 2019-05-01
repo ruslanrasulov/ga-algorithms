@@ -42,6 +42,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
             var algorithm = new GeneticAlgorithm
             {
+                InitialBoard = (MainBoard)settings.Board.Clone(),
                 Board = settings.Board
             };
 
@@ -77,16 +78,17 @@ namespace GaVisualizer.BusinessLogic.Processing
             return Task.CompletedTask;
         }
 
-        public Task StopAsync(string id)
+        public Task<MainBoard> StopAsync(string id)
         {
             var guid = new Guid(id);
 
             if (algorithms.TryGetValue(guid, out var algorithm))
             {
-                algorithm.Board.Cells = null;
+                algorithm.Board = (MainBoard)algorithm.InitialBoard.Clone();
+                return Task.FromResult(algorithm.InitialBoard);
             }
 
-            return Task.CompletedTask;
+            return Task.FromResult((MainBoard)null);
         }
 
         private MainBoard GetRandomBoard()

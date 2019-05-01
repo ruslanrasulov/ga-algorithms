@@ -106,10 +106,10 @@ export const stopAlgorithmStart = algorithmId => ({
     payload: { algorithmId }
 });
 
-export const stopAlgorithmComplete = algorithmId => ({
+export const stopAlgorithmComplete = algorithmInfo => ({
     type: actionTypes.STOP_ALGORITHM_COMPLETE,
     payload: { 
-        algorithmId,
+        ...algorithmInfo,
         isStopped: true,
         isPaused: false,
         isStarted: false,
@@ -120,8 +120,8 @@ export const stopAlgorithmComplete = algorithmId => ({
 export const stopAlgorithm = algorithmId => dispatch => {
     dispatch(stopAlgorithmStart(algorithmId));
 
-    algorithmsApi.stopAlgorithm(algorithmId).then(() => {
-        dispatch(stopAlgorithmComplete(algorithmId));
+    algorithmsApi.stopAlgorithm(algorithmId).then(result => {
+        dispatch(stopAlgorithmComplete(result.data));
     });
 }
 
