@@ -10,6 +10,7 @@ namespace GaVisualizer.Domain.Board
         public int VirusCount { get; set; }
         public int IterationCount { get; set; }
         public MateType MateType { get; set; }
+        public bool CreateRandomBoard { get; set; }
         public MainBoard Board { get; set; }
     }
 }

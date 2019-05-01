@@ -24,7 +24,20 @@ namespace GaVisualizer.BusinessLogic.Processing
         {
             var id = Guid.NewGuid();
 
-            settings.Board = settings.Board ?? GetRandomBoard(fillBoard: false);
+            if (settings.CreateRandomBoard)
+            {
+                settings.Board = GetRandomBoard();
+            }
+            else
+            {
+                if (settings.Board == null)
+                {
+                    throw new ArgumentException("Board should be initialized", nameof(settings.Board));
+                }
+
+                FillBoard(settings.Board.Cells);
+            }
+
             settings.Board.AlgorithmId = id;
 
             var algorithm = new GeneticAlgorithm
@@ -44,15 +57,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             //TODO: implement main algorithm
             if (algorithms.TryGetValue(guid, out GeneticAlgorithm ga))
             {
-                if (ga.Board.Cells == null)
-                {
-                    ga.Board = GetRandomBoard(fillBoard: true);
-                    ga.Board.AlgorithmId = guid;
-                }
-                else
-                {
-                    ProcessAlgorithm(ga.Board.Cells);
-                }
+                ProcessAlgorithm(ga.Board.Cells);
 
                 return Task.FromResult(ga.Board);
             }
@@ -84,10 +89,8 @@ namespace GaVisualizer.BusinessLogic.Processing
             return Task.CompletedTask;
         }
 
-        private MainBoard GetRandomBoard(bool fillBoard = true)
+        private MainBoard GetRandomBoard()
         {
-            if (!fillBoard) return new MainBoard();
-
             var board = new MainBoard()
             {
                 Cells = new IBoardElement[20, 20]
@@ -121,6 +124,19 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
 
             return board;
+        }
+
+        private void FillBoard(IBoardElement[,] cells)
+        {
+            for (int i = 0; i < cells.GetLength(0); i++)
+            {
+                for (int j = 0; j < cells.GetLength(1); j++)
+                {
+                    cells[i, j].SocialValue = Random.NextDouble();
+                    cells[i, j].Productivity = Random.NextDouble();
+                    cells[i, j].Age = 0;
+                }
+            }
         }
 
         private void ProcessAlgorithm(IBoardElement[,] cells)
