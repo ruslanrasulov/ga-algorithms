@@ -19,7 +19,7 @@ class Board extends Component {
             this.board.current.addEventListener('click', this.setupBoard);
         }
         else {
-            this.board.current.addEventListener('mousemove', this.showTooltip);
+            this.board.current.addEventListener('dblclick', this.showTooltip);
         }
     }
 
