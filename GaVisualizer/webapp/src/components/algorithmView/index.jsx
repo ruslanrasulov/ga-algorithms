@@ -111,6 +111,7 @@ class AlgorithmView extends Component {
                             elementType={this.props.algorithmInfo.elementInfo.elementType}
                             socialValue={this.props.algorithmInfo.elementInfo.socialValue}
                             productivity={this.props.algorithmInfo.elementInfo.productivity}
+                            age={this.props.algorithmInfo.elementInfo.age}
                             fitnessValue={this.props.algorithmInfo.elementInfo.fitnessValue} />
                         : null
                 }

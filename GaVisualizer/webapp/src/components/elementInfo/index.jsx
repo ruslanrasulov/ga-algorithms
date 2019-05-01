@@ -6,6 +6,7 @@ const ElementInfo = props => (
         <li className="element-info__item">{props.elementType === 0 ? 'Bacterium' : 'Virus'}</li>
         <li className="element-info__item">Social value: {props.socialValue}</li>
         <li className="element-info__item">Productivity: {props.productivity}</li>
+        <li className="element-info__item">Age: {props.age}</li>
         {
             props.fitnessValue !== undefined
             ? <li className="element-info__item">Fitness value: {props.fitnessValue}</li>
