@@ -1,7 +1,9 @@
-.btn.btn-add {
+.btn.btn-add-algorithm {
     position: fixed;
     bottom: 50px;
     right: 50px;
-    background-color: #00ff00;
+    width: 150px;
+    height: 30px;
+    line-height: 30px;
     z-index: 1;
 }

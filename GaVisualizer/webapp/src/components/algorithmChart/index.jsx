@@ -19,7 +19,7 @@ const plotOptions = {
 
 const AlgorithmChart = () => 
     <HighchartsChart plotOptions={plotOptions}>
-        <Chart />
+        <Chart width={600} height={350} />
         <Title>Virus/Bacteria statistic per iteration</Title>
 
         <Legend layout='vertical' align='right' verticalAlign='middle' />

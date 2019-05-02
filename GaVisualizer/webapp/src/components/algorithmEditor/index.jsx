@@ -7,6 +7,8 @@ import { getNewAlgorithm } from '../../selectors/algorithmsSelectors';
 import Modal from '../modal';
 import Board from '../board';
 
+import './_styles.scss';
+
 class AlgorithmEdtor extends Component {
     saveFile(data) {
         const blob = new Blob([data], { type: 'application/json' });
@@ -37,17 +39,31 @@ class AlgorithmEdtor extends Component {
 
         return (
             <Modal title='Add a new algorithm' onClick={onClick} onClose={onClose}>
-                <Board editMode={true} />
-                
-                <InputFile label='Upload board' onUpload={algorithmInfo => setNewAlgorithm(algorithmInfo)} />
-                <button type='button' onClick={this.saveBoard}>Download board</button>
+                <div className="algorithm-editor">
+                    <div className='algorithm-editor__board'>
+                        <Board editMode={true} />
+                    </div>
+                    
+                    <div className='algorithm-editor__panel'>
+                        <div className="btn algorithm-editor__panel__btn">
+                            <InputFile label='Upload board' onUpload={algorithmInfo => setNewAlgorithm(algorithmInfo)} />
+                        </div>
+                        <button type='button' className='btn algorithm-editor__panel__btn' onClick={this.saveBoard}>Download board</button>
+                    </div>
+                </div>
             </Modal>
         );  
     }
 }
 
+//TODO: move to separate file
 class InputFile extends Component {
-    fileReader = new FileReader();
+    constructor(props) {
+        super(props);
+
+        this.fileReader = new FileReader();
+        this.inputFile = React.createRef();
+    }
 
     onLoadEnd = () => {
         const content = this.fileReader.result;
@@ -66,11 +82,13 @@ class InputFile extends Component {
 
     render = () => (
             <div>
-                <label>{this.props.label}</label>
-                <input 
+                <button type='button' className='input-file__btn' onClick={() => this.inputFile.current.click()}>{this.props.label}</button>
+                <input
+                    className='input-file'
                     type='file'
                     accept='.json'
                     onChange={this.onChange}
+                    ref={this.inputFile}
                 />
             </div>
     );

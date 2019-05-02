@@ -89,7 +89,7 @@ class AlgorithmPage extends Component {
 
     render = () => (
         <div>
-            <div className='btn btn-add' onClick={this.showModal}>Add a new algorithm</div>
+            <div className='btn btn-success btn-add-algorithm' onClick={this.showModal}>Add a new algorithm</div>
             {this.renderAlgorithms()}
             {this.state.showModal
                 ? <AlgorithmEditor onClick={this.onAddAlgorithm} onClose={() => this.setState({ showModal: false })}/>

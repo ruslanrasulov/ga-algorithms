@@ -1,0 +1,15 @@
+.header {
+    height: 50px;
+    line-height: 50px;
+    background-color: #3498db;
+
+    &__container {
+        width: 90%;
+        margin: 0 auto;
+    }
+
+    &__title {
+        color: #fff;
+        font-size: 24px;
+    }
+}

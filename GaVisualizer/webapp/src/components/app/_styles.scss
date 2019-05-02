@@ -1,12 +1,40 @@
 * {
     box-sizing: border-box;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+a,
+a:hover,
+a:active,
+a:link {
+    text-decoration: none;
+    color: #fff;
 }
 
 .btn {
-    padding: 5px;
     background-color: #f0f0f0;
-    border: 1px black solid;
     border-radius: 3px;
-    line-height: 15px;
+    background-color: #ecf0f1;
+    width: 75px;
+    height: 25px;
+    line-height: 25px;
+    text-align: center;
+    border: 0;
     cursor: pointer;
+}
+
+.btn-info {
+    background-color: #4a69bd;
+}
+
+.btn-warning {
+    background-color: #f6b93b;
+}
+
+.btn-success {
+    background-color: #78e08f;
+}
+
+.btn-error {
+    background-color: #eb2f06;
 }

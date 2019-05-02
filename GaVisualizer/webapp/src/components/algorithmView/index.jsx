@@ -106,10 +106,6 @@ class AlgorithmView extends Component {
                     <Board algorithmId={algorithmInfo.algorithmId} width={400} height={400} />
                 </div>
 
-                <div className='alg-container__chart'>
-                    <AlgorithmChart />
-                </div>
-
                 <div className="alg-container__element-info">
                     {
                         elementInfo
@@ -123,14 +119,18 @@ class AlgorithmView extends Component {
                     }
                 </div>
 
+                <div className='alg-container__chart'>
+                    <AlgorithmChart />
+                </div>
+
                 <div className='alg-container__panel'>
                     {algorithmInfo.isStarted
-                        ? <div className='btn btn-stop alg-container__panel__panel-element' onClick={this.onStop}>Stop</div>
-                        : <div className='btn btn-start alg-container__panel__panel-element' onClick={this.onStart}>Start</div> }
+                        ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Stop</div>
+                        : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Start</div> }
 
                     {algorithmInfo.isPaused 
-                        ? <div className='btn btn-resume alg-container__panel__panel-element' onClick={this.onResume}>Resume</div>
-                        : <div className='btn btn-pause alg-container__panel__panel-element' onClick={this.onPause}>Pause</div> }
+                        ? <div className='btn btn-info alg-container__panel__panel-element' onClick={this.onResume}>Resume</div>
+                        : <div className='btn btn-warning alg-container__panel__panel-element' onClick={this.onPause}>Pause</div> }
 
                     <input 
                         type='range'
@@ -142,7 +142,7 @@ class AlgorithmView extends Component {
                         onMouseUp={this.updateInterval} />
                     <label>Update interval ({updateIntervalValue} ms)</label>
 
-                    <div className='btn btn-remove alg-container__panel__panel-element' onClick={this.onRemove}>Remove</div>
+                    <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onRemove}>Remove</div>
                 </div>
             </div>
         );
