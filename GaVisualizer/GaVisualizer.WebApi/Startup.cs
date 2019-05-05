@@ -18,13 +18,13 @@ namespace GaVisualizer.WebApi
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
+            app.UseCors(a =>
+                a.AllowAnyMethod()
+                 .AllowAnyHeader()
+                 .AllowAnyOrigin());
+
             if (env.IsDevelopment())
             {
-                app.UseCors(a => 
-                    a.AllowAnyMethod()
-                     .AllowAnyHeader()
-                     .AllowAnyOrigin());
-
                 app.UseDeveloperExceptionPage();
             }
 
