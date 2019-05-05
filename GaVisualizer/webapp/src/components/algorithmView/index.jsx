@@ -120,7 +120,7 @@ class AlgorithmView extends Component {
                 </div>
 
                 <div className='alg-container__chart'>
-                    <AlgorithmChart />
+                    <AlgorithmChart iterations={algorithmInfo.iterations} />
                 </div>
 
                 <div className='alg-container__panel'>

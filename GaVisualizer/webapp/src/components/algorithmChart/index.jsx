@@ -17,7 +17,7 @@ const plotOptions = {
     }
 };
 
-const AlgorithmChart = () => 
+const AlgorithmChart = props => 
     <HighchartsChart plotOptions={plotOptions}>
         <Chart width={600} height={350} />
         <Title>Virus/Bacteria statistic per iteration</Title>
@@ -30,8 +30,8 @@ const AlgorithmChart = () =>
 
         <YAxis>
             <YAxis.Title>Element count</YAxis.Title>
-            <LineSeries name='Bacteria' data={[30, 24, 25, 38, 45]} />
-            <LineSeries name='Viruses' data={[30, 36, 35, 22, 15]} />
+            <LineSeries name='Bacteria' data={props.iterations.map(i => i.bacteriaCount)} />
+            <LineSeries name='Viruses' data={props.iterations.map(i => i.virusCount)} />
         </YAxis>
 
     </HighchartsChart>

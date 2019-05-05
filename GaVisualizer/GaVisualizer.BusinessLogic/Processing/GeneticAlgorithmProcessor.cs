@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using GaVisualizer.BusinessLogic.Algorithm;
 using GaVisualizer.Domain.Board;
 using GaVisualizer.Domain.Elements;
+using GaVisualizer.Domain.Statistic;
 
 namespace GaVisualizer.BusinessLogic.Processing
 {
@@ -39,6 +40,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
 
             settings.Board.AlgorithmId = id;
+            settings.Board.Iterations = new List<IterationInfo>();
 
             var algorithm = new GeneticAlgorithm
             {
@@ -59,6 +61,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             if (algorithms.TryGetValue(guid, out GeneticAlgorithm ga))
             {
                 ProcessAlgorithm(ga.Board.Cells);
+                CalculateIterationInfo(ga.Board);
 
                 return Task.FromResult(ga.Board);
             }
@@ -95,7 +98,8 @@ namespace GaVisualizer.BusinessLogic.Processing
         {
             var board = new MainBoard()
             {
-                Cells = new IBoardElement[20, 20]
+                Cells = new IBoardElement[20, 20],
+                Iterations = new List<IterationInfo>()
             };
 
             for (int i = 0; i < board.Cells.GetLength(0); i++)
@@ -296,6 +300,35 @@ namespace GaVisualizer.BusinessLogic.Processing
                     }
                 }
             }
+        }
+
+        public void CalculateIterationInfo(MainBoard board)
+        {
+            var currentIteration = board.Iterations.LastOrDefault()?.IterationNumber ?? 0;
+            var virusCount = 0;
+            var bacteriaCount = 0;
+
+            for (int i = 0; i < board.Cells.GetLength(0); i++)
+            {
+                for (int j = 0; j < board.Cells.GetLength(1); j++)
+                {
+                    if (board.Cells[i, j].ElementType == ElementType.Bacteria)
+                    {
+                        bacteriaCount++;
+                    }
+                    else if (board.Cells[i, j].ElementType == ElementType.Virus)
+                    {
+                        virusCount++;
+                    }
+                }
+            }
+
+            board.Iterations.Add(new IterationInfo
+            {
+                IterationNumber = currentIteration + 1,
+                BacteriaCount = bacteriaCount,
+                VirusCount = virusCount
+            });
         }
     }
 }
