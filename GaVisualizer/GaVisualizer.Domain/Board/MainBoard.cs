@@ -20,7 +20,17 @@ namespace GaVisualizer.Domain.Board
 
         public object Clone()
         {
-            return MemberwiseClone();
+            var cells = Cells.Clone() as IBoardElement[,];
+
+            return new MainBoard
+            {
+                AlgorithmId = AlgorithmId,
+                Cells = cells,
+                Iterations = Iterations,
+                IsStopped = IsStopped,
+                IsPaused = IsPaused,
+                IsStarted = IsStarted
+            };
         }
     }
 }

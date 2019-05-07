@@ -60,14 +60,24 @@ namespace GaVisualizer.BusinessLogic.Processing
             //TODO: implement main algorithm
             if (algorithms.TryGetValue(guid, out GeneticAlgorithm ga))
             {
-                ProcessAlgorithm(ga.Board.Cells);
+                if (ga.Board.IsStopped)
+                {
+                    Reset(ga);
+                }
+                else
+                {
+                    ProcessAlgorithm(ga.Board.Cells);
+                }
+
+                ga.Board.IsStarted = true;
+
                 CalculateIterationInfo(ga.Board);
                 CheckForStop(ga.Board);
 
                 return Task.FromResult(ga.Board);
             }
 
-            return Task.FromResult((MainBoard)null);
+            return Task.FromResult(default(MainBoard));
         }
 
         public Task<IEnumerable<MainBoard>> GetAlgorithmsAsync()
@@ -88,7 +98,12 @@ namespace GaVisualizer.BusinessLogic.Processing
 
             if (algorithms.TryGetValue(guid, out var algorithm))
             {
-                algorithm.Board = (MainBoard)algorithm.InitialBoard.Clone();
+                algorithm.Board.IsPaused = false;
+                algorithm.Board.IsStarted = false;
+                algorithm.Board.IsStopped = true;
+
+                algorithm.Board.Iterations = new List<IterationInfo>();
+
                 return Task.FromResult(algorithm.InitialBoard);
             }
 
@@ -339,9 +354,21 @@ namespace GaVisualizer.BusinessLogic.Processing
             //TODO: refactor it
             if (elementTypes.All(e => e == ElementType.Bacteria) || elementTypes.All(e => e == ElementType.Virus))
             {
-                board.IsStarted = false;
                 board.IsPaused = false;
+                board.IsStarted = false;
                 board.IsStopped = true;
+            }
+        }
+
+        private void Reset(GeneticAlgorithm ga)
+        {
+            ga.Board = (MainBoard)ga.InitialBoard.Clone();
+            ga.Board.IsStopped = false;
+            ga.Board.Iterations = new List<IterationInfo>();
+
+            foreach (var element in ga.Board.Cells.Cast<IBoardElement>())
+            {
+                element.Age = 0;
             }
         }
     }

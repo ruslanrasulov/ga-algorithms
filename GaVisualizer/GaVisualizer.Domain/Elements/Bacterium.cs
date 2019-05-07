@@ -1,5 +1,4 @@
-﻿using System;
-using GaVisualizer.Domain.Board;
+﻿using GaVisualizer.Domain.Board;
 
 namespace GaVisualizer.Domain.Elements
 {
@@ -13,7 +12,13 @@ namespace GaVisualizer.Domain.Elements
 
         public object Clone()
         {
-            return MemberwiseClone();
+            return new Bacterium
+            {
+                FitnessValue = FitnessValue,
+                SocialValue = SocialValue,
+                Productivity = Productivity,
+                Age = Age
+            };
         }
     }
 }

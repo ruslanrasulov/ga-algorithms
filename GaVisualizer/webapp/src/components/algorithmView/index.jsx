@@ -28,10 +28,10 @@ class AlgorithmView extends Component {
     onUpdate = () => {
         const {
             onAlgorithmUpdate,
-            algorithmInfo: { algorithmId, isPaused }
+            algorithmInfo: { algorithmId, isPaused, isStarted }
         } = this.props;
 
-        if (!isPaused) {
+        if (isStarted && !isPaused) {
             onAlgorithmUpdate(algorithmId, this.startIntervalUpdating);
         }
     }
@@ -86,10 +86,10 @@ class AlgorithmView extends Component {
     }
 
     startIntervalUpdating = () => {
-        const { timeout, isStopped } = this.props.algorithmInfo;
-
-        if (isStopped) return;
-
+        const { timeout, isStopped, isStarted } = this.props.algorithmInfo;
+        
+        if (isStarted && isStopped) return;
+        
         setTimeout(() => {
             this.onUpdate();
         }, timeout || 1000);

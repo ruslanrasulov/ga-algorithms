@@ -12,7 +12,13 @@ namespace GaVisualizer.Domain.Elements
 
         public object Clone()
         {
-            return MemberwiseClone();
+            return new Virus
+            {
+                FitnessValue = FitnessValue,
+                SocialValue = SocialValue,
+                Productivity = Productivity,
+                Age = Age
+            };
         }
     }
 }
