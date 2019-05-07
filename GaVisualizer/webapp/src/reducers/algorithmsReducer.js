@@ -18,7 +18,17 @@ const reducer = (state = [], action) => {
             const algorithm = state.find(a => a.algorithmId === algorithmId);
 
             if (!algorithm.isPaused && !algorithm.isStopped) {
-                return updateAlgorithms(state, action.payload);
+                if (algorithm.elementInfo !== undefined) {
+                    const { x, y } = algorithm.elementInfo;
+                    
+                    const newElementInfo = Object.assign(action.payload.cells[x][y], { x, y });
+                    const newAglorithm = action.payload;
+                    const newState = { ...newAglorithm, ...{ elementInfo: newElementInfo } };
+
+                    return updateAlgorithms(state, newState);
+                }
+
+                else return updateAlgorithms(state, action.payload);
             }
 
             return state;

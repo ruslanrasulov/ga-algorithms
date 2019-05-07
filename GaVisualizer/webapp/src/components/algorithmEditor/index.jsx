@@ -34,21 +34,47 @@ class AlgorithmEdtor extends Component {
         this.saveFile(content);
     }
 
+    onRadioBtnChange = e => {
+        const a = {};
+        a[e.target.name] = e.target.value;
+        console.log(this.props.algorithmInfo.selectionType);
+        this.props.setNewAlgorithm(a);
+    }
+
     render() {
         const { onClick, onClose, setNewAlgorithm } = this.props;
 
         return (
-            <Modal title='Add a new algorithm' onClick={onClick} onClose={onClose}>
-                <div className="algorithm-editor">
+            <Modal title='Добавить новый алгоритм' onClick={onClick} onClose={onClose}>
+                <div className='algorithm-editor'>
                     <div className='algorithm-editor__board'>
                         <Board editMode={true} />
                     </div>
                     
                     <div className='algorithm-editor__panel'>
-                        <div className="btn algorithm-editor__panel__btn">
+                        <div className='btn algorithm-editor__panel__btn'>
                             <InputFile label='Импорт настроек' onUpload={algorithmInfo => setNewAlgorithm(algorithmInfo)} />
                         </div>
                         <button type='button' className='btn algorithm-editor__panel__btn' onClick={this.saveBoard}>Экспорт настроек</button>
+
+                        <div className='algorithm-editor__radio-btn-group'>
+                            <div>Тип селекции:</div>
+
+                            {/* Export to a new component */}
+                            <div><input type='radio' name='selectionType' value='0' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.selectionType === undefined || this.props.algorithmInfo.selectionType === '0'}/> Турнирная сетка</div>
+                            <div><input type='radio' name='selectionType' value='1' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.selectionType === '1'}/> Отбор усечением</div>
+                            <div><input type='radio' name='selectionType' value='2' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.selectionType === '2'}/> Пропорциональный отбор</div>
+                        </div>
+
+                        <div className='algorithm-editor__radio-btn-group'>
+                            <div>Тип скрещивания:</div>
+
+                            <div><input type='radio' name='crossoverType' value='0' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === undefined || this.props.algorithmInfo.crossoverType === '0'}/> Точечное</div>
+                            <div><input type='radio' name='crossoverType' value='1' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === '1'}/> Двухточечное</div>
+                            <div><input type='radio' name='crossoverType' value='2' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === '2'}/> Многоточечное</div>
+                            <div><input type='radio' name='crossoverType' value='3' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === '3'}/> Равномерное</div>
+                            <div><input type='radio' name='crossoverType' value='4' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === '4'}/> Оператор инверсии</div>
+                        </div>
                     </div>
                 </div>
             </Modal>

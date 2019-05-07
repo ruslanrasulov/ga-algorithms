@@ -93,7 +93,10 @@ namespace GaVisualizer.WebApi.Controllers
                 Board = new MainBoard
                 {
                     Cells = elements
-                }
+                },
+                CrossoverType = settingsVm.Board.CrossoverType,
+                SelectionType = settingsVm.Board.SelectionType,
+                IterationCount = settingsVm.Board.IterationCount
             };
         }
     }

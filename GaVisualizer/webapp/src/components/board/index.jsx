@@ -122,7 +122,8 @@ class Board extends Component {
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
 
         if (x < cells.length && cells.length > 0 && y < cells[0].length) {
-            setElementInfo(algorithmId, cells[x][y]);
+            const currentElement = cells[x][y];
+            setElementInfo(algorithmId, { x, y, ...currentElement });
         }
     }
 
