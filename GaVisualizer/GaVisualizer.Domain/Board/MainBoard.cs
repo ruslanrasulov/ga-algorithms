@@ -12,6 +12,12 @@ namespace GaVisualizer.Domain.Board
 
         public ICollection<IterationInfo> Iterations { get; set; }
 
+        public bool IsStopped { get; set; }
+
+        public bool IsPaused { get; set; }
+
+        public bool IsStarted { get; set; }
+
         public object Clone()
         {
             return MemberwiseClone();

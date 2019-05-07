@@ -37,7 +37,7 @@ class AlgorithmEdtor extends Component {
     onRadioBtnChange = e => {
         const a = {};
         a[e.target.name] = e.target.value;
-        console.log(this.props.algorithmInfo.selectionType);
+
         this.props.setNewAlgorithm(a);
     }
 

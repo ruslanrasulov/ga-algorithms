@@ -62,6 +62,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             {
                 ProcessAlgorithm(ga.Board.Cells);
                 CalculateIterationInfo(ga.Board);
+                CheckForStop(ga.Board);
 
                 return Task.FromResult(ga.Board);
             }
@@ -329,6 +330,19 @@ namespace GaVisualizer.BusinessLogic.Processing
                 BacteriaCount = bacteriaCount,
                 VirusCount = virusCount
             });
+        }
+
+        private void CheckForStop(MainBoard board)
+        {
+            var elementTypes = board.Cells.Cast<IBoardElement>().Select(e => e.ElementType);
+
+            //TODO: refactor it
+            if (elementTypes.All(e => e == ElementType.Bacteria) || elementTypes.All(e => e == ElementType.Virus))
+            {
+                board.IsStarted = false;
+                board.IsPaused = false;
+                board.IsStopped = true;
+            }
         }
     }
 }
