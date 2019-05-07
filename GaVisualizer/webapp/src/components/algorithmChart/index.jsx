@@ -20,18 +20,18 @@ const plotOptions = {
 const AlgorithmChart = props => 
     <HighchartsChart plotOptions={plotOptions}>
         <Chart width={600} height={350} />
-        <Title>Virus/Bacteria statistic per iteration</Title>
+        <Title>Статистика бактерий и вирусов</Title>
 
         <Legend layout='vertical' align='right' verticalAlign='middle' />
 
         <XAxis>
-            <XAxis.Title>Iteration</XAxis.Title>
+            <XAxis.Title>Поколение</XAxis.Title>
         </XAxis>
 
         <YAxis>
-            <YAxis.Title>Element count</YAxis.Title>
-            <LineSeries name='Bacteria' data={props.iterations.map(i => i.bacteriaCount)} />
-            <LineSeries name='Viruses' data={props.iterations.map(i => i.virusCount)} />
+            <YAxis.Title>Количество элементов</YAxis.Title>
+            <LineSeries name='Бактерии' data={props.iterations.map(i => i.bacteriaCount)} />
+            <LineSeries name='Вирусы' data={props.iterations.map(i => i.virusCount)} />
         </YAxis>
 
     </HighchartsChart>

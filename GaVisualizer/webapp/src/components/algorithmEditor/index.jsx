@@ -46,9 +46,9 @@ class AlgorithmEdtor extends Component {
                     
                     <div className='algorithm-editor__panel'>
                         <div className="btn algorithm-editor__panel__btn">
-                            <InputFile label='Upload board' onUpload={algorithmInfo => setNewAlgorithm(algorithmInfo)} />
+                            <InputFile label='Импорт настроек' onUpload={algorithmInfo => setNewAlgorithm(algorithmInfo)} />
                         </div>
-                        <button type='button' className='btn algorithm-editor__panel__btn' onClick={this.saveBoard}>Download board</button>
+                        <button type='button' className='btn algorithm-editor__panel__btn' onClick={this.saveBoard}>Экспорт настроек</button>
                     </div>
                 </div>
             </Modal>

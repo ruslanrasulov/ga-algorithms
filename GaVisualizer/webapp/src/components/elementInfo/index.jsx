@@ -5,17 +5,17 @@ const ElementInfo = props => (
     <ul className='element-info'>
         <li className="element-info__item">
             <span className="element-info__title">
-                {props.elementType === 0 ? 'Bacterium' : 'Virus'}
+                {props.elementType === 0 ? 'Бактерия' : 'Вирус'}
             </span>
         </li>
         <li className="element-info__item">
-            <span className="element-info__item__label">Social value: </span>{props.socialValue}
+            <span className="element-info__item__label">Социальность: </span>{props.socialValue}
         </li>
-        <li className="element-info__item"><span className="element-info__item__label">Productivity: </span>{props.productivity}</li>
-        <li className="element-info__item"><span className="element-info__item__label">Age: </span>{props.age}</li>
+        <li className="element-info__item"><span className="element-info__item__label">Продуктивность: </span>{props.productivity}</li>
+        <li className="element-info__item"><span className="element-info__item__label">Возраст: </span>{props.age}</li>
         {
             props.fitnessValue !== undefined
-            ? <li className="element-info__item"><span className="element-info__item__label">Fitness value: </span>{props.fitnessValue}</li>
+            ? <li className="element-info__item"><span className="element-info__item__label">Значение фитнес функции: </span>{props.fitnessValue}</li>
             : null
         }
     </ul>

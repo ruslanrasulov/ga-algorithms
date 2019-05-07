@@ -125,12 +125,12 @@ class AlgorithmView extends Component {
 
                 <div className='alg-container__panel'>
                     {algorithmInfo.isStarted
-                        ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Stop</div>
-                        : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Start</div> }
+                        ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Стоп</div>
+                        : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Старт</div> }
 
                     {algorithmInfo.isPaused 
-                        ? <div className='btn btn-info alg-container__panel__panel-element' onClick={this.onResume}>Resume</div>
-                        : <div className='btn btn-warning alg-container__panel__panel-element' onClick={this.onPause}>Pause</div> }
+                        ? <div className='btn btn-info alg-container__panel__panel-element' onClick={this.onResume}>Возобновить</div>
+                        : <div className='btn btn-warning alg-container__panel__panel-element' onClick={this.onPause}>Пауза</div> }
 
                     <input 
                         type='range'
@@ -140,9 +140,9 @@ class AlgorithmView extends Component {
                         defaultValue={updateIntervalValue}
                         ref={this.intervalRange}
                         onMouseUp={this.updateInterval} />
-                    <label>Update interval ({updateIntervalValue} ms)</label>
+                    <label>Интервал обновления ({updateIntervalValue} мс)</label>
 
-                    <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onRemove}>Remove</div>
+                    <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onRemove}>Удалить</div>
                 </div>
             </div>
         );
