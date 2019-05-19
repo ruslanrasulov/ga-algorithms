@@ -1,18 +1,16 @@
-﻿using GaVisualizer.Domain.Board;
-
-namespace GaVisualizer.Domain.Elements
+﻿namespace GaVisualizer.Domain.Population
 {
-    public class Bacterium : IBoardElement
+    public class Virus : IPopulationElement
     {
         public double FitnessValue { get; set; }
         public double SocialValue { get; set; }
         public double Productivity { get; set; }
         public int? Age { get; set; }
-        public ElementType ElementType => ElementType.Bacteria;
+        public ElementType ElementType => ElementType.Virus;
 
         public object Clone()
         {
-            return new Bacterium
+            return new Virus
             {
                 FitnessValue = FitnessValue,
                 SocialValue = SocialValue,

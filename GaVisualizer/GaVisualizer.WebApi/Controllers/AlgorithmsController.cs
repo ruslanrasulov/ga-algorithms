@@ -1,7 +1,7 @@
 ﻿using System.Threading.Tasks;
 using GaVisualizer.BusinessLogic.Processing;
-using GaVisualizer.Domain.Board;
-using GaVisualizer.Domain.Elements;
+using GaVisualizer.Domain.Algorithm;
+using GaVisualizer.Domain.Population;
 using GaVisualizer.WebApi.Models;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,12 +19,12 @@ namespace GaVisualizer.WebApi.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> AddNewAlgorithmAsync([FromBody]BoardSettingsVm settingsVm = null)
+        public async Task<IActionResult> AddNewAlgorithmAsync([FromBody]AlgorithmSettingsVm settingsVm = null)
         {
             var settings = GetSettings(settingsVm);
-            var algorithm = await geneticAlgorithmProcessor.AddNewAlgorithmAsync(settings ?? new BoardSettings());
+            var algorithm = await geneticAlgorithmProcessor.AddNewAlgorithmAsync(settings ?? new AlgorithmSettings());
 
-            return Created($"api/algorithms/{algorithm.Board.AlgorithmId}", algorithm.Board);
+            return Created($"api/algorithms/{algorithm.Id}", algorithm);
         }
 
         [HttpPatch("{id}")]
@@ -67,36 +67,37 @@ namespace GaVisualizer.WebApi.Controllers
             return Ok();
         }
 
-        private BoardSettings GetSettings(BoardSettingsVm settingsVm)
+        private AlgorithmSettings GetSettings(AlgorithmSettingsVm settingsVm)
         {
-            var width = settingsVm.Board.Cells.GetLength(0);
-            var height = settingsVm.Board.Cells.GetLength(1);
-            var elements = new IBoardElement[width, height];
+            var width = settingsVm.Generation.Cells.GetLength(0);
+            var height = settingsVm.Generation.Cells.GetLength(1);
+            var elements = new IPopulationElement[width, height];
 
             for (int i = 0; i < width; i++)
             {
                 for (int j = 0; j < height; j++)
                 {
-                    if (settingsVm.Board.Cells[i, j].ElementType == ElementType.Bacteria)
+                    if (settingsVm.Generation.Cells[i, j].ElementType == ElementType.Bacteria)
                     {
                         elements[i, j] = new Bacterium();
                     }
-                    else if (settingsVm.Board.Cells[i, j].ElementType == ElementType.Virus)
+                    else if (settingsVm.Generation.Cells[i, j].ElementType == ElementType.Virus)
                     {
                         elements[i, j] = new Virus();
                     }
                 }
             }
 
-            return new BoardSettings
+            return new AlgorithmSettings
             {
-                Board = new MainBoard
+                InitialGeneration = new Generation
                 {
                     Cells = elements
                 },
-                CrossoverType = settingsVm.Board.CrossoverType,
-                SelectionType = settingsVm.Board.SelectionType,
-                IterationCount = settingsVm.Board.IterationCount
+                CrossoverType = settingsVm.CrossoverType,
+                SelectionType = settingsVm.SelectionType,
+                IterationCount = settingsVm.IterationCount,
+                InitializeRandomPopulation = settingsVm.InitializeRandomPopulation
             };
         }
     }

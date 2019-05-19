@@ -1,4 +1,4 @@
-﻿using GaVisualizer.Domain.Board;
+﻿using GaVisualizer.Domain.Population;
 
 namespace GaVisualizer.WebApi.Models
 {

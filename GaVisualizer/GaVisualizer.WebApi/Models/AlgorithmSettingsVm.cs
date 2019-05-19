@@ -2,9 +2,10 @@
 
 namespace GaVisualizer.WebApi.Models
 {
-    public class BoardVm
+    public class AlgorithmSettingsVm
     {
-        public ElementVm[,] Cells { get; set; }
+        public GenerationVm Generation { get; set; }
+        public bool InitializeRandomPopulation { get; set; }
         public int IterationCount { get; set; }
         public CrossoverType CrossoverType { get; set; }
         public SelectionType SelectionType { get; set; }

@@ -1,16 +1,16 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using GaVisualizer.BusinessLogic.Algorithm;
-using GaVisualizer.Domain.Board;
+using GaVisualizer.Domain.Algorithm;
+using GaVisualizer.Domain.Population;
 
 namespace GaVisualizer.BusinessLogic.Processing
 {
     public interface IGeneticAlgorithmProcessor
     {
-        Task<GeneticAlgorithm> AddNewAlgorithmAsync(BoardSettings settings);
-        Task<MainBoard> GetCurrentStateAsync(string id);
+        Task<GeneticAlgorithm> AddNewAlgorithmAsync(AlgorithmSettings settings);
+        Task<GeneticAlgorithm> GetCurrentStateAsync(string id);
         Task RemoveAsync(string id);
-        Task<MainBoard> StopAsync(string id);
-        Task<IEnumerable<MainBoard>> GetAlgorithmsAsync();
+        Task<GeneticAlgorithm> StopAsync(string id);
+        Task<IEnumerable<GeneticAlgorithm>> GetAlgorithmsAsync();
     }
 }

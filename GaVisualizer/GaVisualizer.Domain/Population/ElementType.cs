@@ -1,4 +1,4 @@
-﻿namespace GaVisualizer.Domain.Board
+﻿namespace GaVisualizer.Domain.Population
 {
     public enum ElementType
     {

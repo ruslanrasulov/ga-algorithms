@@ -2,10 +2,8 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using GaVisualizer.BusinessLogic.Algorithm;
-using GaVisualizer.Domain.Board;
-using GaVisualizer.Domain.Elements;
-using GaVisualizer.Domain.Statistic;
+using GaVisualizer.Domain.Algorithm;
+using GaVisualizer.Domain.Population;
 
 namespace GaVisualizer.BusinessLogic.Processing
 {
@@ -21,31 +19,28 @@ namespace GaVisualizer.BusinessLogic.Processing
             algorithms = new Dictionary<Guid, GeneticAlgorithm>();
         }
 
-        public Task<GeneticAlgorithm> AddNewAlgorithmAsync(BoardSettings settings)
+        public Task<GeneticAlgorithm> AddNewAlgorithmAsync(AlgorithmSettings settings)
         {
             var id = Guid.NewGuid();
 
-            if (settings.CreateRandomBoard)
+            if (settings.InitializeRandomPopulation)
             {
-                settings.Board = GetRandomBoard();
+                settings.InitialGeneration = GetRandomGeneration();
             }
             else
             {
-                if (settings.Board == null)
+                if (settings.InitialGeneration == null)
                 {
-                    throw new ArgumentException("Board should be initialized", nameof(settings.Board));
+                    throw new ArgumentException("Board should be initialized", nameof(settings.InitialGeneration));
                 }
 
-                FillBoard(settings.Board.Cells);
+                FillBoard(settings.InitialGeneration.Cells);
             }
-
-            settings.Board.AlgorithmId = id;
-            settings.Board.Iterations = new List<IterationInfo>();
 
             var algorithm = new GeneticAlgorithm
             {
-                InitialBoard = (MainBoard)settings.Board.Clone(),
-                Board = settings.Board
+                Id = id,
+                Generations = new List<Generation> { settings.InitialGeneration }
             };
 
             algorithms.Add(id, algorithm);
@@ -53,36 +48,41 @@ namespace GaVisualizer.BusinessLogic.Processing
             return Task.FromResult(algorithm);
         }
 
-        public Task<MainBoard> GetCurrentStateAsync(string id)
+        public Task<GeneticAlgorithm> GetCurrentStateAsync(string id)
         {
             var guid = new Guid(id);
 
-            //TODO: implement main algorithm
-            if (algorithms.TryGetValue(guid, out GeneticAlgorithm ga))
+            if (algorithms.TryGetValue(guid, out GeneticAlgorithm algorithm))
             {
-                if (ga.Board.IsStopped)
+                if (algorithm.IsStopped)
                 {
-                    Reset(ga);
+                    Reset(algorithm);
                 }
                 else
                 {
-                    ProcessAlgorithm(ga.Board.Cells);
+                    var newGeneration = algorithm.Generations.Last().Clone() as Generation;
+
+                    ProcessAlgorithm(newGeneration.Cells);
+
+                    if (CheckForStop(newGeneration))
+                    {
+                        Stop(algorithm);
+                    }
+
+                    algorithm.Generations.Add(newGeneration);
                 }
 
-                ga.Board.IsStarted = true;
+                algorithm.IsStarted = true;
 
-                CalculateIterationInfo(ga.Board);
-                CheckForStop(ga.Board);
-
-                return Task.FromResult(ga.Board);
+                return Task.FromResult(algorithm);
             }
 
-            return Task.FromResult(default(MainBoard));
+            return Task.FromResult(default(GeneticAlgorithm));
         }
 
-        public Task<IEnumerable<MainBoard>> GetAlgorithmsAsync()
+        public Task<IEnumerable<GeneticAlgorithm>> GetAlgorithmsAsync()
         {
-            return Task.FromResult(algorithms.Values.Select(v => v.Board));
+            return Task.FromResult(algorithms.Values.Select(v => v));
         }
 
         public Task RemoveAsync(string id)
@@ -92,30 +92,26 @@ namespace GaVisualizer.BusinessLogic.Processing
             return Task.CompletedTask;
         }
 
-        public Task<MainBoard> StopAsync(string id)
+        public Task<GeneticAlgorithm> StopAsync(string id)
         {
             var guid = new Guid(id);
 
             if (algorithms.TryGetValue(guid, out var algorithm))
             {
-                algorithm.Board.IsPaused = false;
-                algorithm.Board.IsStarted = false;
-                algorithm.Board.IsStopped = true;
+                Stop(algorithm);
+                Reset(algorithm);
 
-                algorithm.Board.Iterations = new List<IterationInfo>();
-
-                return Task.FromResult(algorithm.InitialBoard);
+                return Task.FromResult(algorithm);
             }
 
-            return Task.FromResult((MainBoard)null);
+            return Task.FromResult(default(GeneticAlgorithm));
         }
 
-        private MainBoard GetRandomBoard()
+        private Generation GetRandomGeneration()
         {
-            var board = new MainBoard()
+            var board = new Generation()
             {
-                Cells = new IBoardElement[20, 20],
-                Iterations = new List<IterationInfo>()
+                Cells = new IPopulationElement[20, 20]
             };
 
             for (int i = 0; i < board.Cells.GetLength(0); i++)
@@ -126,7 +122,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                     var socialValue = Random.NextDouble();
                     var selectivity = Random.NextDouble();
 
-                    IBoardElement element;
+                    IPopulationElement element;
 
                     if (chance == 1)
                     {
@@ -148,7 +144,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             return board;
         }
 
-        private void FillBoard(IBoardElement[,] cells)
+        private void FillBoard(IPopulationElement[,] cells)
         {
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -161,7 +157,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        private void ProcessAlgorithm(IBoardElement[,] cells)
+        private void ProcessAlgorithm(IPopulationElement[,] cells)
         {
             CalculateFitnessValue(cells);
             KillNotSatisfiedElements(cells);
@@ -171,9 +167,9 @@ namespace GaVisualizer.BusinessLogic.Processing
         }
 
         //todo: please, find more adequate name
-        private void KillNotSatisfiedElements(IBoardElement[,] cells)
+        private void KillNotSatisfiedElements(IPopulationElement[,] cells)
         {
-            var orderedElements = cells.Cast<IBoardElement>().OrderBy(e => e.FitnessValue);
+            var orderedElements = cells.Cast<IPopulationElement>().OrderBy(e => e.FitnessValue);
             var survivalsCount = cells.GetLength(0) * cells.GetLength(1) / 2;
 
             var killCount = 0;
@@ -199,7 +195,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        private void IncreaseAge(IBoardElement[,] cells)
+        private void IncreaseAge(IPopulationElement[,] cells)
         {
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -213,7 +209,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        private void MateElements(IBoardElement[,] cells)
+        private void MateElements(IPopulationElement[,] cells)
         {
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -224,7 +220,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                         var parents = FindParents(cells, i, j);
                         var randomParent = parents[Random.Next(parents.Count)];
 
-                        var child = (IBoardElement)randomParent.Clone();
+                        var child = (IPopulationElement)randomParent.Clone();
                         child.SocialValue = (parents[0].SocialValue + parents[1].SocialValue) / 2;
                         child.FitnessValue = 0;
                         child.Age = 0;
@@ -235,9 +231,9 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        private IReadOnlyList<IBoardElement> FindParents(IBoardElement[,] cells, int indexX, int indexY)
+        private IReadOnlyList<IPopulationElement> FindParents(IPopulationElement[,] cells, int indexX, int indexY)
         {
-            var parents = new List<(IBoardElement element, int range)>();
+            var parents = new List<(IPopulationElement element, int range)>();
 
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -253,13 +249,13 @@ namespace GaVisualizer.BusinessLogic.Processing
 
             return parents
                 .OrderBy(p => p.range)
-                .ThenBy(p => p.element.Productivity) //change to productivity
+                .ThenBy(p => p.element.Productivity)
                 .Select(p => p.element)
                 .Take(2)
                 .ToList();
         }
 
-        private void CalculateFitnessValue(IBoardElement[,] cells)
+        private void CalculateFitnessValue(IPopulationElement[,] cells)
         {
             const int elementsRange = 3;
             const double elementMatchRate = 0.5;
@@ -277,7 +273,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        private int GetNearSimilarElementsCount(IBoardElement[,] cells, int indexX, int indexY, Type elementType, int elementsRange)
+        private int GetNearSimilarElementsCount(IPopulationElement[,] cells, int indexX, int indexY, Type elementType, int elementsRange)
         {
             var count = 0;
 
@@ -303,7 +299,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             return count;
         }
 
-        public void ProcessMutation(IBoardElement[,] cells)
+        public void ProcessMutation(IPopulationElement[,] cells)
         {
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -318,58 +314,31 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        public void CalculateIterationInfo(MainBoard board)
+        private bool CheckForStop(Generation generation)
         {
-            var currentIteration = board.Iterations.LastOrDefault()?.IterationNumber ?? 0;
-            var virusCount = 0;
-            var bacteriaCount = 0;
+            var elementTypes = generation.Cells.Cast<IPopulationElement>().Select(e => e.ElementType);
 
-            for (int i = 0; i < board.Cells.GetLength(0); i++)
-            {
-                for (int j = 0; j < board.Cells.GetLength(1); j++)
-                {
-                    if (board.Cells[i, j].ElementType == ElementType.Bacteria)
-                    {
-                        bacteriaCount++;
-                    }
-                    else if (board.Cells[i, j].ElementType == ElementType.Virus)
-                    {
-                        virusCount++;
-                    }
-                }
-            }
-
-            board.Iterations.Add(new IterationInfo
-            {
-                IterationNumber = currentIteration + 1,
-                BacteriaCount = bacteriaCount,
-                VirusCount = virusCount
-            });
+            return elementTypes.All(e => e == ElementType.Bacteria) || elementTypes.All(e => e == ElementType.Virus);
         }
 
-        private void CheckForStop(MainBoard board)
+        private void Reset(GeneticAlgorithm algorithm)
         {
-            var elementTypes = board.Cells.Cast<IBoardElement>().Select(e => e.ElementType);
+            var firstGeneration = algorithm.Generations.First();
 
-            //TODO: refactor it
-            if (elementTypes.All(e => e == ElementType.Bacteria) || elementTypes.All(e => e == ElementType.Virus))
-            {
-                board.IsPaused = false;
-                board.IsStarted = false;
-                board.IsStopped = true;
-            }
-        }
+            algorithm.Generations.Clear();
+            algorithm.Generations.Add(firstGeneration);
 
-        private void Reset(GeneticAlgorithm ga)
-        {
-            ga.Board = (MainBoard)ga.InitialBoard.Clone();
-            ga.Board.IsStopped = false;
-            ga.Board.Iterations = new List<IterationInfo>();
-
-            foreach (var element in ga.Board.Cells.Cast<IBoardElement>())
+            foreach (var element in firstGeneration.Cells.Cast<IPopulationElement>())
             {
                 element.Age = 0;
             }
+        }
+
+        private void Stop(GeneticAlgorithm algorithm)
+        {
+            algorithm.IsPaused = false;
+            algorithm.IsStarted = false;
+            algorithm.IsStopped = true;
         }
     }
 }

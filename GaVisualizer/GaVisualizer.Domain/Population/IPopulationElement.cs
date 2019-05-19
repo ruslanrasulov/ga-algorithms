@@ -1,13 +1,13 @@
 ﻿using System;
 
-namespace GaVisualizer.Domain.Board
+namespace GaVisualizer.Domain.Population
 {
-    public interface IBoardElement : ICloneable
+    public interface IPopulationElement : ICloneable
     {
         double FitnessValue { get; set; }
         double SocialValue { get; set; }
         double Productivity { get; set; }
         ElementType ElementType { get; }
-        int? Age { get; set; }
+        int Age { get; set; }
     }
 }
