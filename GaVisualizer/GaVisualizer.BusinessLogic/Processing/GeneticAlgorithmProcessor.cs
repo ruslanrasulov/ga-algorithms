@@ -69,9 +69,9 @@ namespace GaVisualizer.BusinessLogic.Processing
                     {
                         Stop(algorithm);
                     }
-                    else
+                    else if (!algorithm.IsStarted)
                     {
-                        algorithm.IsStarted = true;
+                        Start(algorithm);
                     }
 
                     algorithm.Generations.Add(newGeneration);
