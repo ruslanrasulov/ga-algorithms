@@ -176,7 +176,7 @@ const mapStateToProps = (state, ownProps) => {
     }
     else {
         const generations = getAlgorithmById(state, ownProps.id).generations;
-        cells = generations[generations.length - 1].cells;
+        cells = generations[ownProps.generationIndex].cells;
     }
 
     return { cells }

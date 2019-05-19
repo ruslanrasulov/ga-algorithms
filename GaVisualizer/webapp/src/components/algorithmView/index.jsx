@@ -103,7 +103,7 @@ class AlgorithmView extends Component {
         return (
             <div className='alg-container'>
                 <div className="alg-container__board">
-                    <Board id={algorithm.id} width={400} height={400} />
+                    {algorithm.generations.map((g, i) => <Board key={algorithm.id + i} id={algorithm.id} generationIndex={i} />)}
                 </div>
 
                 <div className="alg-container__element-info">
