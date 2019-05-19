@@ -57,6 +57,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                 if (algorithm.IsStopped)
                 {
                     Reset(algorithm);
+                    Start(algorithm);
                 }
                 else
                 {
@@ -68,11 +69,13 @@ namespace GaVisualizer.BusinessLogic.Processing
                     {
                         Stop(algorithm);
                     }
+                    else
+                    {
+                        algorithm.IsStarted = true;
+                    }
 
                     algorithm.Generations.Add(newGeneration);
                 }
-
-                algorithm.IsStarted = true;
 
                 return Task.FromResult(algorithm);
             }
@@ -263,7 +266,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
             return parents
                 .OrderBy(p => p.range)
-                .ThenBy(p => p.element.Productivity)
+                .ThenBy(p => p.element.Productivity.Value)
                 .Take(2)
                 .Select(p => (p.element, p.x, p.y))
                 .ToList();
@@ -358,6 +361,13 @@ namespace GaVisualizer.BusinessLogic.Processing
             {
                 element.Age = 0;
             }
+        }
+
+        private void Start(GeneticAlgorithm algorithm)
+        {
+            algorithm.IsPaused = false;
+            algorithm.IsStopped = false;
+            algorithm.IsStarted = true;
         }
 
         private void Stop(GeneticAlgorithm algorithm)

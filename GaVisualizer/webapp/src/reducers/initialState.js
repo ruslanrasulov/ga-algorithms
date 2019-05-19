@@ -1,1 +1,6 @@
-export default { algorithms: [], newAlgorithm: {} };
+export default { 
+    algorithms: [],
+    newAlgorithm: {
+        generation: { cells: null }
+    }
+};

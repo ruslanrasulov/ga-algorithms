@@ -20,7 +20,9 @@ class Board extends Component {
         this.renderCanvas();
 
         if (editMode) {
-            setNewAlgorithm({ cells: this.getInitialCells(20, 20) });
+            const algorithm = { generation: { cells: this.getInitialCells(20, 20) } };
+            setNewAlgorithm(algorithm);
+
             canvas.addEventListener('click', this.setupBoard);
         }
         else {
@@ -44,7 +46,7 @@ class Board extends Component {
             newCells[x][y].elementType = 0;
         }
 
-        setNewAlgorithm({ cells: newCells });
+        setNewAlgorithm({ generation: { cells:  newCells } });
     }
 
     drawGrid(ctx, cells, boardWidth, boardHeight, cellWidth, cellHeight) {
@@ -118,12 +120,12 @@ class Board extends Component {
     showTooltip = (e) => {
         if (!this.props.cells) return;
         
-        const { cells, algorithmId, setElementInfo } = this.props;
+        const { cells, id, setElementInfo } = this.props;
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
 
         if (x < cells.length && cells.length > 0 && y < cells[0].length) {
             const currentElement = cells[x][y];
-            setElementInfo(algorithmId, { x, y, ...currentElement });
+            setElementInfo(id, { x, y, ...currentElement });
         }
     }
 
@@ -167,16 +169,22 @@ class Board extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    const cells = ownProps.editMode
-        ? getNewAlgorithm(state).cells
-        : getAlgorithmById(state, ownProps.algorithmId).cells;
+    let cells;
 
-    return { cells: cells }
+    if (ownProps.editMode) {
+        cells = getNewAlgorithm(state).generation.cells;
+    }
+    else {
+        const generations = getAlgorithmById(state, ownProps.id).generations;
+        cells = generations[generations.length - 1].cells;
+    }
+
+    return { cells }
 };
 
 const mapDispatchToProps = dispatch => ({
-    setNewAlgorithm: (algorithmInfo) => dispatch(setNewAlgorithm(algorithmInfo)),
-    setElementInfo: (algorithmId, elementInfo) => dispatch(setElementInfo(algorithmId, elementInfo))
+    setNewAlgorithm: (algorithm) => dispatch(setNewAlgorithm(algorithm)),
+    setElementInfo: (id, elementInfo) => dispatch(setElementInfo(id, elementInfo))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);

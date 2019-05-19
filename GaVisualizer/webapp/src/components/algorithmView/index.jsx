@@ -19,74 +19,74 @@ class AlgorithmView extends Component {
     onStart = () => {
         const {
             onAlgorithmStart,
-            algorithmInfo: { algorithmId }
+            algorithm: { id }
         } = this.props;
 
-        onAlgorithmStart(algorithmId, this.startIntervalUpdating);
+        onAlgorithmStart(id, this.startIntervalUpdating);
     }
 
     onUpdate = () => {
         const {
             onAlgorithmUpdate,
-            algorithmInfo: { algorithmId, isPaused, isStarted }
+            algorithm: { id, isPaused, isStarted }
         } = this.props;
 
         if (isStarted && !isPaused) {
-            onAlgorithmUpdate(algorithmId, this.startIntervalUpdating);
+            onAlgorithmUpdate(id, this.startIntervalUpdating);
         }
     }
 
     onPause = () => {
         const { 
             onAlgorithmPause,
-            algorithmInfo: { algorithmId }
+            algorithm: { id }
         } = this.props;
 
-        onAlgorithmPause(algorithmId);
+        onAlgorithmPause(id);
     }
 
     onResume = () => {
         const { 
             onAlgorithmResume,
-            algorithmInfo: { algorithmId }
+            algorithm: { id }
         } = this.props;
 
-        onAlgorithmResume(algorithmId, this.startIntervalUpdating);
+        onAlgorithmResume(id, this.startIntervalUpdating);
     }
 
     onRemove = () => {
         const { 
             onAlgorithmRemove,
-            algorithmInfo: { algorithmId } 
+            algorithm: { id } 
         } = this.props;
         
         this.onStop();
-        onAlgorithmRemove(algorithmId);
+        onAlgorithmRemove(id);
     }
 
     onStop = () => {
         const { 
             onAlgorithmStop,
-            algorithmInfo: { algorithmId } 
+            algorithm: { id } 
         } = this.props;
 
-        onAlgorithmStop(algorithmId);
+        onAlgorithmStop(id);
     }
 
     updateInterval = () => {
         const currentValue = this.intervalRange.current.value;
         const {
             onIntervalUpdate,
-            algorithmInfo: { algorithmId } 
+            algorithm: { id } 
         } = this.props;
 
         this.setState({ updateIntervalValue: currentValue });
 
-        onIntervalUpdate(algorithmId, currentValue);
+        onIntervalUpdate(id, currentValue);
     }
 
     startIntervalUpdating = () => {
-        const { timeout, isStopped, isStarted } = this.props.algorithmInfo;
+        const { timeout, isStopped, isStarted } = this.props.algorithm;
         
         if (isStarted && isStopped) return;
         
@@ -96,14 +96,14 @@ class AlgorithmView extends Component {
     }
 
     render = () => {
-        const { algorithmInfo } = this.props;
+        const { algorithm } = this.props;
         const { updateIntervalValue } = this.state;
-        const elementInfo = algorithmInfo ? algorithmInfo.elementInfo : null;
+        const elementInfo = algorithm ? algorithm.elementInfo : null;
 
         return (
             <div className='alg-container'>
                 <div className="alg-container__board">
-                    <Board algorithmId={algorithmInfo.algorithmId} width={400} height={400} />
+                    <Board id={algorithm.id} width={400} height={400} />
                 </div>
 
                 <div className="alg-container__element-info">
@@ -120,15 +120,15 @@ class AlgorithmView extends Component {
                 </div>
 
                 <div className='alg-container__chart'>
-                    <AlgorithmChart iterations={algorithmInfo.iterations} />
+                    <AlgorithmChart algorithm={algorithm} />
                 </div>
 
                 <div className='alg-container__panel'>
-                    {algorithmInfo.isStarted
+                    {algorithm.isStarted
                         ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Стоп</div>
                         : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Старт</div> }
 
-                    {algorithmInfo.isPaused 
+                    {algorithm.isPaused 
                         ? <div className='btn btn-info alg-container__panel__panel-element' onClick={this.onResume}>Возобновить</div>
                         : <div className='btn btn-warning alg-container__panel__panel-element' onClick={this.onPause}>Пауза</div> }
 

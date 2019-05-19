@@ -74,7 +74,7 @@ class AlgorithmPage extends Component {
         for (let i = 0; i < algorithms.length; i++) {
             elements.push(<AlgorithmView 
                 key={i}
-                algorithmInfo={algorithms[i]}
+                algorithm={algorithms[i]}
                 onAlgorithmStart={this.onAlgorithmStart}
                 onAlgorithmPause={this.onAlgorithmPause}
                 onAlgorithmUpdate={this.onAlgorithmUpdate}

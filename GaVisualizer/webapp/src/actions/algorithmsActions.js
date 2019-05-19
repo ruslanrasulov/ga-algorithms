@@ -5,15 +5,15 @@ export const createNewAlgorithmStart = () => ({
     type: actionTypes.ADD_NEW_ALGORITHM_START
 });
 
-export const createNewAlgorithmComplete = algorithmInfo => ({
+export const createNewAlgorithmComplete = algorithm => ({
     type: actionTypes.ADD_NEW_ALGORITHM_COMPLETE,
-    payload: algorithmInfo
+    payload: algorithm
 });
 
-export const createNewAlgorithm = algorithmInfo => dispatch => {
+export const createNewAlgorithm = algorithm => dispatch => {
     dispatch(createNewAlgorithmStart());
 
-    algorithmsApi.postNewAlgorithm({ board: algorithmInfo }).then(result => {
+    algorithmsApi.postNewAlgorithm(algorithm).then(result => {
         dispatch(createNewAlgorithmComplete(result.data));
     });
 }
@@ -36,32 +36,32 @@ export const getCurrentState = (id, callback) => dispatch => {
     });
 }
 
-export const startAlgorithm = (algorithmId, callback) => dispatch => {
+export const startAlgorithm = (id, callback) => dispatch => {
     dispatch({
         type: actionTypes.START_ALGORITHM,
-        payload: { algorithmId, isPaused: false, isStarted: true, isStopped: false }
+        payload: { id, isPaused: false, isStarted: true, isStopped: false }
     });
 
     callback();
 };
 
-export const pauseAlgorithm = algorithmId => ({
+export const pauseAlgorithm = id => ({
     type: actionTypes.PAUSE_ALGORITHM,
-    payload: { algorithmId, isPaused: true }
+    payload: { id, isPaused: true }
 });
 
-export const resumeAlgorithm = (algorithmId, callback) => dispatch => {
+export const resumeAlgorithm = (id, callback) => dispatch => {
     dispatch({
         type: actionTypes.RESUME_ALGORITHM,
-        payload: { algorithmId, isPaused: false }
+        payload: { id, isPaused: false }
     });
 
     callback();
 };
 
-export const updateInterval = (algorithmId, timeout) => ({
+export const updateInterval = (id, timeout) => ({
     type: actionTypes.UPDATE_INTERVAL,
-    payload: { algorithmId,  timeout }
+    payload: { id,  timeout }
 });
 
 export const getAlgorithmsStart = () => ({
@@ -81,14 +81,14 @@ export const getAlgorithms = () => dispatch => {
     });
 }
 
-export const removeAlgorirthmStart = algorithmId => ({
+export const removeAlgorirthmStart = id => ({
     type: actionTypes.REMOVE_ALGORITHM_START,
-    payload: { algorithmId }
+    payload: { id }
 });
 
-export const removeAlgorirthmComplete = algorithmId => ({
+export const removeAlgorirthmComplete = id => ({
     type: actionTypes.REMOVE_ALGORITHM_COMPLETE,
-    payload: { algorithmId }
+    payload: { id }
 });
 
 export const removeAlgorithm = id => dispatch => {
@@ -101,39 +101,39 @@ export const removeAlgorithm = id => dispatch => {
     });
 }
 
-export const stopAlgorithmStart = algorithmId => ({
+export const stopAlgorithmStart = id => ({
     type: actionTypes.STOP_ALGORITHM_START,
-    payload: { algorithmId }
+    payload: { id }
 });
 
-export const stopAlgorithmComplete = algorithmInfo => ({
+export const stopAlgorithmComplete = algorithm => ({
     type: actionTypes.STOP_ALGORITHM_COMPLETE,
     payload: { 
-        ...algorithmInfo,
+        ...algorithm,
         isStopped: true,
         isPaused: false,
         isStarted: false,
-        cells: null
+        generations: [{ cells: null }]
     }
 });
 
-export const stopAlgorithm = algorithmId => dispatch => {
-    dispatch(stopAlgorithmStart(algorithmId));
+export const stopAlgorithm = id => dispatch => {
+    dispatch(stopAlgorithmStart(id));
 
-    algorithmsApi.stopAlgorithm(algorithmId).then(result => {
+    algorithmsApi.stopAlgorithm(id).then(result => {
         dispatch(stopAlgorithmComplete(result.data));
     });
 }
 
-export const setNewAlgorithm = algorithmInfo => ({
+export const setNewAlgorithm = algorithm => ({
     type: actionTypes.SET_NEW_ALGORITHM,
-    payload: algorithmInfo
+    payload: algorithm
 });
 
-export const setElementInfo = (algorithmId, elementInfo) => ({
+export const setElementInfo = (id, elementInfo) => ({
     type: actionTypes.SET_ELEMENT_INFO,
     payload: {
-        algorithmId,
+        id,
         elementInfo
     }
 })

@@ -10,6 +10,7 @@ import {
     LineSeries,
     withHighcharts
 } from 'react-jsx-highcharts';
+import { flatten } from 'lodash';
 
 const plotOptions = {
     series: {
@@ -30,8 +31,8 @@ const AlgorithmChart = props =>
 
         <YAxis>
             <YAxis.Title>Количество элементов</YAxis.Title>
-            <LineSeries name='Бактерии' data={props.iterations.map(i => i.bacteriaCount)} />
-            <LineSeries name='Вирусы' data={props.iterations.map(i => i.virusCount)} />
+            <LineSeries name='Бактерии' data={props.algorithm.generations.map(g => flatten(g.cells).filter(c => c.elementType === 0).length)} />
+            <LineSeries name='Вирусы' data={props.algorithm.generations.map(g => flatten(g.cells).filter(c => c.elementType === 1).length)} />
         </YAxis>
 
     </HighchartsChart>

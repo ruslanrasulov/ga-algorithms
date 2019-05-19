@@ -30,7 +30,7 @@ class AlgorithmEdtor extends Component {
     }
 
     saveBoard = () => {
-        const content = JSON.stringify(this.props.algorithmInfo, null, 2);
+        const content = JSON.stringify(this.props.algorithm, null, 2);
         this.saveFile(content);
     }
 
@@ -53,7 +53,7 @@ class AlgorithmEdtor extends Component {
                     
                     <div className='algorithm-editor__panel'>
                         <div className='btn algorithm-editor__panel__btn'>
-                            <InputFile label='Импорт настроек' onUpload={algorithmInfo => setNewAlgorithm(algorithmInfo)} />
+                            <InputFile label='Импорт настроек' onUpload={algorithm => setNewAlgorithm(algorithm)} />
                         </div>
                         <button type='button' className='btn algorithm-editor__panel__btn' onClick={this.saveBoard}>Экспорт настроек</button>
 
@@ -61,19 +61,19 @@ class AlgorithmEdtor extends Component {
                             <div>Тип селекции:</div>
 
                             {/* Export to a new component */}
-                            <div><input type='radio' name='selectionType' value='0' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.selectionType === undefined || this.props.algorithmInfo.selectionType === '0'}/> Турнирная сетка</div>
-                            <div><input type='radio' name='selectionType' value='1' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.selectionType === '1'}/> Отбор усечением</div>
-                            <div><input type='radio' name='selectionType' value='2' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.selectionType === '2'}/> Пропорциональный отбор</div>
+                            <div><input type='radio' name='selectionType' value='0' onChange={this.onRadioBtnChange} checked={this.props.algorithm.selectionType === undefined || this.props.algorithm.selectionType === '0'}/> Турнирная сетка</div>
+                            <div><input type='radio' name='selectionType' value='1' onChange={this.onRadioBtnChange} checked={this.props.algorithm.selectionType === '1'}/> Отбор усечением</div>
+                            <div><input type='radio' name='selectionType' value='2' onChange={this.onRadioBtnChange} checked={this.props.algorithm.selectionType === '2'}/> Пропорциональный отбор</div>
                         </div>
 
                         <div className='algorithm-editor__radio-btn-group'>
                             <div>Тип скрещивания:</div>
 
-                            <div><input type='radio' name='crossoverType' value='0' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === undefined || this.props.algorithmInfo.crossoverType === '0'}/> Точечное</div>
-                            <div><input type='radio' name='crossoverType' value='1' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === '1'}/> Двухточечное</div>
-                            <div><input type='radio' name='crossoverType' value='2' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === '2'}/> Многоточечное</div>
-                            <div><input type='radio' name='crossoverType' value='3' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === '3'}/> Равномерное</div>
-                            <div><input type='radio' name='crossoverType' value='4' onChange={this.onRadioBtnChange} checked={this.props.algorithmInfo.crossoverType === '4'}/> Оператор инверсии</div>
+                            <div><input type='radio' name='crossoverType' value='0' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === undefined || this.props.algorithm.crossoverType === '0'}/> Точечное</div>
+                            <div><input type='radio' name='crossoverType' value='1' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === '1'}/> Двухточечное</div>
+                            <div><input type='radio' name='crossoverType' value='2' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === '2'}/> Многоточечное</div>
+                            <div><input type='radio' name='crossoverType' value='3' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === '3'}/> Равномерное</div>
+                            <div><input type='radio' name='crossoverType' value='4' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === '4'}/> Оператор инверсии</div>
                         </div>
                     </div>
                 </div>
@@ -121,11 +121,11 @@ class InputFile extends Component {
 }
 
 const mapStateToProps = state => {
-    return { algorithmInfo: getNewAlgorithm(state) }
+    return { algorithm: getNewAlgorithm(state) }
 };
 
 const mapDispatchToProps = dispatch => ({
-    setNewAlgorithm: (algorithmInfo) => dispatch(setNewAlgorithm(algorithmInfo))
+    setNewAlgorithm: (algorithm) => dispatch(setNewAlgorithm(algorithm))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AlgorithmEdtor);
