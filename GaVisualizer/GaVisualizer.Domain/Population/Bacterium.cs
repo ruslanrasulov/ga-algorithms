@@ -3,9 +3,9 @@
     public class Bacterium : IPopulationElement
     {
         public double FitnessValue { get; set; }
-        public double SocialValue { get; set; }
-        public double Productivity { get; set; }
-        public int? Age { get; set; }
+        public Gene<double> SocialValue { get; set; }
+        public Gene<double> Productivity { get; set; }
+        public int Age { get; set; }
         public ElementType ElementType => ElementType.Bacteria;
 
         public object Clone()

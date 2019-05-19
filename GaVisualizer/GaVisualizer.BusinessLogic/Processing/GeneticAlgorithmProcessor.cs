@@ -120,7 +120,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                 {
                     var chance = Random.Next(2);
                     var socialValue = Random.NextDouble();
-                    var selectivity = Random.NextDouble();
+                    var productivity = Random.NextDouble();
 
                     IPopulationElement element;
 
@@ -133,8 +133,8 @@ namespace GaVisualizer.BusinessLogic.Processing
                         element = new Virus();
                     }
 
-                    element.SocialValue = socialValue;
-                    element.Productivity = selectivity;
+                    element.SocialValue = new Gene<double> { Value = socialValue };
+                    element.Productivity = new Gene<double> { Value = productivity };
                     element.Age = 0;
 
                     board.Cells[i, j] = element;
@@ -150,8 +150,8 @@ namespace GaVisualizer.BusinessLogic.Processing
             {
                 for (int j = 0; j < cells.GetLength(1); j++)
                 {
-                    cells[i, j].SocialValue = Random.NextDouble();
-                    cells[i, j].Productivity = Random.NextDouble();
+                    cells[i, j].SocialValue = new Gene<double> { Value = Random.NextDouble() };
+                    cells[i, j].Productivity = new Gene<double> { Value = Random.NextDouble() };
                     cells[i, j].Age = 0;
                 }
             }
@@ -220,8 +220,22 @@ namespace GaVisualizer.BusinessLogic.Processing
                         var parents = FindParents(cells, i, j);
                         var randomParent = parents[Random.Next(parents.Count)];
 
-                        var child = (IPopulationElement)randomParent.Clone();
-                        child.SocialValue = (parents[0].SocialValue + parents[1].SocialValue) / 2;
+                        var child = (IPopulationElement)randomParent.element.Clone();
+
+                        child.SocialValue = new Gene<double>
+                        {
+                            Value = parents[0].element.SocialValue.Value,
+                            ParentX = parents[0].x,
+                            ParentY = parents[0].y
+                        };
+
+                        child.Productivity = new Gene<double>
+                        {
+                            Value = parents[1].element.Productivity.Value,
+                            ParentX = parents[1].x,
+                            ParentY = parents[1].y
+                        };
+
                         child.FitnessValue = 0;
                         child.Age = 0;
 
@@ -231,9 +245,9 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        private IReadOnlyList<IPopulationElement> FindParents(IPopulationElement[,] cells, int indexX, int indexY)
+        private IReadOnlyList<(IPopulationElement element, int x, int y)> FindParents(IPopulationElement[,] cells, int indexX, int indexY)
         {
-            var parents = new List<(IPopulationElement element, int range)>();
+            var parents = new List<(IPopulationElement element, int x, int y, int range)>();
 
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -242,7 +256,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                     if (i != indexX && j != indexY && cells[i, j] != null)
                     {
                         var range = Math.Abs(i - indexX) + Math.Abs(j - indexY);
-                        parents.Add((cells[i, j], range));
+                        parents.Add((cells[i, j], i, j, range));
                     }
                 }
             }
@@ -250,8 +264,8 @@ namespace GaVisualizer.BusinessLogic.Processing
             return parents
                 .OrderBy(p => p.range)
                 .ThenBy(p => p.element.Productivity)
-                .Select(p => p.element)
                 .Take(2)
+                .Select(p => (p.element, p.x, p.y))
                 .ToList();
         }
 
@@ -268,7 +282,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                     var elementType = currentElement.GetType();
                     var nearSimilarElementsCount = GetNearSimilarElementsCount(cells, i, j, elementType, elementsRange);
 
-                    currentElement.FitnessValue = nearSimilarElementsCount * elementMatchRate * currentElement.SocialValue;
+                    currentElement.FitnessValue = nearSimilarElementsCount * elementMatchRate * currentElement.SocialValue.Value;
                 }
             }
         }
@@ -307,8 +321,20 @@ namespace GaVisualizer.BusinessLogic.Processing
                 {
                     if (Random.NextDouble() > MutationChance)
                     {
-                        cells[i, j].Productivity = Random.NextDouble();
-                        cells[i, j].SocialValue = Random.NextDouble();
+                        var mutatedGene = new Gene<double>
+                        {
+                            IsMutated = true,
+                            Value = Random.NextDouble()
+                        };
+
+                        if (Random.Next(1) == 1)
+                        {
+                            cells[i, j].Productivity = mutatedGene;
+                        }
+                        else
+                        {
+                            cells[i, j].SocialValue = mutatedGene;
+                        }
                     }
                 }
             }
