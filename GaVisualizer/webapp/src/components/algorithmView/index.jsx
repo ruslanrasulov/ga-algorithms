@@ -95,6 +95,54 @@ class AlgorithmView extends Component {
         }, timeout || 1000);
     }
 
+    renderGenerationsNavigation = () => {
+        const { length } = this.props.algorithm.generations;
+        
+        if (length < 2) {
+            return null;
+        }
+
+        const links = [];
+        
+        for (let i = 1; i < length; i++) {
+            const linkElements = `${i}-${i+1}`;
+            links.push(<span key={i} onClick={this.setGenerations} data-indecies={linkElements}>{linkElements}</span>);
+        }
+
+        return links;
+    }
+
+    setGenerations = (e) => {
+        const splitedIndecies = e.currentTarget.dataset.indecies.split('-');
+
+        this.setState({
+            leftGeneration: +splitedIndecies[0] - 1,
+            rightGeneration: +splitedIndecies[1] - 1
+        })
+    }
+
+    renderBoards = () => {
+        const { leftGeneration, rightGeneration } = this.state;
+        const { id, generations } = this.props.algorithm;
+        const generationIndexes = [];
+
+        if (leftGeneration === undefined || rightGeneration === undefined) {
+            if (generations.length > 1) {
+                generationIndexes.push(generations.length - 2);
+            }
+            generationIndexes.push(generations.length - 1);
+        }
+        else {
+            generationIndexes.push(leftGeneration);
+            generationIndexes.push(rightGeneration);
+        }
+
+        return generationIndexes.map(i => 
+            <div className="alg-container__board" key={id + i}>
+                <Board id={id} generationIndex={i} />
+            </div>);
+    }
+
     render = () => {
         const { algorithm } = this.props;
         const { updateIntervalValue } = this.state;
@@ -102,9 +150,8 @@ class AlgorithmView extends Component {
 
         return (
             <div className='alg-container'>
-                <div className="alg-container__board">
-                    {algorithm.generations.map((g, i) => <Board key={algorithm.id + i} id={algorithm.id} generationIndex={i} />)}
-                </div>
+                {this.renderBoards()}
+                {this.renderGenerationsNavigation()}
 
                 <div className="alg-container__element-info">
                     {
