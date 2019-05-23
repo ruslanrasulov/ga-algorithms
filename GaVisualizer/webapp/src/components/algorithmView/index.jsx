@@ -147,7 +147,9 @@ class AlgorithmView extends Component {
     render = () => {
         const { algorithm } = this.props;
         const { updateIntervalValue } = this.state;
-        const elementInfo = algorithm ? algorithm.elementInfo : null;
+        const firstParent = algorithm ? algorithm.firstParent : null;
+        const secondParent = algorithm ? algorithm.secondParent : null;
+        const selectedElement = algorithm ? algorithm.selectedElement : null;
 
         return (
             <div className='alg-container'>
@@ -155,14 +157,37 @@ class AlgorithmView extends Component {
                 {this.renderGenerationsNavigation()}
 
                 <div className="alg-container__element-info">
+                    First parent:
                     {
-                        elementInfo
+                        firstParent
                             ? <ElementInfo 
-                                elementType={elementInfo.elementType}
-                                socialValue={elementInfo.socialValue}
-                                productivity={elementInfo.productivity}
-                                age={elementInfo.age}
-                                fitnessValue={elementInfo.fitnessValue} />
+                                elementType={firstParent.elementType}
+                                socialValue={firstParent.socialValue}
+                                productivity={firstParent.productivity}
+                                age={firstParent.age}
+                                fitnessValue={firstParent.fitnessValue} />
+                            : null
+                    }
+                    Second parent:
+                    {
+                        secondParent
+                            ? <ElementInfo 
+                                elementType={secondParent.elementType}
+                                socialValue={secondParent.socialValue}
+                                productivity={secondParent.productivity}
+                                age={secondParent.age}
+                                fitnessValue={secondParent.fitnessValue} />
+                            : null
+                    }
+                    Selected element:
+                    {
+                        selectedElement
+                            ? <ElementInfo 
+                                elementType={selectedElement.elementType}
+                                socialValue={selectedElement.socialValue}
+                                productivity={selectedElement.productivity}
+                                age={selectedElement.age}
+                                fitnessValue={selectedElement.fitnessValue} />
                             : null
                     }
                 </div>

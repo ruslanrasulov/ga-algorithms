@@ -9,9 +9,9 @@ const ElementInfo = props => (
             </span>
         </li>
         <li className="element-info__item">
-            <span className="element-info__item__label">Социальность: </span>{props.socialValue}
+            <span className="element-info__item__label">Социальность: </span>{props.socialValue.value}
         </li>
-        <li className="element-info__item"><span className="element-info__item__label">Продуктивность: </span>{props.productivity}</li>
+        <li className="element-info__item"><span className="element-info__item__label">Продуктивность: </span>{props.productivity.value}</li>
         <li className="element-info__item"><span className="element-info__item__label">Возраст: </span>{props.age}</li>
         {
             props.fitnessValue !== undefined
