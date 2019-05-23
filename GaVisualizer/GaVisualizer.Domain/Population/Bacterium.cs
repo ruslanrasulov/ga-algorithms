@@ -1,4 +1,6 @@
-﻿namespace GaVisualizer.Domain.Population
+﻿using System;
+
+namespace GaVisualizer.Domain.Population
 {
     public class Bacterium : IPopulationElement
     {
@@ -8,10 +10,17 @@
         public int Age { get; set; }
         public ElementType ElementType => ElementType.Bacteria;
 
+        public Guid Id { get; set; }
+        public Guid? FirstParentId { get; set; }
+        public Guid? SecondParentId { get; set; }
+
         public object Clone()
         {
             return new Bacterium
             {
+                Id = Id,
+                FirstParentId = FirstParentId,
+                SecondParentId = SecondParentId,
                 FitnessValue = FitnessValue,
                 SocialValue = SocialValue,
                 Productivity = Productivity,

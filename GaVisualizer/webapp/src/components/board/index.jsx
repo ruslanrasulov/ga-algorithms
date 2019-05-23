@@ -10,6 +10,7 @@ class Board extends Component {
     constructor(props) {
         super(props);
 
+        this.state = { };
         this.board = React.createRef();
     }
 
@@ -35,7 +36,7 @@ class Board extends Component {
     }
 
     setupBoard = (e) => {
-        const { setNewAlgorithm, cells } = this.props;
+        const { setNewAlgorithm, generation: { cells } } = this.props;
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
         const newCells = cells.map(c => c.slice());
 
@@ -70,12 +71,20 @@ class Board extends Component {
     fillGrid(ctx, cells, cellWidth, cellHeight) {
         ctx.font = "15px Impact";
 
+        const { generation: { selectedElements } } = this.props;
+
         for (let i = 0; i < cells.length; i++) {
             for (let j = 0; j < cells[0].length; j++) {
                 let rectFillStyle;
                 let textFillStyle;
 
-                if (cells[i][j].elementType === 0) { //bacterium
+                const selectedCell = selectedElements && selectedElements.find(c => c === cells[i][j].id);
+
+                if (selectedCell) {
+                    rectFillStyle = '#ffffff';
+                    textFillStyle = '#000000';
+                }
+                else if (cells[i][j].elementType === 0) { //bacterium
                     rectFillStyle = '#00ff00';
                     textFillStyle = '#000000';
                 }
@@ -107,10 +116,9 @@ class Board extends Component {
         const ctx = canvas.getContext('2d');
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-        if (!this.props.cells) return;
+        if (!this.props.generation.cells) return;
         
-        const { cells } = this.props;
+        const { generation: { cells } } = this.props;
         const { cellWidth, cellHeight } = this.getBoardSize();
 
         this.fillGrid(ctx, cells, cellWidth, cellHeight);
@@ -118,14 +126,17 @@ class Board extends Component {
     }
 
     showTooltip = (e) => {
-        if (!this.props.cells) return;
+        if (!this.props.generation.cells) return;
         
-        const { cells, id, setElementInfo } = this.props;
+        const { generation: { cells }, id, setElementInfo, generationIndex } = this.props;
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
 
+        this.setState({
+            selectedCell: { x, y }
+        });
+
         if (x < cells.length && cells.length > 0 && y < cells[0].length) {
-            const currentElement = cells[x][y];
-            setElementInfo(id, { x, y, ...currentElement });
+            setElementInfo(id, x, y, generationIndex);
         }
     }
 
@@ -139,7 +150,7 @@ class Board extends Component {
     }
 
     getBoardSize = () => {
-        const { cells } = this.props;
+        const { generation: { cells } } = this.props;
         const canvas = this.board.current;
 
         const lineCount = cells.length;
@@ -169,22 +180,22 @@ class Board extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    let cells;
+    let generation;
 
     if (ownProps.editMode) {
-        cells = getNewAlgorithm(state).generation.cells;
+        generation = { cells: getNewAlgorithm(state).generation.cells };
     }
     else {
         const generations = getAlgorithmById(state, ownProps.id).generations;
-        cells = generations[ownProps.generationIndex].cells;
+        generation = generations[ownProps.generationIndex];
     }
 
-    return { cells }
+    return { generation };
 };
 
 const mapDispatchToProps = dispatch => ({
     setNewAlgorithm: (algorithm) => dispatch(setNewAlgorithm(algorithm)),
-    setElementInfo: (id, elementInfo) => dispatch(setElementInfo(id, elementInfo))
+    setElementInfo: (id, x, y, generationIndex) => dispatch(setElementInfo(id, x, y, generationIndex))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);

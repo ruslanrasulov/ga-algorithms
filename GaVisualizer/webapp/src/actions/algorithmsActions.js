@@ -130,10 +130,17 @@ export const setNewAlgorithm = algorithm => ({
     payload: algorithm
 });
 
-export const setElementInfo = (id, elementInfo) => ({
+export const setElementInfo = (id, x, y, generationIndex) => ({
     type: actionTypes.SET_ELEMENT_INFO,
     payload: {
         id,
-        elementInfo
+        x,
+        y,
+        generationIndex
     }
-})
+});
+
+export const setGenerations = (id, leftGenerationIndex, rightGenerationIndex) => ({
+    type: actionTypes.SET_GENERATIONS,
+    payload: { id, leftGenerationIndex, rightGenerationIndex }
+});

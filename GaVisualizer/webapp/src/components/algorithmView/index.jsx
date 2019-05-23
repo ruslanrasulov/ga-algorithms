@@ -73,6 +73,17 @@ class AlgorithmView extends Component {
         onAlgorithmStop(id);
     }
 
+    setGenerations = e => {
+        const splitedIndecies = e.currentTarget.dataset.indecies.split('-');
+        const { onSetGenerations, algorithm: { id } } = this.props;
+
+        onSetGenerations({
+            id,
+            leftGenerationIndex: +splitedIndecies[0] - 1,
+            rightGenerationIndex: +splitedIndecies[1] - 1
+        })
+    }
+
     updateInterval = () => {
         const currentValue = this.intervalRange.current.value;
         const {
@@ -112,29 +123,19 @@ class AlgorithmView extends Component {
         return links;
     }
 
-    setGenerations = (e) => {
-        const splitedIndecies = e.currentTarget.dataset.indecies.split('-');
-
-        this.setState({
-            leftGeneration: +splitedIndecies[0] - 1,
-            rightGeneration: +splitedIndecies[1] - 1
-        })
-    }
-
     renderBoards = () => {
-        const { leftGeneration, rightGeneration } = this.state;
-        const { id, generations } = this.props.algorithm;
+        const { id, generations, leftGenerationIndex, rightGenerationIndex } = this.props.algorithm;
         const generationIndexes = [];
 
-        if (leftGeneration === undefined || rightGeneration === undefined) {
+        if (leftGenerationIndex === undefined || rightGenerationIndex === undefined) {
             if (generations.length > 1) {
                 generationIndexes.push(generations.length - 2);
             }
             generationIndexes.push(generations.length - 1);
         }
         else {
-            generationIndexes.push(leftGeneration);
-            generationIndexes.push(rightGeneration);
+            generationIndexes.push(leftGenerationIndex);
+            generationIndexes.push(rightGenerationIndex);
         }
 
         return generationIndexes.map(i => 

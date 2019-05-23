@@ -136,6 +136,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                         element = new Virus();
                     }
 
+                    element.Id = Guid.NewGuid();
                     element.SocialValue = new Gene<double> { Value = socialValue };
                     element.Productivity = new Gene<double> { Value = productivity };
                     element.Age = 0;
@@ -153,6 +154,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             {
                 for (int j = 0; j < cells.GetLength(1); j++)
                 {
+                    cells[i, j].Id = Guid.NewGuid();
                     cells[i, j].SocialValue = new Gene<double> { Value = Random.NextDouble() };
                     cells[i, j].Productivity = new Gene<double> { Value = Random.NextDouble() };
                     cells[i, j].Age = 0;
@@ -174,7 +176,6 @@ namespace GaVisualizer.BusinessLogic.Processing
         {
             var orderedElements = cells.Cast<IPopulationElement>().OrderBy(e => e.FitnessValue);
             var survivalsCount = cells.GetLength(0) * cells.GetLength(1) / 2;
-
             var killCount = 0;
 
             foreach (var elementToKill in orderedElements)
@@ -214,6 +215,8 @@ namespace GaVisualizer.BusinessLogic.Processing
 
         private void MateElements(IPopulationElement[,] cells)
         {
+            var newCells = new List<(int x, int y, IPopulationElement element)>();
+
             for (int i = 0; i < cells.GetLength(0); i++)
             {
                 for (int j = 0; j < cells.GetLength(1); j++)
@@ -225,27 +228,31 @@ namespace GaVisualizer.BusinessLogic.Processing
 
                         var child = (IPopulationElement)randomParent.element.Clone();
 
+                        child.Id = Guid.NewGuid();
+                        child.FirstParentId = parents[0].element.Id;
+                        child.SecondParentId = parents[1].element.Id;
+
                         child.SocialValue = new Gene<double>
                         {
                             Value = parents[0].element.SocialValue.Value,
-                            ParentX = parents[0].x,
-                            ParentY = parents[0].y
+                            ParentId = parents[0].element.Id
                         };
 
                         child.Productivity = new Gene<double>
                         {
                             Value = parents[1].element.Productivity.Value,
-                            ParentX = parents[1].x,
-                            ParentY = parents[1].y
+                            ParentId = parents[1].element.Id
                         };
 
                         child.FitnessValue = 0;
                         child.Age = 0;
 
-                        cells[i, j] = child;
+                        newCells.Add((i, j, child));
                     }
                 }
             }
+
+            newCells.ForEach(c => cells[c.x, c.y] = c.element);
         }
 
         private IReadOnlyList<(IPopulationElement element, int x, int y)> FindParents(IPopulationElement[,] cells, int indexX, int indexY)
@@ -264,9 +271,13 @@ namespace GaVisualizer.BusinessLogic.Processing
                 }
             }
 
-            return parents
+            var orderedParents = parents
                 .OrderBy(p => p.range)
-                .ThenBy(p => p.element.Productivity.Value)
+                .ThenBy(p => p.element.Productivity.Value);
+
+            var elementType = orderedParents.First().element.ElementType;
+
+            return orderedParents.Where(p => p.element.ElementType == elementType)
                 .Take(2)
                 .Select(p => (p.element, p.x, p.y))
                 .ToList();

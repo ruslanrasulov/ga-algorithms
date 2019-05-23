@@ -1,3 +1,4 @@
+import { flatten } from 'lodash';
 import * as actionTypes from '../actions/actionTypes';
 
 const reducer = (state = [], action) => {
@@ -9,7 +10,8 @@ const reducer = (state = [], action) => {
         case actionTypes.PAUSE_ALGORITHM:
         case actionTypes.RESUME_ALGORITHM:
         case actionTypes.UPDATE_INTERVAL:
-        case actionTypes.STOP_ALGORITHM_COMPLETE: {
+        case actionTypes.STOP_ALGORITHM_COMPLETE:
+        case actionTypes.SET_GENERATIONS: {
             return updateAlgorithms(state, action.payload);
         }
         case actionTypes.FETCH_CURRENT_STATE_COMPLETE: {
@@ -43,11 +45,31 @@ const reducer = (state = [], action) => {
             return state.filter(a => a.id !== id);
         }
         case actionTypes.SET_ELEMENT_INFO: {
-            const { id, elementInfo } = action.payload;
+            const { id, x, y, generationIndex } = action.payload;
+            const algorithm = state.find(a => a.id === id);
+            const leftAlgorithm = algorithm.generations[generationIndex - 1];
+            const rightAlgorithm = algorithm.generations[generationIndex];
 
+            const selectedElement = rightAlgorithm.cells[x][y];
+            const flattenCells = flatten(leftAlgorithm.cells);
+
+            const firstParent = flattenCells.find(c => c.id === selectedElement.firstParentId);
+            const secondParent = flattenCells.find(c => c.id === selectedElement.secondParentId);
+
+            const updatedGenerations = algorithm.generations.map((g, i) => {
+                if (i === generationIndex - 1 && firstParent && secondParent) {
+                    return { ...g, selectedElements: [firstParent.id, secondParent.id] };
+                }
+                
+                if (i === generationIndex) {
+                    return { ...g, selectedElements: [selectedElement.id] };
+                }
+                
+                return { ...g, selectedElements: null };
+            });
             return state.map(a => {
                 if (a.id === id) {
-                    return { ...a, elementInfo };
+                    return { ...a, firstParent, secondParent, selectedElement, generations: updatedGenerations };
                 }
 
                 return a;

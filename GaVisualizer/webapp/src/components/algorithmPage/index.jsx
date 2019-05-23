@@ -14,7 +14,8 @@ import {
     updateInterval,
     getAlgorithms,
     removeAlgorithm,
-    stopAlgorithm
+    stopAlgorithm,
+    setGenerations
 } from '../../actions/algorithmsActions';
 
 import './_styles.scss';
@@ -67,6 +68,10 @@ class AlgorithmPage extends Component {
         this.props.updateInterval(id, value, callback);
     }
 
+    onSetGenerations = ({ id, leftGenerationIndex, rightGenerationIndex }) => {
+        this.props.setGenerations(id, leftGenerationIndex, rightGenerationIndex);
+    }
+
     renderAlgorithms = () => {
         const { algorithms } = this.props;
         const elements = [];
@@ -81,7 +86,8 @@ class AlgorithmPage extends Component {
                 onAlgorithmResume={this.onAlgorithmResume}
                 onIntervalUpdate={this.onIntervalUpdate}
                 onAlgorithmRemove={this.onAlgorithmRemove}
-                onAlgorithmStop={this.onAlgorithmStop} />);
+                onAlgorithmStop={this.onAlgorithmStop}
+                onSetGenerations={this.onSetGenerations} />);
         }
 
         return elements;
@@ -113,7 +119,8 @@ const mapDispatchToProps = dispatch => ({
     updateInterval: (id, value) => dispatch(updateInterval(id, value)),
     getAlgorithms: () => dispatch(getAlgorithms()),
     removeAlgorithm: id => dispatch(removeAlgorithm(id)),
-    stopAlgorithm: id => dispatch(stopAlgorithm(id))
+    stopAlgorithm: id => dispatch(stopAlgorithm(id)),
+    setGenerations: (id, leftGenerationIndex, rightGenerationIndex) => dispatch(setGenerations(id, leftGenerationIndex, rightGenerationIndex))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AlgorithmPage);
