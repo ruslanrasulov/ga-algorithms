@@ -14,6 +14,9 @@ namespace GaVisualizer.Domain.Population
 
         public ElementType ElementType => ElementType.Virus;
 
+        public int X { get; set; }
+        public int Y { get; set; }
+
         public object Clone()
         {
             return new Virus
@@ -24,7 +27,9 @@ namespace GaVisualizer.Domain.Population
                 FitnessValue = FitnessValue,
                 SocialValue = SocialValue,
                 Productivity = Productivity,
-                Age = Age
+                Age = Age,
+                X = X,
+                Y = Y
             };
         }
     }

@@ -12,5 +12,7 @@ namespace GaVisualizer.Domain.Population
         Gene<double> Productivity { get; set; }
         ElementType ElementType { get; }
         int Age { get; set; }
+        int X { get; set; }
+        int Y { get; set; }
     }
 }

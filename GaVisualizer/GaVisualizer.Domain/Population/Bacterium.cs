@@ -14,6 +14,9 @@ namespace GaVisualizer.Domain.Population
         public Guid? FirstParentId { get; set; }
         public Guid? SecondParentId { get; set; }
 
+        public int X { get; set; }
+        public int Y { get; set; }
+
         public object Clone()
         {
             return new Bacterium
@@ -24,7 +27,9 @@ namespace GaVisualizer.Domain.Population
                 FitnessValue = FitnessValue,
                 SocialValue = SocialValue,
                 Productivity = Productivity,
-                Age = Age
+                Age = Age,
+                X = X,
+                Y = Y
             };
         }
     }

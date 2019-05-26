@@ -146,3 +146,8 @@ export const setGenerations = (id, leftGenerationIndex, rightGenerationIndex) =>
     type: actionTypes.SET_GENERATIONS,
     payload: { id, leftGenerationIndex, rightGenerationIndex }
 });
+
+export const setCrossoverElement = (id, currentCrossoverElement) => ({
+    type: actionTypes.SET_CROSSOVER_ELEMENT,
+    payload: { id, currentCrossoverElement }
+});

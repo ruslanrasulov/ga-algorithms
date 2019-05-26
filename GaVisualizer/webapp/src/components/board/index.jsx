@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
+import { flatten } from 'lodash';
 
 import { getAlgorithmById, getNewAlgorithm } from '../../selectors/algorithmsSelectors';
 import { setNewAlgorithm, setElementInfo } from '../../actions/algorithmsActions';
@@ -65,32 +66,38 @@ class Board extends Component {
         setNewAlgorithm({ generation: { cells:  newCells } });
     }
 
-    drawGrid(ctx, cells, boardWidth, boardHeight, cellWidth, cellHeight) {
-        ctx.strokeStyle = '#000000';
+    // drawGrid(ctx, cells, boardWidth, boardHeight, cellWidth, cellHeight) {
+    //     ctx.strokeStyle = '#000000';
 
-        for (let i = 0; i < 6; i++) {
-            for (let j = 0; j < 6; j++) {
-                ctx.beginPath();
-                ctx.moveTo(cellWidth * i, 0);
-                ctx.lineTo(cellWidth * i, boardWidth);
-                ctx.stroke();
+    //     for (let i = 0; i < 6; i++) {
+    //         for (let j = 0; j < 6; j++) {
+    //             ctx.beginPath();
+    //             ctx.moveTo(cellWidth * i, 0);
+    //             ctx.lineTo(cellWidth * i, boardWidth);
+    //             ctx.stroke();
 
-                ctx.beginPath();
-                ctx.moveTo(0, cellHeight * j);
-                ctx.lineTo(boardHeight, cellHeight * j);
-                ctx.stroke();
-            }
-        }
-    }
+    //             ctx.beginPath();
+    //             ctx.moveTo(0, cellHeight * j);
+    //             ctx.lineTo(boardHeight, cellHeight * j);
+    //             ctx.stroke();
+    //         }
+    //     }
+    // }
 
     fillGrid(ctx, cells, cellWidth, cellHeight) {
         ctx.font = "15px Impact";
 
         //const { generation: { selectedElements } } = this.props;
+        const { metaData, currentCrossoverElement } = this.props.algorithm;
+        const newElements = metaData && metaData.newElements;
 
         for (let i = 0; i < cells.length; i++) { //TODO: For temproary purpose
             for (let j = 0; j < cells[0].length; j++) {
-                if (cells[i][j] === null || (i === j && this.state.hide)) {
+                if (cells[i][j] === null) {
+                    continue;
+                }
+
+                if (!this.props.editMode && newElements && currentCrossoverElement !== undefined && newElements.slice(currentCrossoverElement).some(e => e.x === i && e.y === j)) {
                     continue;
                 }
 
@@ -212,7 +219,7 @@ class Board extends Component {
 
         const { algorithm: { generations, metaData: { selectedElements } } } = this.props;
         const cells = generations[generations.length - 1].cells;
-        console.log(this.props.algorithm);
+
         if (!cells) return;
 
         const { cellWidth, cellHeight } = this.getBoardSize();
@@ -288,12 +295,12 @@ class Board extends Component {
                 ctx.fillText(age, textX, textY);
             }
 
-            if (gene === null || gene === 1) {
+            if (gene === null || gene === 2) {
                 const productivity = `P: ${cell.productivity.value.toFixed(3)}`;
                 ctx.fillText(productivity, textX, textY + 15);
             }
 
-            if (gene === null || gene === 2) {
+            if (gene === null || gene === 1) {
                 const socialValue = `S: ${cell.socialValue.value.toFixed(3)}`;
                 ctx.fillText(socialValue, textX, textY + 30);
             }
@@ -322,19 +329,22 @@ class Board extends Component {
         const canvas = this.board.current;
         const ctx = canvas.getContext('2d');
 
-        const { algorithm: { generations } } = this.props;
+        const { algorithm } = this.props;
+        const { generations, metaData: { newElements } } = algorithm;
         const cells = generations[generations.length - 1].cells;
 
         if (!cells) return;
 
         const { cellWidth, cellHeight } = this.getBoardSize();
-        const elements = [];
 
-        elements.push({dest: { i: 0, j: 0}, firstParent: { i: 1, j: 2 }, secondParent: { i: 1, j: 0 }});
-        elements.push({dest: { i: 1, j: 1}, firstParent: { i: 2, j: 3 }, secondParent: { i: 2, j: 1 }});
-        elements.push({dest: { i: 2, j: 2}, firstParent: { i: 3, j: 2 }, secondParent: { i: 1, j: 2 }});
-        elements.push({dest: { i: 3, j: 3}, firstParent: { i: 4, j: 2 }, secondParent: { i: 1, j: 3 }});
-        elements.push({dest: { i: 4, j: 4}, firstParent: { i: 4, j: 1 }, secondParent: { i: 1, j: 4 }});
+        const newElement = newElements[algorithm.currentCrossoverElement];
+        const flattenCells = flatten(cells);
+
+        const firstParent = flattenCells.find(c => c.id === newElement.firstParentId);
+        const secondParent = flattenCells.find(c => c.id === newElement.secondParentId)
+
+        const elements = [];
+        elements.push({dest: { i: newElement.x, j: newElement.y}, firstParent: { i: firstParent.x, j: firstParent.y }, secondParent: { i: secondParent.x, j: secondParent.y }});
 
         ctx.save();
         this.crossoverElement(ctx, elements, cellWidth, cellHeight, 1);

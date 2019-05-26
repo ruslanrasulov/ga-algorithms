@@ -15,7 +15,8 @@ import {
     getAlgorithms,
     removeAlgorithm,
     stopAlgorithm,
-    setGenerations
+    setGenerations,
+    setCrossoverElement
 } from '../../actions/algorithmsActions';
 
 import './_styles.scss';
@@ -73,7 +74,14 @@ class AlgorithmPage extends Component {
     }
 
     onNext = (id) => {
-        this.props.getCurrentState(id);
+        const algorithm = this.props.algorithms.find(a => a.id === id);
+
+        if (algorithm.currentState === 3 && algorithm.currentCrossoverElement !== undefined && algorithm.currentCrossoverElement < algorithm.metaData.newElements.length - 1) {
+            this.props.setCrossoverElement(id, algorithm.currentCrossoverElement + 1);
+        }
+        else {
+            this.props.getCurrentState(id);
+        }
     }
 
     renderAlgorithms = () => {
@@ -125,7 +133,8 @@ const mapDispatchToProps = dispatch => ({
     getAlgorithms: () => dispatch(getAlgorithms()),
     removeAlgorithm: id => dispatch(removeAlgorithm(id)),
     stopAlgorithm: id => dispatch(stopAlgorithm(id)),
-    setGenerations: (id, leftGenerationIndex, rightGenerationIndex) => dispatch(setGenerations(id, leftGenerationIndex, rightGenerationIndex))
+    setGenerations: (id, leftGenerationIndex, rightGenerationIndex) => dispatch(setGenerations(id, leftGenerationIndex, rightGenerationIndex)),
+    setCrossoverElement: (id, currentCrossoverElement) => dispatch(setCrossoverElement(id, currentCrossoverElement))
 });
 
 export default connect(mapStateToProps, mapDispatchToProps)(AlgorithmPage);

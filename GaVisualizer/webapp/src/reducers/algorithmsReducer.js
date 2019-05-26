@@ -15,25 +15,18 @@ const reducer = (state = [], action) => {
             return updateAlgorithms(state, action.payload);
         }
         case actionTypes.FETCH_CURRENT_STATE_COMPLETE: {
-            const { id } = action.payload;
-            const algorithm = state.find(a => a.id === id);
+            const algorithm = action.payload;
+            const currentAlgorithm = state.find(a => a.id === algorithm.id);
 
-            if (algorithm.isPaused || algorithm.isStopped) {
+            if (currentAlgorithm.isPaused || currentAlgorithm.isStopped) {
                 return state;
             }
 
-            if (algorithm.elementInfo !== undefined) {
-                const { x, y } = algorithm.elementInfo;
-                
-                const newElementInfo = Object.assign(action.payload.cells[x][y], { x, y });
-                const newAglorithm = action.payload;
-                const newState = { ...newAglorithm, ...{ elementInfo: newElementInfo } };
-
-                return updateAlgorithms(state, newState);
+            if (algorithm.currentState === 2) {
+                return updateAlgorithms(state, { ...algorithm, currentCrossoverElement: 0 });
             }
-            else {
-                return updateAlgorithms(state, action.payload);
-            }
+            
+            return updateAlgorithms(state, algorithm);
         }
 
         case actionTypes.FETCH_ALGORITHMS_COMPLETE: {
@@ -74,6 +67,12 @@ const reducer = (state = [], action) => {
 
                 return a;
             })
+        }
+        case actionTypes.SET_CROSSOVER_ELEMENT: {
+            const { id, currentCrossoverElement } = action.payload;
+            const algorithm = state.find(a => a.id === id);
+
+            return updateAlgorithms(state, { ...algorithm, currentCrossoverElement });
         }
         default:
             return state;

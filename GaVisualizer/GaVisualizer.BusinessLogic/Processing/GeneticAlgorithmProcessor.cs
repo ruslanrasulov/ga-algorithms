@@ -105,9 +105,11 @@ namespace GaVisualizer.BusinessLogic.Processing
                         break;
                     case AlgorithmState.Selection:
                         var selectedElements = KillNotSatisfiedElements(lastGeneration.Cells);
+                        IncreaseAge(lastGeneration.Cells);
 
                         algorithm.CurrentState = AlgorithmState.Crossover;
                         algorithm.MetaData = new MetaInformation { SelectedElements = selectedElements };
+
                         break;
                     case AlgorithmState.Crossover:
                         var newElements = MateElements(lastGeneration.Cells);
@@ -204,6 +206,8 @@ namespace GaVisualizer.BusinessLogic.Processing
                     cells[i, j].SocialValue = new Gene<double> { Value = Random.NextDouble(), GeneType = GeneType.SocialValue };
                     cells[i, j].Productivity = new Gene<double> { Value = Random.NextDouble(), GeneType = GeneType.Productivity };
                     cells[i, j].Age = 0;
+                    cells[i, j].X = i;
+                    cells[i, j].Y = j;
                 }
             }
         }
@@ -285,6 +289,10 @@ namespace GaVisualizer.BusinessLogic.Processing
 
                         child.FirstParentId = firstParent.Id;
                         child.SecondParentId = secondParent?.Id;
+                        child.FitnessValue = 0;
+                        child.Age = 0;
+                        child.X = i;
+                        child.Y = j;
 
                         child.SocialValue = new Gene<double>
                         {
@@ -311,9 +319,6 @@ namespace GaVisualizer.BusinessLogic.Processing
                                 GeneType = GeneType.Productivity
                             };
                         }
-
-                        child.FitnessValue = 0;
-                        child.Age = 0;
 
                         newCells.Add((i, j, child));
                     }
