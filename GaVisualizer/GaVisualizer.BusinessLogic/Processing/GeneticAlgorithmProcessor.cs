@@ -104,16 +104,22 @@ namespace GaVisualizer.BusinessLogic.Processing
                         algorithm.Generations.Add(newGeneration);
                         break;
                     case AlgorithmState.Selection:
-                        KillNotSatisfiedElements(lastGeneration.Cells);
+                        var selectedElements = KillNotSatisfiedElements(lastGeneration.Cells);
+
                         algorithm.CurrentState = AlgorithmState.Crossover;
+                        algorithm.MetaData = new MetaInformation { SelectedElements = selectedElements };
                         break;
                     case AlgorithmState.Crossover:
-                        MateElements(lastGeneration.Cells);
+                        var newElements = MateElements(lastGeneration.Cells);
+
                         algorithm.CurrentState = AlgorithmState.Mutation;
+                        algorithm.MetaData = new MetaInformation { NewElements = newElements };
                         break;
                     case AlgorithmState.Mutation:
-                        ProcessMutation(lastGeneration.Cells);
+                        var mutatedGenes = ProcessMutation(lastGeneration.Cells);
+
                         algorithm.CurrentState = AlgorithmState.CalculatingFitnessValue;
+                        algorithm.MetaData = new MetaInformation { MutatedGenes = mutatedGenes };
                         break;
                 }
 
@@ -212,11 +218,12 @@ namespace GaVisualizer.BusinessLogic.Processing
         }
 
         //todo: please, find more adequate name
-        private void KillNotSatisfiedElements(IPopulationElement[,] cells)
+        private IEnumerable<(int x, int y, IPopulationElement)> KillNotSatisfiedElements(IPopulationElement[,] cells)
         {
             var orderedElements = cells.Cast<IPopulationElement>().OrderBy(e => e.FitnessValue);
             var survivalsCount = cells.GetLength(0) * cells.GetLength(1) / 2;
             var killCount = 0;
+            var result = new List<(int x, int y, IPopulationElement)>();
 
             foreach (var elementToKill in orderedElements)
             {
@@ -226,17 +233,20 @@ namespace GaVisualizer.BusinessLogic.Processing
                     {
                         if (killCount > survivalsCount)
                         {
-                            return;
+                            return result;
                         }
 
                         if (cells[i, j] == elementToKill)
                         {
                             killCount++;
+                            result.Add((i, j, cells[i, j]));
                             cells[i, j] = null;
                         }
                     }
                 }
             }
+
+            return result;
         }
 
         private void IncreaseAge(IPopulationElement[,] cells)
@@ -253,7 +263,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        private void MateElements(IPopulationElement[,] cells)
+        private IEnumerable<IPopulationElement> MateElements(IPopulationElement[,] cells)
         {
             var newCells = new List<(int x, int y, IPopulationElement element)>();
 
@@ -311,6 +321,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
 
             newCells.ForEach(c => cells[c.x, c.y] = c.element);
+            return newCells.Select(c => c.element);
         }
 
         private IReadOnlyList<(IPopulationElement element, int x, int y)> FindParents(IPopulationElement[,] cells, int indexX, int indexY)
@@ -385,8 +396,10 @@ namespace GaVisualizer.BusinessLogic.Processing
             return count;
         }
 
-        public void ProcessMutation(IPopulationElement[,] cells)
+        public IEnumerable<(Guid id, Gene<double> gene)> ProcessMutation(IPopulationElement[,] cells)
         {
+            var mutatedGenes = new List<(Guid id, Gene<double> gene)>();
+
             for (int i = 0; i < cells.GetLength(0); i++)
             {
                 for (int j = 0; j < cells.GetLength(1); j++)
@@ -407,9 +420,13 @@ namespace GaVisualizer.BusinessLogic.Processing
                         {
                             cells[i, j].SocialValue = mutatedGene;
                         }
+
+                        mutatedGenes.Add((cells[i, j].Id, mutatedGene));
                     }
                 }
             }
+
+            return mutatedGenes;
         }
 
         private bool CheckForStop(Generation generation)

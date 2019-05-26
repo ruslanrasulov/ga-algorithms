@@ -1,6 +1,6 @@
 export default { 
     algorithms: [],
     newAlgorithm: {
-        generation: { cells: null }
+        generations: [{ cells: null }]
     }
 };

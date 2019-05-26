@@ -8,5 +8,6 @@ namespace GaVisualizer.Domain.Algorithm
     {
         public IEnumerable<IPopulationElement> NewElements { get; set; }
         public IEnumerable<(Guid elementId, Gene<double>)> MutatedGenes { get; set; }
+        public IEnumerable<(int x, int y, IPopulationElement)> SelectedElements { get; set; }
     }
 }

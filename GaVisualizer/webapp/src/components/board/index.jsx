@@ -21,7 +21,7 @@ class Board extends Component {
         this.renderCanvas();
 
         if (editMode) {
-            const algorithm = { generation: { cells: this.getInitialCells(5, 5) } };
+            const algorithm = { generations: [{ cells: this.getInitialCells(5, 5) }] };
             setNewAlgorithm(algorithm);
 
             canvas.addEventListener('click', this.setupBoard);
@@ -32,26 +32,27 @@ class Board extends Component {
     }
 
     componentDidUpdate() {
-        this.renderCanvas();
-        switch (this.props.currentState) {
-            case 0: {
-                this.renderCanvas();
-            } break;
-            case 1: {
+        switch (this.props.algorithm.currentState) {
+            case 2: {
                 this.fadeElements();
             } break;
-            case 2: {
+            case 3: {
                 this.crossoverElements();
             } break;
-            case 3: {
+            case 4: {
                 this.mutateElements();
-            }
+            } break;
+            default: {
+                this.renderCanvas();
+            } break;
         }
     }
 
     setupBoard = (e) => {
-        const { setNewAlgorithm, generation: { cells } } = this.props;
+        const { setNewAlgorithm, algorithm } = this.props;
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
+        const cells = algorithm.generations[algorithm.generations.length - 1].cells;
+
         const newCells = cells.map(c => c.slice());
 
         if (newCells[x][y].elementType === 0) {
@@ -142,10 +143,10 @@ class Board extends Component {
         const ctx = canvas.getContext('2d');
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        console.log(this.props);
-        if (!this.props.generation.cells) return;
+        const { algorithm: { generations } } = this.props;
+        const cells = generations[generations.length - 1].cells;
+        if (!cells) return;
         
-        const { generation: { cells } } = this.props;
         const { cellWidth, cellHeight } = this.getBoardSize();
 
         this.fillGrid(ctx, cells, cellWidth, cellHeight);
@@ -153,9 +154,11 @@ class Board extends Component {
     }
 
     showTooltip = (e) => {
-        if (!this.props.generation.cells) return;
+        const { algorithm: { generations }, id, setElementInfo, generationIndex } = this.props;
+        const cells = generations[generations.length - 1].cells;
+
+        if (!cells) return;
         
-        const { generation: { cells }, id, setElementInfo, generationIndex } = this.props;
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
 
         this.setState({
@@ -171,19 +174,20 @@ class Board extends Component {
         const { cellWidth, cellHeight } = this.getBoardSize();
 
         return {
-            x: Math.floor(layerX / cellWidth),
+            x: Math.floor(layerX / (cellWidth - 20)),
             y: Math.floor(layerY / cellHeight)
         };
     }
 
     getBoardSize = () => {
-        const { generation: { cells } } = this.props;
+        const { algorithm: { generations }} = this.props;
+        const cells = generations[generations.length - 1].cells;
         const canvas = this.board.current;
         const marginSize = 10;
 
         const lineCount = cells.length;
         const cellWidth = canvas.width / lineCount - marginSize * 2;
-        const cellHeight = canvas.height / lineCount  - marginSize * 2;
+        const cellHeight = canvas.height / lineCount - marginSize * 2;
 
         return { cellWidth, cellHeight };
     }
@@ -206,11 +210,21 @@ class Board extends Component {
         const canvas = this.board.current;
         const ctx = canvas.getContext('2d');
 
-        if (!this.props.generation.cells) return;
+        const { algorithm: { generations, metaData: { selectedElements } } } = this.props;
+        const cells = generations[generations.length - 1].cells;
+        console.log(this.props.algorithm);
+        if (!cells) return;
+
         const { cellWidth, cellHeight } = this.getBoardSize();
+        
         ctx.save();
-        for (let i = 0; i < 5; i++) {
-            this.fadeElement(ctx, i, i, cellWidth, cellHeight);
+
+        for (let i = 0; i < selectedElements.length; i++) {
+            const x = selectedElements[i].item1;
+            const y = selectedElements[i].item2;
+            const cell = selectedElements[i].item3;
+
+            this.fadeElement(ctx, x, y, cell, cellWidth, cellHeight);
         }
     }
 
@@ -235,22 +249,22 @@ class Board extends Component {
         return { x, y };
     }
 
-    fadeElement(ctx, i, j, cellWidth, cellHeight, step = 0) {
+    fadeElement(ctx, i, j, cell, cellWidth, cellHeight, step = 0) {
         const { x, y } = this.calculatePosition(i, j, cellWidth, cellHeight);
 
         ctx.globalAlpha = 1 - step * 0.01;
         ctx.fillStyle = '#000000';
         ctx.clearRect(x - 1, y - 1, cellWidth + 2, cellHeight + 2);
 
-        this.drawCell(ctx, this.props.generation.cells[i][j], x, y, cellWidth, cellHeight);
-        this.drawCellValues(ctx, this.props.generation.cells[i][j], x, y);
+        this.drawCell(ctx, cell, x, y, cellWidth, cellHeight);
+        this.drawCellValues(ctx, cell, x, y);
 
         if (step === 100) {
             ctx.globalAlpha = 1;
             return;
         }
 
-        requestAnimationFrame(() => this.fadeElement(ctx, i, j, cellWidth, cellHeight, step + 1));
+        requestAnimationFrame(() => this.fadeElement(ctx, i, j, cell, cellWidth, cellHeight, step + 1));
     }
 
     drawCellValues = (ctx, cell, x, y, gene = null) => {
@@ -308,9 +322,12 @@ class Board extends Component {
         const canvas = this.board.current;
         const ctx = canvas.getContext('2d');
 
-        if (!this.props.generation.cells) return;
-        const { cellWidth, cellHeight } = this.getBoardSize();
+        const { algorithm: { generations } } = this.props;
+        const cells = generations[generations.length - 1].cells;
 
+        if (!cells) return;
+
+        const { cellWidth, cellHeight } = this.getBoardSize();
         const elements = [];
 
         elements.push({dest: { i: 0, j: 0}, firstParent: { i: 1, j: 2 }, secondParent: { i: 1, j: 0 }});
@@ -338,8 +355,11 @@ class Board extends Component {
     }
 
     drawParent = (ctx, cell, cellWidth, cellHeight, gene) => {
-        this.drawCell(ctx, this.props.generation.cells[cell.i][cell.j], cell.x, cell.y, cellWidth, cellHeight);
-        this.drawCellValues(ctx, this.props.generation.cells[cell.i][cell.j], cell.x, cell.y, gene);
+        const { algorithm: { generations } } = this.props;
+        const cells = generations[generations.length - 1].cells;
+
+        this.drawCell(ctx, cells[cell.i][cell.j], cell.x, cell.y, cellWidth, cellHeight);
+        this.drawCellValues(ctx, cells[cell.i][cell.j], cell.x, cell.y, gene);
     }
 
     crossoverElement = (ctx, elements, cellWidth, cellHeight) => {
@@ -408,17 +428,16 @@ class Board extends Component {
 }
 
 const mapStateToProps = (state, ownProps) => {
-    let generation;
+    let algorithm;
 
     if (ownProps.editMode) {
-        generation = { cells: getNewAlgorithm(state).generation.cells };
+        algorithm = getNewAlgorithm(state);
     }
     else {
-        const generations = getAlgorithmById(state, ownProps.id).generations;
-        generation = generations[ownProps.generationIndex];
+        algorithm = getAlgorithmById(state, ownProps.id);
     }
 
-    return { generation };
+    return { algorithm };
 };
 
 const mapDispatchToProps = dispatch => ({
