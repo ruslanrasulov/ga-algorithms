@@ -90,7 +90,7 @@ class Board extends Component {
         //const { generation: { selectedElements } } = this.props;
         const { metaData, currentCrossoverElement } = this.props.algorithm;
         const newElements = metaData && metaData.newElements;
-
+        ctx.save();
         for (let i = 0; i < cells.length; i++) { //TODO: For temproary purpose
             for (let j = 0; j < cells[0].length; j++) {
                 if (cells[i][j] === null) {
@@ -100,6 +100,8 @@ class Board extends Component {
                 if (!this.props.editMode && newElements && currentCrossoverElement !== undefined && newElements.slice(currentCrossoverElement).some(e => e.x === i && e.y === j)) {
                     continue;
                 }
+
+                ctx.globalAlpha = 0.5 + cells[i][j].fitnessValue * 0.08;
 
                 const { x, y } = this.calculatePosition(i, j, cellWidth, cellHeight);
                 this.drawCell(ctx, cells[i][j], x, y, cellWidth, cellHeight);
@@ -143,6 +145,8 @@ class Board extends Component {
                 // }
             }
         }
+
+        ctx.restore();
     }
 
     renderCanvas() {
@@ -259,7 +263,8 @@ class Board extends Component {
     fadeElement(ctx, i, j, cell, cellWidth, cellHeight, step = 0) {
         const { x, y } = this.calculatePosition(i, j, cellWidth, cellHeight);
 
-        ctx.globalAlpha = 1 - step * 0.01;
+        const currentAlpha = 0.5 + cell.fitnessValue * 0.08 - step * 0.01;
+        ctx.globalAlpha = currentAlpha < 0 ? 0 : currentAlpha;
         ctx.fillStyle = '#000000';
         ctx.clearRect(x - 1, y - 1, cellWidth + 2, cellHeight + 2);
 
