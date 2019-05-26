@@ -21,7 +21,7 @@ class Board extends Component {
         this.renderCanvas();
 
         if (editMode) {
-            const algorithm = { generation: { cells: this.getInitialCells(20, 20) } };
+            const algorithm = { generation: { cells: this.getInitialCells(5, 5) } };
             setNewAlgorithm(algorithm);
 
             canvas.addEventListener('click', this.setupBoard);
@@ -33,6 +33,20 @@ class Board extends Component {
 
     componentDidUpdate() {
         this.renderCanvas();
+        switch (this.props.currentState) {
+            case 0: {
+                this.renderCanvas();
+            } break;
+            case 1: {
+                this.fadeElements();
+            } break;
+            case 2: {
+                this.crossoverElements();
+            } break;
+            case 3: {
+                this.mutateElements();
+            }
+        }
     }
 
     setupBoard = (e) => {
@@ -73,9 +87,9 @@ class Board extends Component {
 
         //const { generation: { selectedElements } } = this.props;
 
-        for (let i = 0; i < 5; i++) { //TODO: For temproary purpose
-            for (let j = 0; j < 5; j++) {
-                if (i === j && this.state.hide) {
+        for (let i = 0; i < cells.length; i++) { //TODO: For temproary purpose
+            for (let j = 0; j < cells[0].length; j++) {
+                if (cells[i][j] === null || (i === j && this.state.hide)) {
                     continue;
                 }
 
@@ -128,6 +142,7 @@ class Board extends Component {
         const ctx = canvas.getContext('2d');
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
+        console.log(this.props);
         if (!this.props.generation.cells) return;
         
         const { generation: { cells } } = this.props;
@@ -162,12 +177,13 @@ class Board extends Component {
     }
 
     getBoardSize = () => {
-        //const { generation: { cells } } = this.props;
+        const { generation: { cells } } = this.props;
         const canvas = this.board.current;
+        const marginSize = 10;
 
-        //const lineCount = cells.length;
-        const cellWidth = canvas.width / 6;
-        const cellHeight = canvas.height / 6;
+        const lineCount = cells.length;
+        const cellWidth = canvas.width / lineCount - marginSize * 2;
+        const cellHeight = canvas.height / lineCount  - marginSize * 2;
 
         return { cellWidth, cellHeight };
     }
@@ -384,29 +400,9 @@ class Board extends Component {
         return { x, y };
     }
 
-    updateState = () => {
-        this.setState((prevState) => { 
-            switch (prevState.currentState) {
-                case 0: {
-                    this.renderCanvas();
-                    return { currentState: 1, hide: false };
-                }
-                case 1: {
-                    this.fadeElements();
-                    return { currentState: 2 };
-                }
-                case 2: {
-                    this.crossoverElements();
-                    return { currentState: 3, hide: true };
-                }
-            }
-        });
-    }
-
     render = () => (
         <div>
             <canvas className='board' width={480} height={480} ref={this.board} />
-            <button className="btn" onClick={this.updateState}>Next</button>
         </div>
     )
 }

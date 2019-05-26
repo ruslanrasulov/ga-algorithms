@@ -11,5 +11,7 @@ namespace GaVisualizer.Domain.Algorithm
         public bool IsStopped { get; set; }
         public bool IsPaused { get; set; }
         public bool IsStarted { get; set; }
+        public AlgorithmState CurrentState { get; set; }
+        public MetaInformation MetaData { get; set; }
     }
 }

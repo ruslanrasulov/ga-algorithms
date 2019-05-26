@@ -40,7 +40,8 @@ namespace GaVisualizer.BusinessLogic.Processing
             var algorithm = new GeneticAlgorithm
             {
                 Id = id,
-                Generations = new List<Generation> { settings.InitialGeneration }
+                Generations = new List<Generation> { settings.InitialGeneration },
+                CurrentState = AlgorithmState.CalculatingFitnessValue
             };
 
             algorithms.Add(id, algorithm);
@@ -48,6 +49,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             return Task.FromResult(algorithm);
         }
 
+        //TODO: remove after implementing step by step processing
         public Task<GeneticAlgorithm> GetCurrentStateAsync(string id)
         {
             var guid = new Guid(id);
@@ -75,6 +77,44 @@ namespace GaVisualizer.BusinessLogic.Processing
                     }
 
                     algorithm.Generations.Add(newGeneration);
+                }
+
+                return Task.FromResult(algorithm);
+            }
+
+            return Task.FromResult(default(GeneticAlgorithm));
+        }
+
+        public Task<GeneticAlgorithm> GetNextStateAsync(string id)
+        {
+            var guid = new Guid(id);
+
+            if (algorithms.TryGetValue(guid, out var algorithm))
+            {
+                var lastGeneration = algorithm.Generations.Last();
+
+                switch (algorithm.CurrentState)
+                {
+                    case AlgorithmState.CalculatingFitnessValue:
+                        var newGeneration = lastGeneration.Clone() as Generation;
+
+                        CalculateFitnessValue(newGeneration.Cells);
+
+                        algorithm.CurrentState = AlgorithmState.Selection;
+                        algorithm.Generations.Add(newGeneration);
+                        break;
+                    case AlgorithmState.Selection:
+                        KillNotSatisfiedElements(lastGeneration.Cells);
+                        algorithm.CurrentState = AlgorithmState.Crossover;
+                        break;
+                    case AlgorithmState.Crossover:
+                        MateElements(lastGeneration.Cells);
+                        algorithm.CurrentState = AlgorithmState.Mutation;
+                        break;
+                    case AlgorithmState.Mutation:
+                        ProcessMutation(lastGeneration.Cells);
+                        algorithm.CurrentState = AlgorithmState.CalculatingFitnessValue;
+                        break;
                 }
 
                 return Task.FromResult(algorithm);
@@ -155,8 +195,8 @@ namespace GaVisualizer.BusinessLogic.Processing
                 for (int j = 0; j < cells.GetLength(1); j++)
                 {
                     cells[i, j].Id = Guid.NewGuid();
-                    cells[i, j].SocialValue = new Gene<double> { Value = Random.NextDouble() };
-                    cells[i, j].Productivity = new Gene<double> { Value = Random.NextDouble() };
+                    cells[i, j].SocialValue = new Gene<double> { Value = Random.NextDouble(), GeneType = GeneType.SocialValue };
+                    cells[i, j].Productivity = new Gene<double> { Value = Random.NextDouble(), GeneType = GeneType.Productivity };
                     cells[i, j].Age = 0;
                 }
             }
@@ -229,20 +269,38 @@ namespace GaVisualizer.BusinessLogic.Processing
                         var child = (IPopulationElement)randomParent.element.Clone();
 
                         child.Id = Guid.NewGuid();
-                        child.FirstParentId = parents[0].element.Id;
-                        child.SecondParentId = parents[1].element.Id;
+
+                        var firstParent = parents[0].element;
+                        var secondParent = parents.Count > 1 ? parents[1].element : null;
+
+                        child.FirstParentId = firstParent.Id;
+                        child.SecondParentId = secondParent?.Id;
 
                         child.SocialValue = new Gene<double>
                         {
-                            Value = parents[0].element.SocialValue.Value,
-                            ParentId = parents[0].element.Id
+                            Value = firstParent.SocialValue.Value,
+                            ParentId = firstParent.Id,
+                            GeneType = GeneType.SocialValue
                         };
 
-                        child.Productivity = new Gene<double>
+                        if (secondParent != null)
                         {
-                            Value = parents[1].element.Productivity.Value,
-                            ParentId = parents[1].element.Id
-                        };
+                            child.Productivity = new Gene<double>
+                            {
+                                Value = secondParent.Productivity.Value,
+                                ParentId = secondParent.Id,
+                                GeneType = GeneType.Productivity
+                            };
+                        }
+                        else
+                        {
+                            child.Productivity = new Gene<double>
+                            {
+                                Value = firstParent.Productivity.Value,
+                                ParentId = firstParent.Id,
+                                GeneType = GeneType.Productivity
+                            };
+                        }
 
                         child.FitnessValue = 0;
                         child.Age = 0;

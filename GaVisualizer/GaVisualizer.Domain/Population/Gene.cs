@@ -6,6 +6,7 @@ namespace GaVisualizer.Domain.Population
     {
         public T Value { get; set; }
         public Guid ParentId { get; set; }
+        public GeneType GeneType { get; set; }
         public bool IsMutated { get; set; }
     }
 }

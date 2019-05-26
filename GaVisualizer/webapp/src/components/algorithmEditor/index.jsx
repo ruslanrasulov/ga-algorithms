@@ -48,7 +48,7 @@ class AlgorithmEdtor extends Component {
             <Modal title='Добавить новый алгоритм' onClick={onClick} onClose={onClose}>
                 <div className='algorithm-editor'>
                     <div className='algorithm-editor__board'>
-                        <Board editMode={true} />
+                        <Board editMode={true} currentState={0} />
                     </div>
                     
                     <div className='algorithm-editor__panel'>

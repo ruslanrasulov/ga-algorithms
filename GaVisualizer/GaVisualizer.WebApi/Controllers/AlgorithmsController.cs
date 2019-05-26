@@ -38,6 +38,7 @@ namespace GaVisualizer.WebApi.Controllers
             return Ok();
         }
 
+        //TODO: remove after implementing step by step processing
         [HttpGet("{id}/state")]
         public async Task<IActionResult> GetCurrentStateAsync(string id)
         {
@@ -49,6 +50,20 @@ namespace GaVisualizer.WebApi.Controllers
             }
 
             return Ok(currentState);
+        }
+
+        //temproary route. will be changed to {id}/state
+        [HttpGet("{id}/next-state")]
+        public async Task<IActionResult> GetNextStateAsync(string id)
+        {
+            var nextState = await geneticAlgorithmProcessor.GetNextStateAsync(id);
+
+            if (nextState == null)
+            {
+                return NotFound();
+            }
+
+            return Ok(nextState);
         }
         
         [HttpGet]

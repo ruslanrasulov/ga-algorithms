@@ -72,6 +72,10 @@ class AlgorithmPage extends Component {
         this.props.setGenerations(id, leftGenerationIndex, rightGenerationIndex);
     }
 
+    onNext = (id) => {
+        this.props.getCurrentState(id);
+    }
+
     renderAlgorithms = () => {
         const { algorithms } = this.props;
         const elements = [];
@@ -87,7 +91,8 @@ class AlgorithmPage extends Component {
                 onIntervalUpdate={this.onIntervalUpdate}
                 onAlgorithmRemove={this.onAlgorithmRemove}
                 onAlgorithmStop={this.onAlgorithmStop}
-                onSetGenerations={this.onSetGenerations} />);
+                onSetGenerations={this.onSetGenerations}
+                onNext={this.onNext} />);
         }
 
         return elements;

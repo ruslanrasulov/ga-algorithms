@@ -30,9 +30,11 @@ export const getCurrentStateComplete = state => ({
 export const getCurrentState = (id, callback) => dispatch => {
     dispatch(getCurrentStateStart());
 
-    algorithmsApi.getCurrentState(id).then(result => {
+    algorithmsApi.getNextState(id).then(result => {
         dispatch(getCurrentStateComplete(result.data));
-        callback();
+        if (callback) {
+            callback();
+        }
     });
 }
 

@@ -11,6 +11,10 @@ export default class AlgorithmsApi {
         return AlgorithmsApi.get(`${id}/state`);
     }
 
+    static getNextState = (id) => {
+        return AlgorithmsApi.get(`${id}/next-state`);
+    }
+
     static getAlgorithms = () => {
         return AlgorithmsApi.get();
     }

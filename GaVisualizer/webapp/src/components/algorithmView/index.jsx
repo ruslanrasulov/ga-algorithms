@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-import AlgorithmChart from '../algorithmChart';
+// import AlgorithmChart from '../algorithmChart';
 import Board from '../board';
 import ElementInfo from '../elementInfo';
 
@@ -123,25 +123,30 @@ class AlgorithmView extends Component {
         return links;
     }
 
+    //TODO: remove multiply boards showing
     renderBoards = () => {
         const { id, generations, leftGenerationIndex, rightGenerationIndex } = this.props.algorithm;
         const generationIndexes = [];
 
         if (leftGenerationIndex === undefined || rightGenerationIndex === undefined) {
-            if (generations.length > 1) {
-                generationIndexes.push(generations.length - 2);
-            }
+            // if (generations.length > 1) {
+            //     generationIndexes.push(generations.length - 2);
+            // }
             generationIndexes.push(generations.length - 1);
         }
         else {
-            generationIndexes.push(leftGenerationIndex);
+            //generationIndexes.push(leftGenerationIndex);
             generationIndexes.push(rightGenerationIndex);
         }
 
-        return generationIndexes.map(i => 
+        return generationIndexes.map(i =>
             <div className="alg-container__board" key={id + i}>
                 <Board id={id} generationIndex={i} />
             </div>);
+    }
+
+    updateState = () => {
+        this.props.onNext(this.props.algorithm.id);
     }
 
     render = () => {
@@ -154,7 +159,7 @@ class AlgorithmView extends Component {
         return (
             <div className='alg-container'>
                 {this.renderBoards()}
-                {this.renderGenerationsNavigation()}
+                {/* {this.renderGenerationsNavigation()} */}
 
                 <div className="alg-container__element-info">
                     First parent:
@@ -193,10 +198,11 @@ class AlgorithmView extends Component {
                 </div>
 
                 <div className='alg-container__chart'>
-                    <AlgorithmChart algorithm={algorithm} />
+                    {/* <AlgorithmChart algorithm={algorithm} /> */}
                 </div>
 
                 <div className='alg-container__panel'>
+                    <button className="btn" onClick={this.updateState}>Next {algorithm.currentState}</button>
                     {algorithm.isStarted
                         ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Стоп</div>
                         : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Старт</div> }
