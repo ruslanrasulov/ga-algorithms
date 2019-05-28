@@ -185,8 +185,8 @@ class Board extends Component {
         const { cellWidth, cellHeight } = this.getBoardSize();
 
         return {
-            x: Math.floor(layerX / (cellWidth - 20)),
-            y: Math.floor(layerY / cellHeight)
+            x: Math.floor((layerX + 16) / cellWidth),
+            y: Math.floor((layerY + 16) / cellHeight)
         };
     }
 
@@ -197,8 +197,8 @@ class Board extends Component {
         const marginSize = 10;
 
         const lineCount = cells.length;
-        const cellWidth = canvas.width / lineCount - marginSize * 2;
-        const cellHeight = canvas.height / lineCount - marginSize * 2;
+        const cellWidth = canvas.width / lineCount - marginSize;
+        const cellHeight = canvas.height / lineCount - marginSize;
 
         return { cellWidth, cellHeight };
     }
@@ -240,22 +240,8 @@ class Board extends Component {
     }
 
     calculatePosition = (i, j, cellWidth, cellHeight) => {
-        let x = 0;
-        let y = 0;
-
-        if (i === 0) {
-            x = 0;
-        }
-        else {
-            x = i * cellWidth + i * 10;
-        }
-
-        if (j === 0) {
-            y = 0;
-        }
-        else {
-            y = j * cellHeight + j * 10;
-        }
+        const x = i * cellWidth + i * 8 + 8;
+        const y = j * cellHeight + j * 8 + 8;
 
         return { x, y };
     }
@@ -349,7 +335,7 @@ class Board extends Component {
         const secondParent = flattenCells.find(c => c.id === newElement.secondParentId)
 
         const elements = [];
-        elements.push({dest: { i: newElement.x, j: newElement.y}, firstParent: { i: firstParent.x, j: firstParent.y }, secondParent: { i: secondParent.x, j: secondParent.y }});
+        elements.push({dest: { i: newElement.x, j: newElement.y }, firstParent: { i: firstParent.x, j: firstParent.y }, secondParent: { i: secondParent.x, j: secondParent.y }});
 
         ctx.save();
         this.crossoverElement(ctx, elements, cellWidth, cellHeight, 1);
@@ -369,7 +355,7 @@ class Board extends Component {
         cell.y = y;
     }
 
-    drawParent = (ctx, cell, cellWidth, cellHeight, gene) => {
+    drawElement = (ctx, cell, cellWidth, cellHeight, gene) => {
         const { algorithm: { generations } } = this.props;
         const cells = generations[generations.length - 1].cells;
 
@@ -393,11 +379,14 @@ class Board extends Component {
             this.setupNextPosition(firstParent, dest, step);
             this.setupNextPosition(secondParent, dest, step);
 
-            this.drawParent(ctx, firstParent, cellWidth, cellHeight, 1);
-            this.drawParent(ctx, secondParent, cellWidth, cellHeight, 2);
+            this.drawElement(ctx, firstParent, cellWidth, cellHeight, 1);
+            this.drawElement(ctx, secondParent, cellWidth, cellHeight, 2);
 
             if (firstParent.x !== dest.x || firstParent.y !== dest.y || secondParent.x !== dest.x || secondParent.y !== dest.y) {
                 breakCrossover = false;
+            }
+            else {
+                this.drawElement(ctx, dest, cellWidth, cellHeight);
             }
         }
 
@@ -437,7 +426,7 @@ class Board extends Component {
 
     render = () => (
         <div>
-            <canvas className='board' width={480} height={480} ref={this.board} />
+            <canvas className='board' width={450} height={450} ref={this.board} />
         </div>
     )
 }
