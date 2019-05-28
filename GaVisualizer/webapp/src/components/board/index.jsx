@@ -56,6 +56,10 @@ class Board extends Component {
 
         const newCells = cells.map(c => c.slice());
 
+        if (x < 0 || x > cells.length - 1 || y < 0 || y > cells[0].length - 1) {
+            return;
+        }
+
         if (newCells[x][y].elementType === 0) {
             newCells[x][y].elementType = 1;
         }
@@ -185,8 +189,8 @@ class Board extends Component {
         const { cellWidth, cellHeight } = this.getBoardSize();
 
         return {
-            x: Math.floor((layerX + 16) / cellWidth),
-            y: Math.floor((layerY + 16) / cellHeight)
+            x: Math.floor((layerX - 8) / (cellWidth + 8)),
+            y: Math.floor((layerY - 8) / (cellHeight + 8))
         };
     }
 
@@ -365,7 +369,6 @@ class Board extends Component {
 
     crossoverElement = (ctx, elements, cellWidth, cellHeight) => {
         const step = 1;
-        let breakCrossover = true;
 
         this.renderCanvas();
 
@@ -382,16 +385,10 @@ class Board extends Component {
             this.drawElement(ctx, firstParent, cellWidth, cellHeight, 1);
             this.drawElement(ctx, secondParent, cellWidth, cellHeight, 2);
 
-            if (firstParent.x !== dest.x || firstParent.y !== dest.y || secondParent.x !== dest.x || secondParent.y !== dest.y) {
-                breakCrossover = false;
-            }
-            else {
+            if (firstParent.x === dest.x && firstParent.y === dest.y && secondParent.x === dest.x && secondParent.y === dest.y) {
                 this.drawElement(ctx, dest, cellWidth, cellHeight);
+                return;
             }
-        }
-
-        if (breakCrossover) {
-            return;
         }
 
         requestAnimationFrame(() => this.crossoverElement(ctx, elements, cellWidth, cellHeight));
