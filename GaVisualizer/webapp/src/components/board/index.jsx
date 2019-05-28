@@ -34,13 +34,13 @@ class Board extends Component {
 
     componentDidUpdate() {
         switch (this.props.algorithm.currentState) {
-            case 2: {
+            case 3: {
                 this.fadeElements();
             } break;
-            case 3: {
+            case 4: {
                 this.crossoverElements();
             } break;
-            case 4: {
+            case 5: {
                 this.mutateElements();
             } break;
             default: {

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using GaVisualizer.Domain.Evolution;
 using GaVisualizer.Domain.Population;
 
 namespace GaVisualizer.Domain.Algorithm
@@ -13,5 +14,7 @@ namespace GaVisualizer.Domain.Algorithm
         public bool IsStarted { get; set; }
         public AlgorithmState CurrentState { get; set; }
         public MetaInformation MetaData { get; set; }
+        public CrossoverType CrossoverType { get; set; }
+        public SelectionType SelectionType { get; set; }
     }
 }

@@ -41,7 +41,9 @@ namespace GaVisualizer.BusinessLogic.Processing
             {
                 Id = id,
                 Generations = new List<Generation> { settings.InitialGeneration },
-                CurrentState = AlgorithmState.CalculatingFitnessValue
+                CurrentState = AlgorithmState.NotStarted,
+                SelectionType = settings.SelectionType,
+                CrossoverType = settings.CrossoverType
             };
 
             algorithms.Add(id, algorithm);
@@ -95,6 +97,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
                 switch (algorithm.CurrentState)
                 {
+                    case AlgorithmState.NotStarted:
                     case AlgorithmState.CalculatingFitnessValue:
                         var newGeneration = lastGeneration.Clone() as Generation;
 

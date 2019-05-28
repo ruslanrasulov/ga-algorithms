@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 // import AlgorithmChart from '../algorithmChart';
 import Board from '../board';
-import ElementInfo from '../elementInfo';
+//import ElementInfo from '../elementInfo';
 
 import './_styles.scss';
 
@@ -140,7 +140,7 @@ class AlgorithmView extends Component {
         }
 
         return generationIndexes.map(i =>
-            <div className="alg-container__board" key={id + i}>
+            <div className='alg-container__board' key={id + i}>
                 <Board id={id} generationIndex={i} />
             </div>);
     }
@@ -149,52 +149,74 @@ class AlgorithmView extends Component {
         this.props.onNext(this.props.algorithm.id);
     }
 
+    getSelectionType = () => {
+        switch (this.props.algorithm.selectionType) {
+            case 0: {
+                return 'Турнирная сетка';
+            }
+            case 1: {
+                return 'Отбор усечением';
+            }
+            case 2: {
+                return 'Пропорциональный отбор';
+            }
+        }
+    }
+
+    getCrossoverType = () => {
+        switch (this.props.algorithm.crossoverType) {
+            case 0: {
+                return 'Точечное';
+            }
+            case 1: {
+                return 'Двухточечное';
+            }
+            case 3: {
+                return 'Многоточечное';
+            }
+            case 4: {
+                return 'Равномерное';
+            }
+            case 5: {
+                return 'Оператор инверсии';
+            }
+        }
+    }
+
+    getCurrentStep = () => {
+        switch (this.props.algorithm.currentState) {
+            case 0: {
+                return '';
+            }
+            case 1: {
+                return 'Мутация';
+            }
+            case 2: {
+                return 'Вычисление фитес функции';
+            }
+            case 3: {
+                return 'Селекция';
+            }
+            case 4: {
+                return 'Скрещивание';
+            }
+        }
+    }
+
     render = () => {
         const { algorithm } = this.props;
         const { updateIntervalValue } = this.state;
-        const firstParent = algorithm ? algorithm.firstParent : null;
-        const secondParent = algorithm ? algorithm.secondParent : null;
-        const selectedElement = algorithm ? algorithm.selectedElement : null;
 
         return (
             <div className='alg-container'>
                 {this.renderBoards()}
                 {/* {this.renderGenerationsNavigation()} */}
 
-                <div className="alg-container__element-info">
-                    First parent:
-                    {
-                        firstParent
-                            ? <ElementInfo 
-                                elementType={firstParent.elementType}
-                                socialValue={firstParent.socialValue}
-                                productivity={firstParent.productivity}
-                                age={firstParent.age}
-                                fitnessValue={firstParent.fitnessValue} />
-                            : null
-                    }
-                    Second parent:
-                    {
-                        secondParent
-                            ? <ElementInfo 
-                                elementType={secondParent.elementType}
-                                socialValue={secondParent.socialValue}
-                                productivity={secondParent.productivity}
-                                age={secondParent.age}
-                                fitnessValue={secondParent.fitnessValue} />
-                            : null
-                    }
-                    Selected element:
-                    {
-                        selectedElement
-                            ? <ElementInfo 
-                                elementType={selectedElement.elementType}
-                                socialValue={selectedElement.socialValue}
-                                productivity={selectedElement.productivity}
-                                age={selectedElement.age}
-                                fitnessValue={selectedElement.fitnessValue} />
-                            : null
-                    }
+                <div className='alg-container__element-info'>
+                    <div>Поколение: {algorithm.generations.length}</div>
+                    <div>Тип селекции: {this.getSelectionType()}</div>
+                    <div>Тип скрещивания: {this.getCrossoverType()}</div>
+                    <div>Текущий шаг: {this.getCurrentStep()}</div>
                 </div>
 
                 <div className='alg-container__chart'>
@@ -202,7 +224,7 @@ class AlgorithmView extends Component {
                 </div>
 
                 <div className='alg-container__panel'>
-                    <button className="btn" onClick={this.updateState}>Next {algorithm.currentState}</button>
+                    <button className='btn' onClick={this.updateState}>Next {algorithm.currentState}</button>
                     {algorithm.isStarted
                         ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Стоп</div>
                         : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Старт</div> }

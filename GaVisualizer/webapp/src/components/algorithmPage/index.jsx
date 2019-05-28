@@ -76,7 +76,7 @@ class AlgorithmPage extends Component {
     onNext = (id) => {
         const algorithm = this.props.algorithms.find(a => a.id === id);
 
-        if (algorithm.currentState === 3 && algorithm.currentCrossoverElement !== undefined && algorithm.currentCrossoverElement < algorithm.metaData.newElements.length - 1) {
+        if (algorithm.currentState === 4 && algorithm.currentCrossoverElement !== undefined && algorithm.currentCrossoverElement < algorithm.metaData.newElements.length - 1) {
             this.props.setCrossoverElement(id, algorithm.currentCrossoverElement + 1);
         }
         else {

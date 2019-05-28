@@ -2,6 +2,7 @@
 {
     public enum AlgorithmState
     {
+        NotStarted,
         CalculatingFitnessValue,
         Selection,
         Crossover,
