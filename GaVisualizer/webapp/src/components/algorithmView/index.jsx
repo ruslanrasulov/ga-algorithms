@@ -171,13 +171,13 @@ class AlgorithmView extends Component {
             case 1: {
                 return 'Двухточечное';
             }
-            case 3: {
+            case 2: {
                 return 'Многоточечное';
             }
-            case 4: {
+            case 3: {
                 return 'Равномерное';
             }
-            case 5: {
+            case 4: {
                 return 'Оператор инверсии';
             }
         }
