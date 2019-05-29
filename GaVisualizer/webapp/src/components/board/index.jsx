@@ -40,7 +40,7 @@ class Board extends Component {
             case 4: {
                 this.crossoverElements();
             } break;
-            case 5: {
+            case 1: {
                 this.mutateElements();
             } break;
             default: {
@@ -269,14 +269,24 @@ class Board extends Component {
         requestAnimationFrame(() => this.fadeElement(ctx, i, j, cell, cellWidth, cellHeight, step + 1));
     }
 
-    drawCellValues = (ctx, cell, x, y, gene = null) => {
+    drawCellValues = (ctx, cell, x, y, gene = null, clear = false) => {
         let textFillStyle;
 
         if (cell.elementType === 0) { //bacterium
-            textFillStyle = '#000000';
+            if (clear) {
+                textFillStyle = '#00ff00';
+            }
+            else {
+                textFillStyle = '#000000';
+            }
         }
         else if (cell.elementType === 1){ //virus
-            textFillStyle = '#ffffff';
+            if (clear) {
+                textFillStyle = '#ff0000';
+            }
+            else {
+                textFillStyle = '#ffffff';
+            }
         }
 
         if (!this.props.editMode) {
@@ -392,6 +402,59 @@ class Board extends Component {
         }
 
         requestAnimationFrame(() => this.crossoverElement(ctx, elements, cellWidth, cellHeight));
+    }
+
+    mutateElements = () => {
+        const canvas = this.board.current;
+        const ctx = canvas.getContext('2d');
+
+        const { algorithm } = this.props;
+        const { generations, metaData: { mutatedGenes } } = algorithm;
+        const cells = generations[generations.length - 1].cells;
+
+        if (!cells) return;
+
+        const flattenCells = flatten(cells);
+        const { cellWidth, cellHeight } = this.getBoardSize();
+
+        ctx.save();
+
+        for (let i = 0; i < mutatedGenes.length; i++) {
+            const element = flattenCells.find(c => c.id === mutatedGenes[i].elementId);
+            const { x, y } = this.calculatePosition(element.x, element.y, cellWidth, cellHeight);
+
+            this.mutateElement(ctx, { cell: element, x, y }, mutatedGenes[i], cellWidth, cellHeight);
+        }
+
+        ctx.restore();
+    }
+
+    mutateElement = (ctx, element, newGene, cellWidth, cellHeight, step = 0) => {
+        const { cell, x, y } = element;
+        ctx.globalAlpha = 0.5 + cell.fitnessValue * 0.08;
+
+        if (step < 100) {
+            this.drawCellValues(ctx, cell, x, y, newGene.geneType + 1, true);
+            ctx.globalAlpha = 1 - step * 0.01;
+            this.drawCellValues(ctx, cell, x, y, newGene.geneType + 1);
+        }
+        else if (step === 100) {
+            this.drawCellValues(ctx, cell, x, y, newGene.geneType + 1, true);
+        }
+        else if (step > 100 && step < 200) {
+            const updatedCell = newGene.geneType === 0
+                ? { ...cell, productivity: newGene }
+                : { ...cell, socialValue: newGene };
+            console.log(updatedCell, newGene);
+            this.drawCellValues(ctx, updatedCell, x, y, newGene.geneType + 1, true);
+            ctx.globalAlpha = step / 2 * 0.01;
+            this.drawCellValues(ctx, updatedCell, x, y, newGene.geneType + 1);
+        }
+        else {
+            return;
+        }
+
+        requestAnimationFrame(() => this.mutateElement(ctx, element, newGene, cellWidth, cellHeight, step + 1));
     }
 
     calculateNextPosition = (x1, y1, x2, y2, step) => {

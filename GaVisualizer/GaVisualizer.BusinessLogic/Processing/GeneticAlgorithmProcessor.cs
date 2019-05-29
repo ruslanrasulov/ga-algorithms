@@ -301,7 +301,8 @@ namespace GaVisualizer.BusinessLogic.Processing
                         {
                             Value = firstParent.SocialValue.Value,
                             ParentId = firstParent.Id,
-                            GeneType = GeneType.SocialValue
+                            GeneType = GeneType.SocialValue,
+                            ElementId = child.Id
                         };
 
                         if (secondParent != null)
@@ -310,7 +311,8 @@ namespace GaVisualizer.BusinessLogic.Processing
                             {
                                 Value = secondParent.Productivity.Value,
                                 ParentId = secondParent.Id,
-                                GeneType = GeneType.Productivity
+                                GeneType = GeneType.Productivity,
+                                ElementId = child.Id
                             };
                         }
                         else
@@ -319,7 +321,8 @@ namespace GaVisualizer.BusinessLogic.Processing
                             {
                                 Value = firstParent.Productivity.Value,
                                 ParentId = firstParent.Id,
-                                GeneType = GeneType.Productivity
+                                GeneType = GeneType.Productivity,
+                                ElementId = child.Id
                             };
                         }
 
@@ -404,9 +407,9 @@ namespace GaVisualizer.BusinessLogic.Processing
             return count;
         }
 
-        public IEnumerable<(Guid id, Gene<double> gene)> ProcessMutation(IPopulationElement[,] cells)
+        public IEnumerable<Gene<double>> ProcessMutation(IPopulationElement[,] cells)
         {
-            var mutatedGenes = new List<(Guid id, Gene<double> gene)>();
+            var mutatedGenes = new List<Gene<double>>();
 
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -416,6 +419,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                     {
                         var mutatedGene = new Gene<double>
                         {
+                            ElementId = cells[i, j].Id,
                             IsMutated = true,
                             Value = Random.NextDouble()
                         };
@@ -423,13 +427,15 @@ namespace GaVisualizer.BusinessLogic.Processing
                         if (Random.Next(1) == 1)
                         {
                             cells[i, j].Productivity = mutatedGene;
+                            mutatedGene.GeneType = GeneType.Productivity;
                         }
                         else
                         {
                             cells[i, j].SocialValue = mutatedGene;
+                            mutatedGene.GeneType = GeneType.SocialValue;
                         }
 
-                        mutatedGenes.Add((cells[i, j].Id, mutatedGene));
+                        mutatedGenes.Add(mutatedGene);
                     }
                 }
             }
