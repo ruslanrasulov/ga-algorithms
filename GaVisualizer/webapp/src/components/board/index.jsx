@@ -445,7 +445,7 @@ class Board extends Component {
             const updatedCell = newGene.geneType === 0
                 ? { ...cell, productivity: newGene }
                 : { ...cell, socialValue: newGene };
-            console.log(updatedCell, newGene);
+
             this.drawCellValues(ctx, updatedCell, x, y, newGene.geneType + 1, true);
             ctx.globalAlpha = step / 2 * 0.01;
             this.drawCellValues(ctx, updatedCell, x, y, newGene.geneType + 1);

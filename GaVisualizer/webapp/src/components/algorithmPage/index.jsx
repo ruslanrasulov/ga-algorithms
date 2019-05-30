@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 
 import AlgorithmView from '../algorithmView';
 import AlgorithmEditor from '../algorithmEditor';
+import HelpWindow from '../helpWindow';
 
 import { getAlgorithms as selectAlgorithms, getNewAlgorithm } from '../../selectors/algorithmsSelectors';
 import { 
@@ -30,10 +31,6 @@ class AlgorithmPage extends Component {
 
     componentDidMount = () => {
         this.props.getAlgorithms();
-    }
-
-    showModal = () => {
-        this.setState({ showModal: true });
     }
 
     onAddAlgorithm = () => {
@@ -106,12 +103,33 @@ class AlgorithmPage extends Component {
         return elements;
     }
 
+    showHelp = () => {
+        this.setState({ showHelp: true });
+    }
+
+    closeHelp = () => {
+        this.setState({ showHelp: false });
+    }
+
+    showModal = () => {
+        this.setState({ showModal: true });
+    }
+
+    closeModal = () => {
+        this.setState({ showModal: false });
+    }
+
     render = () => (
         <div>
+            <div className='btn btn-help' onClick={this.showHelp}>Help</div>
             <div className='btn btn-success btn-add-algorithm' onClick={this.showModal}>Добавить новый алгоритм</div>
             {this.renderAlgorithms()}
             {this.state.showModal
-                ? <AlgorithmEditor onClick={this.onAddAlgorithm} onClose={() => this.setState({ showModal: false })}/>
+                ? <AlgorithmEditor onClick={this.onAddAlgorithm} onClose={this.closeModal}/>
+                : null
+            }
+            {this.state.showHelp
+                ? <HelpWindow onClose={this.closeHelp} />
                 : null
             }
         </div>
