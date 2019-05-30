@@ -121,10 +121,10 @@ namespace GaVisualizer.BusinessLogic.Processing
                         algorithm.MetaData = new MetaInformation { NewElements = newElements };
                         break;
                     case AlgorithmState.Mutation:
-                        var mutatedGenes = ProcessMutation(lastGeneration.Cells);
+                        var oldGenes = ProcessMutation(lastGeneration.Cells);
 
                         algorithm.CurrentState = AlgorithmState.CalculatingFitnessValue;
-                        algorithm.MetaData = new MetaInformation { MutatedGenes = mutatedGenes };
+                        algorithm.MetaData = new MetaInformation { OldGenes = oldGenes };
                         break;
                 }
 
@@ -205,9 +205,10 @@ namespace GaVisualizer.BusinessLogic.Processing
             {
                 for (int j = 0; j < cells.GetLength(1); j++)
                 {
-                    cells[i, j].Id = Guid.NewGuid();
-                    cells[i, j].SocialValue = new Gene<double> { Value = Random.NextDouble(), GeneType = GeneType.SocialValue };
-                    cells[i, j].Productivity = new Gene<double> { Value = Random.NextDouble(), GeneType = GeneType.Productivity };
+                    var id = Guid.NewGuid();
+                    cells[i, j].Id = id;
+                    cells[i, j].SocialValue = new Gene<double> { ElementId = id, Value = Random.NextDouble(), GeneType = GeneType.SocialValue };
+                    cells[i, j].Productivity = new Gene<double> { ElementId = id, Value = Random.NextDouble(), GeneType = GeneType.Productivity };
                     cells[i, j].Age = 0;
                     cells[i, j].X = i;
                     cells[i, j].Y = j;
@@ -409,7 +410,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
         public IEnumerable<Gene<double>> ProcessMutation(IPopulationElement[,] cells)
         {
-            var mutatedGenes = new List<Gene<double>>();
+            var oldGenes = new List<Gene<double>>();
 
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -424,23 +425,27 @@ namespace GaVisualizer.BusinessLogic.Processing
                             Value = Random.NextDouble()
                         };
 
+                        Gene<double> oldGene;
+
                         if (Random.Next(1) == 1)
                         {
+                            oldGene = cells[i, j].Productivity;
                             cells[i, j].Productivity = mutatedGene;
                             mutatedGene.GeneType = GeneType.Productivity;
                         }
                         else
                         {
+                            oldGene = cells[i, j].SocialValue;
                             cells[i, j].SocialValue = mutatedGene;
                             mutatedGene.GeneType = GeneType.SocialValue;
                         }
 
-                        mutatedGenes.Add(mutatedGene);
+                        oldGenes.Add(oldGene);
                     }
                 }
             }
 
-            return mutatedGenes;
+            return oldGenes;
         }
 
         private bool CheckForStop(Generation generation)

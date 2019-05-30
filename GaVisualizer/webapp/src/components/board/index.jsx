@@ -409,7 +409,7 @@ class Board extends Component {
         const ctx = canvas.getContext('2d');
 
         const { algorithm } = this.props;
-        const { generations, metaData: { mutatedGenes } } = algorithm;
+        const { generations, metaData: { oldGenes } } = algorithm;
         const cells = generations[generations.length - 1].cells;
 
         if (!cells) return;
@@ -419,42 +419,45 @@ class Board extends Component {
 
         ctx.save();
 
-        for (let i = 0; i < mutatedGenes.length; i++) {
-            const element = flattenCells.find(c => c.id === mutatedGenes[i].elementId);
+        for (let i = 0; i < oldGenes.length; i++) {
+            const element = flattenCells.find(c => c.id === oldGenes[i].elementId);
             const { x, y } = this.calculatePosition(element.x, element.y, cellWidth, cellHeight);
 
-            this.mutateElement(ctx, { cell: element, x, y }, mutatedGenes[i], cellWidth, cellHeight);
+            this.mutateElement(ctx, { cell: element, x, y }, oldGenes[i], cellWidth, cellHeight);
         }
 
         ctx.restore();
     }
 
-    mutateElement = (ctx, element, newGene, cellWidth, cellHeight, step = 0) => {
+    mutateElement = (ctx, element, oldGene, cellWidth, cellHeight, step = 0) => {
         const { cell, x, y } = element;
         ctx.globalAlpha = 0.5 + cell.fitnessValue * 0.08;
 
         if (step < 100) {
-            this.drawCellValues(ctx, cell, x, y, newGene.geneType + 1, true);
+            const oldGeneCell = oldGene.geneType === 1
+                ? { ...cell, productivity: oldGene }
+                : { ...cell, socialValue: oldGene };
+            this.drawCellValues(ctx, oldGeneCell, x, y, oldGene.geneType + 1, true);
             ctx.globalAlpha = 1 - step * 0.01;
-            this.drawCellValues(ctx, cell, x, y, newGene.geneType + 1);
+            this.drawCellValues(ctx, oldGeneCell, x, y, oldGene.geneType + 1);
         }
         else if (step === 100) {
-            this.drawCellValues(ctx, cell, x, y, newGene.geneType + 1, true);
+            const oldGeneCell = oldGene.geneType === 1
+                ? { ...cell, productivity: oldGene }
+                : { ...cell, socialValue: oldGene };
+
+            this.drawCellValues(ctx, oldGeneCell, x, y, oldGene.geneType + 1, true);
         }
         else if (step > 100 && step < 200) {
-            const updatedCell = newGene.geneType === 0
-                ? { ...cell, productivity: newGene }
-                : { ...cell, socialValue: newGene };
-
-            this.drawCellValues(ctx, updatedCell, x, y, newGene.geneType + 1, true);
+            this.drawCellValues(ctx, cell, x, y, oldGene.geneType + 1, true);
             ctx.globalAlpha = step / 2 * 0.01;
-            this.drawCellValues(ctx, updatedCell, x, y, newGene.geneType + 1);
+            this.drawCellValues(ctx, cell, x, y, oldGene.geneType + 1);
         }
         else {
             return;
         }
 
-        requestAnimationFrame(() => this.mutateElement(ctx, element, newGene, cellWidth, cellHeight, step + 1));
+        requestAnimationFrame(() => this.mutateElement(ctx, element, oldGene, cellWidth, cellHeight, step + 1));
     }
 
     calculateNextPosition = (x1, y1, x2, y2, step) => {
