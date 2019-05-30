@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 
-// import AlgorithmChart from '../algorithmChart';
+import AlgorithmChart from '../algorithmChart';
 import Board from '../board';
 //import ElementInfo from '../elementInfo';
 
@@ -220,7 +220,7 @@ class AlgorithmView extends Component {
                 </div>
 
                 <div className='alg-container__chart'>
-                    {/* <AlgorithmChart algorithm={algorithm} /> */}
+                    <AlgorithmChart algorithm={algorithm} />
                 </div>
 
                 <div className='alg-container__panel'>

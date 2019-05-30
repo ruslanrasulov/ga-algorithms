@@ -18,23 +18,31 @@ const plotOptions = {
     }
 };
 
-const AlgorithmChart = props => 
-    <HighchartsChart plotOptions={plotOptions}>
-        <Chart width={600} height={350} />
-        <Title>Статистика бактерий и вирусов</Title>
+const AlgorithmChart = props => {
+        const beforeLast = props.algorithm.generations.length - 1;
+        const cells = props.algorithm.generations.slice(0, beforeLast).map(g => flatten(g.cells));
+        const bacteriumPerGenerations = cells.map(cell => cell.filter(c => c.elementType === 0).length);
+        const virusesPerGeneratinos = cells.map(cell => cell.filter(c => c.elementType === 1).length);
 
-        <Legend layout='vertical' align='right' verticalAlign='middle' />
+        return (
+            <HighchartsChart plotOptions={plotOptions}>
+                <Chart width={600} height={350} />
+                <Title>Статистика бактерий и вирусов</Title>
 
-        <XAxis>
-            <XAxis.Title>Поколение</XAxis.Title>
-        </XAxis>
+                <Legend layout='vertical' align='right' verticalAlign='middle' />
 
-        <YAxis>
-            <YAxis.Title>Количество элементов</YAxis.Title>
-            <LineSeries name='Бактерии' data={props.algorithm.generations.map(g => flatten(g.cells).filter(c => c.elementType === 0).length)} />
-            <LineSeries name='Вирусы' data={props.algorithm.generations.map(g => flatten(g.cells).filter(c => c.elementType === 1).length)} />
-        </YAxis>
+                <XAxis>
+                    <XAxis.Title>Поколение</XAxis.Title>
+                </XAxis>
 
-    </HighchartsChart>
+                <YAxis>
+                    <YAxis.Title>Количество элементов</YAxis.Title>
+                    <LineSeries name='Бактерии' data={bacteriumPerGenerations} />
+                    <LineSeries name='Вирусы' data={virusesPerGeneratinos} />
+                </YAxis>
+
+            </HighchartsChart>
+        )
+    }
 
 export default withHighcharts(AlgorithmChart, Highcharts);
