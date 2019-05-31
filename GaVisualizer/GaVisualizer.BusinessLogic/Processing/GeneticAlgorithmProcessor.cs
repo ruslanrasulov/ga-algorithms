@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using GaVisualizer.Domain.Algorithm;
+using GaVisualizer.Domain.Evolution;
 using GaVisualizer.Domain.Population;
 
 namespace GaVisualizer.BusinessLogic.Processing
@@ -10,6 +11,7 @@ namespace GaVisualizer.BusinessLogic.Processing
     internal class GeneticAlgorithmProcessor : IGeneticAlgorithmProcessor
     {
         private const double MutationChance = 0.9;
+        private const int TournamentGroupSize = 5;
 
         private static readonly Random Random = new Random();
         private readonly IDictionary<Guid, GeneticAlgorithm> algorithms;
@@ -67,7 +69,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                 {
                     var newGeneration = algorithm.Generations.Last().Clone() as Generation;
 
-                    ProcessAlgorithm(newGeneration.Cells);
+                    ProcessAlgorithm(newGeneration.Cells, algorithm.SelectionType, algorithm.CrossoverType);
 
                     if (CheckForStop(newGeneration))
                     {
@@ -107,7 +109,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                         algorithm.Generations.Add(newGeneration);
                         break;
                     case AlgorithmState.Selection:
-                        var selectedElements = KillNotSatisfiedElements(lastGeneration.Cells);
+                        var selectedElements = SelectElements(lastGeneration.Cells, algorithm.SelectionType);
                         IncreaseAge(lastGeneration.Cells);
 
                         algorithm.CurrentState = AlgorithmState.Crossover;
@@ -115,7 +117,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
                         break;
                     case AlgorithmState.Crossover:
-                        var newElements = MateElements(lastGeneration.Cells);
+                        var newElements = MateElements(lastGeneration.Cells, algorithm.CrossoverType);
 
                         algorithm.CurrentState = AlgorithmState.Mutation;
                         algorithm.MetaData = new MetaInformation { NewElements = newElements };
@@ -216,17 +218,31 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        private void ProcessAlgorithm(IPopulationElement[,] cells)
+        private void ProcessAlgorithm(IPopulationElement[,] cells, SelectionType selectionType, CrossoverType crossoverType)
         {
             CalculateFitnessValue(cells);
-            KillNotSatisfiedElements(cells);
+            SelectElements(cells, selectionType);
             IncreaseAge(cells);
-            MateElements(cells);
+            MateElements(cells, crossoverType);
             ProcessMutation(cells);
         }
 
-        //todo: please, find more adequate name
-        private IEnumerable<(int x, int y, IPopulationElement)> KillNotSatisfiedElements(IPopulationElement[,] cells)
+        private IEnumerable<(int x, int y, IPopulationElement)> SelectElements(IPopulationElement[,] cells, SelectionType selectionType)
+        {
+            switch (selectionType)
+            {
+                case SelectionType.Proportional:
+                    return SelectElementsProportional(cells);
+                case SelectionType.Truncation:
+                    return SelectElementsByTruncation(cells);
+                case SelectionType.Tournament:
+                    return SelectElementsByTournament(cells);
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(SelectionType), $"{selectionType} selection type don't supported");
+            }
+        }
+
+        private IEnumerable<(int x, int y, IPopulationElement)> SelectElementsByTruncation(IPopulationElement[,] cells)
         {
             var orderedElements = cells.Cast<IPopulationElement>().OrderBy(e => e.FitnessValue);
             var survivalsCount = cells.GetLength(0) * cells.GetLength(1) / 2;
@@ -257,6 +273,48 @@ namespace GaVisualizer.BusinessLogic.Processing
             return result;
         }
 
+        private IEnumerable<(int x, int y, IPopulationElement)> SelectElementsByTournament(IPopulationElement[,] cells)
+        {
+            var flattenCells = cells.Cast<IPopulationElement>().ToList();
+            var result = new List<IPopulationElement>();
+            var survivalsCount = TournamentGroupSize / 2;
+
+            for (int i = 0; i < flattenCells.Count / TournamentGroupSize; i++)
+            {
+                var notSurvivedCellsInGroup = flattenCells
+                    .Skip(i * TournamentGroupSize)
+                    .Take(TournamentGroupSize)
+                    .OrderBy(e => e.FitnessValue)
+                    .Take(survivalsCount);
+    
+                result.AddRange(notSurvivedCellsInGroup);
+            }
+
+            result.ForEach(c => cells[c.X, c.Y] = null);
+
+            return result.Select(c => (c.X, c.Y, c));
+        }
+
+        private IEnumerable<(int x, int y, IPopulationElement)> SelectElementsProportional(IPopulationElement[,] cells)
+        {
+            var flattenCells = cells.Cast<IPopulationElement>().ToList();
+            var result = new List<IPopulationElement>();
+            var avgFitnessValue = flattenCells.Sum(c => c.FitnessValue) / flattenCells.Count;
+
+            foreach (var cell in flattenCells)
+            {
+                var fitnessValueRatio = cell.FitnessValue / avgFitnessValue;
+
+                if (fitnessValueRatio < 1)
+                {
+                    cells[cell.X, cell.Y] = null;
+                    result.Add(cell);
+                }
+            }
+
+            return result.Select(c => (c.X, c.Y, c));
+        }
+
         private void IncreaseAge(IPopulationElement[,] cells)
         {
             for (int i = 0; i < cells.GetLength(0); i++)
@@ -271,7 +329,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             }
         }
 
-        private IEnumerable<IPopulationElement> MateElements(IPopulationElement[,] cells)
+        private IEnumerable<IPopulationElement> MateElements(IPopulationElement[,] cells, CrossoverType crossoverType)
         {
             var newCells = new List<(int x, int y, IPopulationElement element)>();
 
@@ -298,34 +356,10 @@ namespace GaVisualizer.BusinessLogic.Processing
                         child.X = i;
                         child.Y = j;
 
-                        child.SocialValue = new Gene<double>
-                        {
-                            Value = firstParent.SocialValue.Value,
-                            ParentId = firstParent.Id,
-                            GeneType = GeneType.SocialValue,
-                            ElementId = child.Id
-                        };
+                        var (productivity, socialValue) = SelectGenes(firstParent, secondParent, child, crossoverType);
 
-                        if (secondParent != null)
-                        {
-                            child.Productivity = new Gene<double>
-                            {
-                                Value = secondParent.Productivity.Value,
-                                ParentId = secondParent.Id,
-                                GeneType = GeneType.Productivity,
-                                ElementId = child.Id
-                            };
-                        }
-                        else
-                        {
-                            child.Productivity = new Gene<double>
-                            {
-                                Value = firstParent.Productivity.Value,
-                                ParentId = firstParent.Id,
-                                GeneType = GeneType.Productivity,
-                                ElementId = child.Id
-                            };
-                        }
+                        child.Productivity = productivity;
+                        child.SocialValue = socialValue;
 
                         newCells.Add((i, j, child));
                     }
@@ -334,6 +368,46 @@ namespace GaVisualizer.BusinessLogic.Processing
 
             newCells.ForEach(c => cells[c.x, c.y] = c.element);
             return newCells.Select(c => c.element);
+        }
+
+        private (Gene<double> productivity, Gene<double> socialValue) SelectGenes(
+            IPopulationElement firstParent,
+            IPopulationElement secondParent,
+            IPopulationElement childElement,
+            CrossoverType crossoverType)
+        {
+            var productivity = new Gene<double>
+            {
+                GeneType = GeneType.Productivity,
+                ElementId = childElement.Id
+            };
+            var socialValue = new Gene<double>
+            {
+                GeneType = GeneType.SocialValue,
+                ElementId = childElement.Id
+            };
+
+            switch (crossoverType)
+            {
+                case CrossoverType.Point:
+                case CrossoverType.MultiplePoint:
+                case CrossoverType.Flat:
+                    productivity.ParentId = firstParent.Id;
+                    productivity.Value = firstParent.Productivity.Value;
+                    socialValue.ParentId = secondParent.Id;
+                    socialValue.Value = secondParent.SocialValue.Value;
+                    break;
+                case CrossoverType.DoublePoint:
+                    productivity.ParentId = secondParent.Id;
+                    productivity.Value = secondParent.Productivity.Value;
+                    socialValue.ParentId = firstParent.Id;
+                    socialValue.Value = firstParent.SocialValue.Value;
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(crossoverType), $"{crossoverType} crossover type don't supported");
+            }
+
+            return (productivity, socialValue);
         }
 
         private IReadOnlyList<(IPopulationElement element, int x, int y)> FindParents(IPopulationElement[,] cells, int indexX, int indexY)
