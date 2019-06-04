@@ -121,7 +121,7 @@ class AlgorithmPage extends Component {
 
     render = () => (
         <div>
-            <div className='btn btn-help' onClick={this.showHelp}>Help</div>
+            <div className='btn btn-help' onClick={this.showHelp}>Справка</div>
             <div className='btn btn-success btn-add-algorithm' onClick={this.showModal}>Добавить новый алгоритм</div>
             {this.renderAlgorithms()}
             {this.state.showModal

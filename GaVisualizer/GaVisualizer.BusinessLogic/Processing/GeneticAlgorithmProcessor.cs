@@ -451,7 +451,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                     var elementType = currentElement.GetType();
                     var nearSimilarElementsCount = GetNearSimilarElementsCount(cells, i, j, elementType, elementsRange);
 
-                    currentElement.FitnessValue = nearSimilarElementsCount * elementMatchRate * currentElement.SocialValue.Value;
+                    currentElement.FitnessValue = nearSimilarElementsCount * elementMatchRate * currentElement.SocialValue.Value * currentElement.Productivity.Value;
                 }
             }
         }

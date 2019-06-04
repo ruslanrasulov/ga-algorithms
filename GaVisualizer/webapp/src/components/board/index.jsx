@@ -27,9 +27,6 @@ class Board extends Component {
 
             canvas.addEventListener('click', this.setupBoard);
         }
-        else {
-            canvas.addEventListener('dblclick', this.showTooltip);
-        }
     }
 
     componentDidUpdate() {
@@ -253,7 +250,7 @@ class Board extends Component {
     fadeElement(ctx, i, j, cell, cellWidth, cellHeight, step = 0) {
         const { x, y } = this.calculatePosition(i, j, cellWidth, cellHeight);
 
-        const currentAlpha = 0.5 + cell.fitnessValue * 0.08 - step * 0.01;
+        const currentAlpha = 0.5 + cell.fitnessValue * 0.2 - step * 0.01;
         ctx.globalAlpha = currentAlpha < 0 ? 0 : currentAlpha;
         ctx.fillStyle = '#000000';
         ctx.clearRect(x - 1, y - 1, cellWidth + 2, cellHeight + 2);
@@ -296,17 +293,17 @@ class Board extends Component {
             ctx.fillStyle = textFillStyle;
             
             if (gene === null) {
-                const age = `Age: ${cell.age}`;
+                const age = `В: ${cell.age}`;
                 ctx.fillText(age, textX, textY);
             }
 
             if (gene === null || gene === 2) {
-                const productivity = `P: ${cell.productivity.value.toFixed(3)}`;
+                const productivity = `П: ${cell.productivity.value.toFixed(3)}`;
                 ctx.fillText(productivity, textX, textY + 15);
             }
 
             if (gene === null || gene === 1) {
-                const socialValue = `S: ${cell.socialValue.value.toFixed(3)}`;
+                const socialValue = `С: ${cell.socialValue.value.toFixed(3)}`;
                 ctx.fillText(socialValue, textX, textY + 30);
             }
         }

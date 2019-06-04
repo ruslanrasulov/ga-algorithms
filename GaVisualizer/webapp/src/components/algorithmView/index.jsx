@@ -205,7 +205,7 @@ class AlgorithmView extends Component {
 
     render = () => {
         const { algorithm } = this.props;
-        const { updateIntervalValue } = this.state;
+        // const { updateIntervalValue } = this.state;
 
         return (
             <div className='alg-container'>
@@ -224,15 +224,15 @@ class AlgorithmView extends Component {
                 </div>
 
                 <div className='alg-container__panel'>
-                    <button className='btn' onClick={this.updateState}>Next {algorithm.currentState}</button>
-                    {algorithm.isStarted
+                    <button className='btn' onClick={this.updateState}>Следующий шаг</button>
+                    {/* {algorithm.isStarted
                         ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Стоп</div>
                         : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Старт</div> }
 
                     {algorithm.isPaused 
                         ? <div className='btn btn-info alg-container__panel__panel-element' onClick={this.onResume}>Возобновить</div>
-                        : <div className='btn btn-warning alg-container__panel__panel-element' onClick={this.onPause}>Пауза</div> }
-
+                        : <div className='btn btn-warning alg-container__panel__panel-element' onClick={this.onPause}>Пауза</div> } */}
+{/* 
                     <input 
                         type='range'
                         min='500'
@@ -241,7 +241,7 @@ class AlgorithmView extends Component {
                         defaultValue={updateIntervalValue}
                         ref={this.intervalRange}
                         onMouseUp={this.updateInterval} />
-                    <label>Интервал обновления ({updateIntervalValue} мс)</label>
+                    <label>Интервал обновления ({updateIntervalValue} мс)</label> */}
 
                     <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onRemove}>Удалить</div>
                 </div>
