@@ -70,14 +70,14 @@ class AlgorithmPage extends Component {
         this.props.setGenerations(id, leftGenerationIndex, rightGenerationIndex);
     }
 
-    onNext = (id) => {
+    onNext = (id, useAnimation) => {
         const algorithm = this.props.algorithms.find(a => a.id === id);
 
-        if (algorithm.currentState === 4 && algorithm.currentCrossoverElement !== undefined && algorithm.currentCrossoverElement < algorithm.metaData.newElements.length - 1) {
+        if (useAnimation && algorithm.currentState === 4 && algorithm.currentCrossoverElement !== undefined && algorithm.currentCrossoverElement < algorithm.metaData.newElements.length - 1) {
             this.props.setCrossoverElement(id, algorithm.currentCrossoverElement + 1);
         }
         else {
-            this.props.getCurrentState(id);
+            this.props.getCurrentState(id, useAnimation);
         }
     }
 
@@ -143,7 +143,7 @@ const mapStateToProps = state => ({
 
 const mapDispatchToProps = dispatch => ({
     createNewAlgorithm: (newAlgorithm) => dispatch(createNewAlgorithm(newAlgorithm)),
-    getCurrentState: (id, callback) => dispatch(getCurrentState(id, callback)),
+    getCurrentState: (id, useAnimation, callback) => dispatch(getCurrentState(id, useAnimation, callback)),
     startAlgorithm: (id, callback) => dispatch(startAlgorithm(id, callback)),
     pauseAlgorithm: id => dispatch(pauseAlgorithm(id)),
     resumeAlgorithm: (id, callback) => dispatch(resumeAlgorithm(id, callback)),

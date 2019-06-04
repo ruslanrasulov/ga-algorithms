@@ -27,11 +27,11 @@ export const getCurrentStateComplete = state => ({
     payload: state
 });
 
-export const getCurrentState = (id, callback) => dispatch => {
+export const getCurrentState = (id, useAnimation, callback) => dispatch => {
     dispatch(getCurrentStateStart());
 
     algorithmsApi.getNextState(id).then(result => {
-        dispatch(getCurrentStateComplete(result.data));
+        dispatch(getCurrentStateComplete({ ...result.data, useAnimation }));
         if (callback) {
             callback();
         }

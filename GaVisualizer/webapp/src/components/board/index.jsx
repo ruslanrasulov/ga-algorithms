@@ -30,6 +30,10 @@ class Board extends Component {
     }
 
     componentDidUpdate() {
+        if (!this.props.algorithm.useAnimation) {
+            this.renderCanvas();
+            return;
+        }
         switch (this.props.algorithm.currentState) {
             case 3: {
                 this.fadeElements();

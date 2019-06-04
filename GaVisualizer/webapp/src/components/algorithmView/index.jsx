@@ -146,7 +146,11 @@ class AlgorithmView extends Component {
     }
 
     updateState = () => {
-        this.props.onNext(this.props.algorithm.id);
+        this.props.onNext(this.props.algorithm.id, true);
+    }
+
+    updateStateImmediately = () => {
+        this.props.onNext(this.props.algorithm.id, false);
     }
 
     getSelectionType = () => {
@@ -225,6 +229,7 @@ class AlgorithmView extends Component {
 
                 <div className='alg-container__panel'>
                     <div className='btn alg-container__panel__panel-element' onClick={this.updateState}>Следующий шаг</div>
+                    <div className='btn alg-container__panel__panel-element' onClick={this.updateStateImmediately}>Следующий шаг (без анимации)</div>
                     {/* {algorithm.isStarted
                         ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Стоп</div>
                         : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Старт</div> }
