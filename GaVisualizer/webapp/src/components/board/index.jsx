@@ -298,13 +298,13 @@ class Board extends Component {
             }
 
             if (gene === null || gene === 2) {
-                const productivity = `П: ${cell.productivity.value.toFixed(3)}`;
-                ctx.fillText(productivity, textX, textY + 15);
+                const socialValue = `П: ${cell.socialValue.value.toFixed(3)}`;
+                ctx.fillText(socialValue, textX, textY + 15);
             }
 
             if (gene === null || gene === 1) {
-                const socialValue = `С: ${cell.socialValue.value.toFixed(3)}`;
-                ctx.fillText(socialValue, textX, textY + 30);
+                const productivity = `С: ${cell.productivity.value.toFixed(3)}`;
+                ctx.fillText(productivity, textX, textY + 30);
             }
         }
     }
@@ -343,7 +343,7 @@ class Board extends Component {
         const flattenCells = flatten(cells);
 
         const firstParent = flattenCells.find(c => c.id === newElement.firstParentId);
-        const secondParent = flattenCells.find(c => c.id === newElement.secondParentId)
+        const secondParent = flattenCells.find(c => c.id === newElement.secondParentId);
 
         const elements = [];
         elements.push({dest: { i: newElement.x, j: newElement.y }, firstParent: { i: firstParent.x, j: firstParent.y }, secondParent: { i: secondParent.x, j: secondParent.y }});
@@ -376,7 +376,7 @@ class Board extends Component {
 
     crossoverElement = (ctx, elements, cellWidth, cellHeight) => {
         const step = 1;
-
+        
         this.renderCanvas();
 
         for (let i = 0; i < elements.length; i++) {
@@ -432,16 +432,17 @@ class Board extends Component {
 
         if (step < 100) {
             const oldGeneCell = oldGene.geneType === 1
-                ? { ...cell, productivity: oldGene }
-                : { ...cell, socialValue: oldGene };
+                ? { ...cell, socialValue: oldGene }
+                : { ...cell, productivity: oldGene };
+
             this.drawCellValues(ctx, oldGeneCell, x, y, oldGene.geneType + 1, true);
             ctx.globalAlpha = 1 - step * 0.01;
             this.drawCellValues(ctx, oldGeneCell, x, y, oldGene.geneType + 1);
         }
         else if (step === 100) {
             const oldGeneCell = oldGene.geneType === 1
-                ? { ...cell, productivity: oldGene }
-                : { ...cell, socialValue: oldGene };
+                ? { ...cell, socialValue: oldGene }
+                : { ...cell, productivity: oldGene };
 
             this.drawCellValues(ctx, oldGeneCell, x, y, oldGene.geneType + 1, true);
         }

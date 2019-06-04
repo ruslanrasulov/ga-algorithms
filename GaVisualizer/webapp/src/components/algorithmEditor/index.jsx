@@ -73,7 +73,7 @@ class AlgorithmEdtor extends Component {
                             <div><input type='radio' name='crossoverType' value='1' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === '1'}/> Двухточечное</div>
                             <div><input type='radio' name='crossoverType' value='2' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === '2'}/> Многоточечное</div>
                             <div><input type='radio' name='crossoverType' value='3' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === '3'}/> Равномерное</div>
-                            <div><input type='radio' name='crossoverType' value='4' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === '4'}/> Оператор инверсии</div>
+                            {/* <div><input type='radio' name='crossoverType' value='4' onChange={this.onRadioBtnChange} checked={this.props.algorithm.crossoverType === '4'}/> Оператор инверсии</div> */}
                         </div>
                     </div>
                 </div>

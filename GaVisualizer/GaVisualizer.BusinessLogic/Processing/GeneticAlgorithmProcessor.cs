@@ -347,7 +347,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                         child.Id = Guid.NewGuid();
 
                         var firstParent = parents[0].element;
-                        var secondParent = parents.Count > 1 ? parents[1].element : null;
+                        var secondParent = parents.Count > 1 ? parents[1].element : parents[0].element;
 
                         child.FirstParentId = firstParent.Id;
                         child.SecondParentId = secondParent?.Id;
@@ -504,14 +504,14 @@ namespace GaVisualizer.BusinessLogic.Processing
                         if (Random.Next(1) == 1)
                         {
                             oldGene = cells[i, j].Productivity;
-                            cells[i, j].Productivity = mutatedGene;
                             mutatedGene.GeneType = GeneType.Productivity;
+                            cells[i, j].Productivity = mutatedGene;
                         }
                         else
                         {
                             oldGene = cells[i, j].SocialValue;
-                            cells[i, j].SocialValue = mutatedGene;
                             mutatedGene.GeneType = GeneType.SocialValue;
+                            cells[i, j].SocialValue = mutatedGene;
                         }
 
                         oldGenes.Add(oldGene);

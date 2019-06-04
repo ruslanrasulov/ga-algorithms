@@ -224,7 +224,7 @@ class AlgorithmView extends Component {
                 </div>
 
                 <div className='alg-container__panel'>
-                    <button className='btn' onClick={this.updateState}>Следующий шаг</button>
+                    <div className='btn alg-container__panel__panel-element' onClick={this.updateState}>Следующий шаг</div>
                     {/* {algorithm.isStarted
                         ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Стоп</div>
                         : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Старт</div> }

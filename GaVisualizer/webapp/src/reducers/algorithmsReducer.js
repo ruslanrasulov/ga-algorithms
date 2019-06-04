@@ -22,11 +22,7 @@ const reducer = (state = [], action) => {
                 return state;
             }
 
-            if (algorithm.currentState === 2) {
-                return updateAlgorithms(state, { ...algorithm, currentCrossoverElement: 0 });
-            }
-            
-            return updateAlgorithms(state, algorithm);
+            return updateAlgorithms(state, { ...algorithm, currentCrossoverElement: 0 });
         }
 
         case actionTypes.FETCH_ALGORITHMS_COMPLETE: {
