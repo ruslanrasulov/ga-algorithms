@@ -443,7 +443,6 @@ namespace GaVisualizer.BusinessLogic.Processing
         private void CalculateFitnessValue(IPopulationElement[,] cells)
         {
             const int elementsRange = 3;
-            const double elementMatchRate = 0.5;
 
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -453,7 +452,8 @@ namespace GaVisualizer.BusinessLogic.Processing
                     var elementType = currentElement.GetType();
                     var nearSimilarElementsCount = GetNearSimilarElementsCount(cells, i, j, elementType, elementsRange);
 
-                    currentElement.FitnessValue = nearSimilarElementsCount * elementMatchRate * currentElement.SocialValue.Value * currentElement.Productivity.Value;
+                    currentElement.NearSimilarElementsCount = nearSimilarElementsCount;
+                    currentElement.FitnessValue = nearSimilarElementsCount * currentElement.SocialValue.Value * currentElement.Productivity.Value;
                 }
             }
         }

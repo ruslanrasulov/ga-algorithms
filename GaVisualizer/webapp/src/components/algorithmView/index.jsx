@@ -209,6 +209,7 @@ class AlgorithmView extends Component {
 
     render = () => {
         const { algorithm } = this.props;
+        const { selectedElement } = algorithm;
 
         return (
             <div className='alg-container'>
@@ -232,6 +233,18 @@ class AlgorithmView extends Component {
                         {algorithm.topFiveLongLivedElements.map(e => <li key={e.id}><ElementInfo element={e} /></li>)}
                     </ul>
                 </div>
+
+                {selectedElement && selectedElement.fitnessValue !== 0
+                    ? <div>
+                        <div>Вычисление фитнес-функции элемента {selectedElement.id}:</div>
+                        <div>Э * С * П = {`${selectedElement.nearSimilarElementsCount} * ${selectedElement.socialValue.value.toFixed(3)} * ${selectedElement.productivity.value.toFixed(3)}`} = {selectedElement.fitnessValue.toFixed(3)}</div>
+                        <div>Где,</div>
+                        <div>Э - количество однотипных элементов рядом</div>
+                        <div>С - значение социальности</div>
+                        <div>П - значение продуктивности</div>
+                      </div>
+                    : null
+                }
 
                 <div className='alg-container__chart'>
                     <AlgorithmChart algorithm={algorithm} />

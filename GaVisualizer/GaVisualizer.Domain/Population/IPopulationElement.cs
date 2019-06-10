@@ -14,5 +14,6 @@ namespace GaVisualizer.Domain.Population
         int Age { get; set; }
         int X { get; set; }
         int Y { get; set; }
+        int NearSimilarElementsCount { get; set; }
     }
 }

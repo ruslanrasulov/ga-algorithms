@@ -27,6 +27,9 @@ class Board extends Component {
 
             canvas.addEventListener('click', this.setupBoard);
         }
+        else {
+            canvas.addEventListener('dblclick', this.showTooltip);
+        }
     }
 
     componentDidUpdate() {
@@ -106,7 +109,7 @@ class Board extends Component {
                     continue;
                 }
 
-                ctx.globalAlpha = 0.5 + cells[i][j].fitnessValue * 0.08;
+                ctx.globalAlpha = 0.5 + cells[i][j].fitnessValue * 0.05;
 
                 const { x, y } = this.calculatePosition(i, j, cellWidth, cellHeight);
                 this.drawCell(ctx, cells[i][j], x, y, cellWidth, cellHeight);
@@ -176,10 +179,6 @@ class Board extends Component {
         if (!cells) return;
         
         const { x, y } = this.getCellPosition(e.layerX, e.layerY);
-
-        this.setState({
-            selectedCell: { x, y }
-        });
 
         if (x < cells.length && cells.length > 0 && y < cells[0].length) {
             setElementInfo(id, x, y, generationIndex);

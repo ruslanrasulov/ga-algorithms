@@ -4,7 +4,7 @@ import * as actionTypes from '../actions/actionTypes';
 const reducer = (state = [], action) => {
     switch(action.type) {
         case actionTypes.ADD_NEW_ALGORITHM_COMPLETE: {
-            return state.concat([action.payload]);
+            return state.concat([selectTopElements(action.payload)]);
         }
         case actionTypes.START_ALGORITHM:
         case actionTypes.PAUSE_ALGORITHM:
@@ -32,29 +32,12 @@ const reducer = (state = [], action) => {
         case actionTypes.SET_ELEMENT_INFO: {
             const { id, x, y, generationIndex } = action.payload;
             const algorithm = state.find(a => a.id === id);
-            const leftAlgorithm = algorithm.generations[generationIndex - 1];
-            const rightAlgorithm = algorithm.generations[generationIndex];
+            const lastGeneration = algorithm.generations[generationIndex];
+            const selectedElement = lastGeneration.cells[x][y];
 
-            const selectedElement = rightAlgorithm.cells[x][y];
-            const flattenCells = flatten(leftAlgorithm.cells);
-
-            const firstParent = flattenCells.find(c => c.id === selectedElement.firstParentId);
-            const secondParent = flattenCells.find(c => c.id === selectedElement.secondParentId);
-
-            const updatedGenerations = algorithm.generations.map((g, i) => {
-                if (i === generationIndex - 1 && firstParent && secondParent) {
-                    return { ...g, selectedElements: [firstParent.id, secondParent.id] };
-                }
-                
-                if (i === generationIndex) {
-                    return { ...g, selectedElements: [selectedElement.id] };
-                }
-                
-                return { ...g, selectedElements: null };
-            });
             return state.map(a => {
                 if (a.id === id) {
-                    return { ...a, firstParent, secondParent, selectedElement, generations: updatedGenerations };
+                    return { ...a, selectedElement };
                 }
 
                 return a;
