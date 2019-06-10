@@ -297,18 +297,21 @@ class Board extends Component {
             ctx.fillStyle = textFillStyle;
             
             if (gene === null) {
+                const id = `ID: ${cell.id}`;
                 const age = `В: ${cell.age}`;
-                ctx.fillText(age, textX, textY);
+
+                ctx.fillText(id, textX, textY);
+                ctx.fillText(age, textX, textY + 15);
             }
 
             if (gene === null || gene === 2) {
                 const socialValue = `П: ${cell.socialValue.value.toFixed(3)}`;
-                ctx.fillText(socialValue, textX, textY + 15);
+                ctx.fillText(socialValue, textX, textY + 30);
             }
 
             if (gene === null || gene === 1) {
                 const productivity = `С: ${cell.productivity.value.toFixed(3)}`;
-                ctx.fillText(productivity, textX, textY + 30);
+                ctx.fillText(productivity, textX, textY + 45);
             }
         }
     }

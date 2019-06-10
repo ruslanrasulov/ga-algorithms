@@ -1,4 +1,4 @@
-import { flatten } from 'lodash';
+import { flatten, sortBy, take } from 'lodash';
 import * as actionTypes from '../actions/actionTypes';
 
 const reducer = (state = [], action) => {
@@ -16,17 +16,13 @@ const reducer = (state = [], action) => {
         }
         case actionTypes.FETCH_CURRENT_STATE_COMPLETE: {
             const algorithm = action.payload;
-            const currentAlgorithm = state.find(a => a.id === algorithm.id);
-
-            if (currentAlgorithm.isPaused || currentAlgorithm.isStopped) {
-                return state;
-            }
-
-            return updateAlgorithms(state, { ...algorithm, currentCrossoverElement: 0 });
+            const updatedAlgorithm = selectTopElements(algorithm);
+            
+            return updateAlgorithms(state, { ...updatedAlgorithm, currentCrossoverElement: 0 });
         }
 
         case actionTypes.FETCH_ALGORITHMS_COMPLETE: {
-            return action.payload;
+            return action.payload.map(a => selectTopElements(a));
         }
         case actionTypes.REMOVE_ALGORITHM_COMPLETE: {
             const { id } = action.payload;
@@ -74,6 +70,16 @@ const reducer = (state = [], action) => {
             return state;
     }
 };
+
+const selectTopElements = algorithm => {
+    const lastGeneration = algorithm.generations[algorithm.generations.length - 1];
+    const flattenCells = flatten(lastGeneration.cells).filter(c => c !== null);
+
+    const topFiveFitElements = take(sortBy(flattenCells, c => c.fitnessValue).reverse(), 5);
+    const topFiveLongLivedElements = take(sortBy(flattenCells, c => c.age).reverse(), 5);
+
+    return { ...algorithm,  topFiveFitElements, topFiveLongLivedElements };
+}
 
 const updateAlgorithms = (state, newState) => {
     return state.map(item => {

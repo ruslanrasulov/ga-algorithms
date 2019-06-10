@@ -10,6 +10,8 @@ namespace GaVisualizer.BusinessLogic.Processing
 {
     internal class GeneticAlgorithmProcessor : IGeneticAlgorithmProcessor
     {
+        private static int ElementsMaxId = 1;
+
         private const double MutationChance = 0.9;
         private const int TournamentGroupSize = 5;
 
@@ -189,7 +191,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                         element = new Virus();
                     }
 
-                    element.Id = Guid.NewGuid();
+                    element.Id = ElementsMaxId++;
                     element.SocialValue = new Gene<double> { Value = socialValue };
                     element.Productivity = new Gene<double> { Value = productivity };
                     element.Age = 0;
@@ -207,7 +209,7 @@ namespace GaVisualizer.BusinessLogic.Processing
             {
                 for (int j = 0; j < cells.GetLength(1); j++)
                 {
-                    var id = Guid.NewGuid();
+                    var id = ElementsMaxId++;
                     cells[i, j].Id = id;
                     cells[i, j].SocialValue = new Gene<double> { ElementId = id, Value = Random.NextDouble(), GeneType = GeneType.SocialValue };
                     cells[i, j].Productivity = new Gene<double> { ElementId = id, Value = Random.NextDouble(), GeneType = GeneType.Productivity };
@@ -344,7 +346,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
                         var child = (IPopulationElement)randomParent.element.Clone();
 
-                        child.Id = Guid.NewGuid();
+                        child.Id = ElementsMaxId++;
 
                         var firstParent = parents[0].element;
                         var secondParent = parents.Count > 1 ? parents[1].element : parents[0].element;

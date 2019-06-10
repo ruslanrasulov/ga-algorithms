@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace GaVisualizer.Domain.Population
+﻿namespace GaVisualizer.Domain.Population
 {
     public class Bacterium : IPopulationElement
     {
@@ -10,9 +8,9 @@ namespace GaVisualizer.Domain.Population
         public int Age { get; set; }
         public ElementType ElementType => ElementType.Bacteria;
 
-        public Guid Id { get; set; }
-        public Guid? FirstParentId { get; set; }
-        public Guid? SecondParentId { get; set; }
+        public int Id { get; set; }
+        public int? FirstParentId { get; set; }
+        public int? SecondParentId { get; set; }
 
         public int X { get; set; }
         public int Y { get; set; }

@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import AlgorithmChart from '../algorithmChart';
 import Board from '../board';
-//import ElementInfo from '../elementInfo';
+import ElementInfo from '../elementInfo';
 
 import './_styles.scss';
 
@@ -209,18 +209,28 @@ class AlgorithmView extends Component {
 
     render = () => {
         const { algorithm } = this.props;
-        // const { updateIntervalValue } = this.state;
 
         return (
             <div className='alg-container'>
                 {this.renderBoards()}
-                {/* {this.renderGenerationsNavigation()} */}
 
                 <div className='alg-container__element-info'>
                     <div>Поколение: {algorithm.generations.length}</div>
                     <div>Тип селекции: {this.getSelectionType()}</div>
                     <div>Тип скрещивания: {this.getCrossoverType()}</div>
                     <div>Текущий шаг: {this.getCurrentStep()}</div>
+
+                    <div>Top 5 приспособленных клеток:</div>
+                    <ul>
+                        {algorithm.topFiveFitElements.map(e => <li key={e.id}><ElementInfo element={e} /></li>)}
+                    </ul>
+                </div>
+
+                <div className='alg-container__element-info'>
+                    <div>Top 5 долгоживущих клеток:</div>
+                    <ul>
+                        {algorithm.topFiveLongLivedElements.map(e => <li key={e.id}><ElementInfo element={e} /></li>)}
+                    </ul>
                 </div>
 
                 <div className='alg-container__chart'>
@@ -230,23 +240,6 @@ class AlgorithmView extends Component {
                 <div className='alg-container__panel'>
                     <div className='btn alg-container__panel__panel-element' onClick={this.updateState}>Следующий шаг</div>
                     <div className='btn alg-container__panel__panel-element' onClick={this.updateStateImmediately}>Следующий шаг (без анимации)</div>
-                    {/* {algorithm.isStarted
-                        ? <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onStop}>Стоп</div>
-                        : <div className='btn btn-success alg-container__panel__panel-element' onClick={this.onStart}>Старт</div> }
-
-                    {algorithm.isPaused 
-                        ? <div className='btn btn-info alg-container__panel__panel-element' onClick={this.onResume}>Возобновить</div>
-                        : <div className='btn btn-warning alg-container__panel__panel-element' onClick={this.onPause}>Пауза</div> } */}
-{/* 
-                    <input 
-                        type='range'
-                        min='500'
-                        max='5000'
-                        className='alg-container__panel__input-timeout alg-container__panel__panel-element'
-                        defaultValue={updateIntervalValue}
-                        ref={this.intervalRange}
-                        onMouseUp={this.updateInterval} />
-                    <label>Интервал обновления ({updateIntervalValue} мс)</label> */}
 
                     <div className='btn btn-error alg-container__panel__panel-element' onClick={this.onRemove}>Удалить</div>
                 </div>

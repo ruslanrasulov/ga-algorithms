@@ -1,21 +1,24 @@
 import React from 'react';
 import './_styles.scss';
 
-const ElementInfo = props => (
+const ElementInfo = ({ element: { id, elementType, socialValue, productivity, age, fitnessValue } }) => (
     <ul className='element-info'>
         <li className="element-info__item">
             <span className="element-info__title">
-                {props.elementType === 0 ? 'Бактерия' : 'Вирус'}
+                {elementType === 0 ? 'Бактерия' : 'Вирус'}
             </span>
         </li>
         <li className="element-info__item">
-            <span className="element-info__item__label">Социальность: </span>{props.socialValue.value}
+            <span className="element-info__item__label">Идентификатор: </span>{id}
         </li>
-        <li className="element-info__item"><span className="element-info__item__label">Продуктивность: </span>{props.productivity.value}</li>
-        <li className="element-info__item"><span className="element-info__item__label">Возраст: </span>{props.age}</li>
+        <li className="element-info__item">
+            <span className="element-info__item__label">Социальность: </span>{socialValue.value.toFixed(3)}
+        </li>
+        <li className="element-info__item"><span className="element-info__item__label">Продуктивность: </span>{productivity.value.toFixed(3)}</li>
+        <li className="element-info__item"><span className="element-info__item__label">Возраст: </span>{age}</li>
         {
-            props.fitnessValue !== undefined
-            ? <li className="element-info__item"><span className="element-info__item__label">Значение фитнес функции: </span>{props.fitnessValue}</li>
+            fitnessValue !== undefined
+            ? <li className="element-info__item"><span className="element-info__item__label">Значение фитнес функции: </span>{fitnessValue.toFixed(3)}</li>
             : null
         }
     </ul>
