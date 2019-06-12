@@ -1,0 +1,24 @@
+.element-infos {
+    margin-top: 10px;
+    font-size: 13px;
+}
+
+.element-infos__title {
+    text-align: center;
+}
+
+.element-infos__table {
+    margin-top: 10px;
+    width: 100%;
+    table-layout: fixed;
+}
+
+.element-infos__table,
+.element-infos__table td,
+.element-infos__table th {
+    border: 1px solid black;
+    word-wrap: break-word;
+    text-align: left;
+    max-width: 100%;
+    padding: 5px;
+}

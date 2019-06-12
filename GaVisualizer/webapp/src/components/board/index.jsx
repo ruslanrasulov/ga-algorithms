@@ -493,7 +493,7 @@ class Board extends Component {
 
     render = () => (
         <div>
-            <canvas className='board' width={450} height={450} ref={this.board} />
+            <canvas className='board' width={400} height={400} ref={this.board} />
         </div>
     )
 }

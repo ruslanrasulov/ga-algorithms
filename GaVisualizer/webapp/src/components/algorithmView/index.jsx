@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import AlgorithmChart from '../algorithmChart';
 import Board from '../board';
-import ElementInfo from '../elementInfo';
+import ElementInfos from '../elementInfos';
 
 import './_styles.scss';
 
@@ -215,27 +215,22 @@ class AlgorithmView extends Component {
             <div className='alg-container'>
                 {this.renderBoards()}
 
-                <div className='alg-container__element-info'>
+                <div className='alg-container__algorithm-info'>
                     <div>Поколение: {algorithm.generations.length}</div>
                     <div>Тип селекции: {this.getSelectionType()}</div>
                     <div>Тип скрещивания: {this.getCrossoverType()}</div>
                     <div>Текущий шаг: {this.getCurrentStep()}</div>
 
-                    <div>Top 5 приспособленных клеток:</div>
-                    <ul>
-                        {algorithm.topFiveFitElements.map(e => <li key={e.id}><ElementInfo element={e} /></li>)}
-                    </ul>
+                    <ElementInfos title='Top 5 приспособленных клеток' elements={algorithm.topFiveFitElements} />
+                    <ElementInfos title='Top 5 долгоживущих клеток' elements={algorithm.topFiveLongLivedElements} />
                 </div>
 
-                <div className='alg-container__element-info'>
-                    <div>Top 5 долгоживущих клеток:</div>
-                    <ul>
-                        {algorithm.topFiveLongLivedElements.map(e => <li key={e.id}><ElementInfo element={e} /></li>)}
-                    </ul>
+                <div className='alg-container__chart'>
+                    <AlgorithmChart algorithm={algorithm} />
                 </div>
 
                 {selectedElement && selectedElement.fitnessValue !== 0
-                    ? <div>
+                    ? <div className='alg-container__element-info'>
                         <div>Вычисление фитнес-функции элемента {selectedElement.id}:</div>
                         <div>Э * С * П = {`${selectedElement.nearSimilarElementsCount} * ${selectedElement.socialValue.value.toFixed(3)} * ${selectedElement.productivity.value.toFixed(3)}`} = {selectedElement.fitnessValue.toFixed(3)}</div>
                         <div>Где,</div>
@@ -245,10 +240,6 @@ class AlgorithmView extends Component {
                       </div>
                     : null
                 }
-
-                <div className='alg-container__chart'>
-                    <AlgorithmChart algorithm={algorithm} />
-                </div>
 
                 <div className='alg-container__panel'>
                     <div className='btn alg-container__panel__panel-element' onClick={this.updateState}>Следующий шаг</div>

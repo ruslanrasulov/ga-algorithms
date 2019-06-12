@@ -26,7 +26,7 @@ const AlgorithmChart = props => {
 
         return (
             <HighchartsChart plotOptions={plotOptions}>
-                <Chart width={600} height={350} />
+                <Chart width={400} height={250} />
                 <Title>Статистика бактерий и вирусов</Title>
 
                 <Legend layout='vertical' align='right' verticalAlign='middle' />
