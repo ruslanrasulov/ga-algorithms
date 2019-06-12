@@ -187,8 +187,8 @@ class AlgorithmView extends Component {
         }
     }
 
-    getCurrentStep = () => {
-        switch (this.props.algorithm.currentState) {
+    getStepDescription = (step) => {
+        switch (step) {
             case 0: {
                 return '';
             }
@@ -207,9 +207,17 @@ class AlgorithmView extends Component {
         }
     }
 
+    getNextStep(step) {
+        if (step === 4) {
+            return 1;
+        }
+        
+        return step + 1;
+    }
+
     render = () => {
         const { algorithm } = this.props;
-        const { selectedElement } = algorithm;
+        const { selectedElement, currentState } = algorithm;
 
         return (
             <div className='alg-container'>
@@ -219,7 +227,8 @@ class AlgorithmView extends Component {
                     <div>Поколение: {algorithm.generations.length}</div>
                     <div>Тип селекции: {this.getSelectionType()}</div>
                     <div>Тип скрещивания: {this.getCrossoverType()}</div>
-                    <div>Текущий шаг: {this.getCurrentStep()}</div>
+                    <div>Текущий шаг: {this.getStepDescription(currentState)}</div>
+                    <div>Следующий шаг: {this.getStepDescription(this.getNextStep(currentState))}</div>
 
                     <ElementInfos title='Top 5 приспособленных клеток' elements={algorithm.topFiveFitElements} />
                     <ElementInfos title='Top 5 долгоживущих клеток' elements={algorithm.topFiveLongLivedElements} />
