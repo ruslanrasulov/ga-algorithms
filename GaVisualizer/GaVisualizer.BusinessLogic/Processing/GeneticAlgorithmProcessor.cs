@@ -442,7 +442,7 @@ namespace GaVisualizer.BusinessLogic.Processing
 
         private void CalculateFitnessValue(IPopulationElement[,] cells)
         {
-            const int elementsRange = 3;
+            const int elementsRange = 1;
 
             for (int i = 0; i < cells.GetLength(0); i++)
             {
@@ -453,7 +453,7 @@ namespace GaVisualizer.BusinessLogic.Processing
                     var nearSimilarElementsCount = GetNearSimilarElementsCount(cells, i, j, elementType, elementsRange);
 
                     currentElement.NearSimilarElementsCount = nearSimilarElementsCount;
-                    currentElement.FitnessValue = nearSimilarElementsCount * currentElement.SocialValue.Value * currentElement.Productivity.Value;
+                    currentElement.FitnessValue = (nearSimilarElementsCount * currentElement.SocialValue.Value) + currentElement.Productivity.Value;
                 }
             }
         }
@@ -462,20 +462,18 @@ namespace GaVisualizer.BusinessLogic.Processing
         {
             var count = 0;
 
-            for (int i = -indexX - elementsRange; i < indexX + elementsRange; i++)
+            for (int i = 0; i < cells.GetLength(0); i++)
             {
-                for (int j = -indexY; j < indexY; j++)
+                for (int j = 0; j < cells.GetLength(1); j++)
                 {
-                    var currentIndexX = indexX - i;
-                    var currentIndexY = indexY - j;
-
-                    if (currentIndexX > 0 && currentIndexX < cells.GetLength(0) && currentIndexY > 0 && currentIndexY < cells.GetLength(1))
+                    if (i != indexX && j != indexY)
                     {
-                        var currentElement = cells[currentIndexX, currentIndexY];
-
-                        if (currentElement.GetType() == elementType)
+                        if (Math.Abs(indexX - i) <= elementsRange && Math.Abs(indexY - j) <= elementsRange)
                         {
-                            count++;
+                            if (elementType == cells[i, j].GetType())
+                            {
+                                count++;
+                            }
                         }
                     }
                 }
