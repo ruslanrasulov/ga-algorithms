@@ -29,14 +29,12 @@
 
     &__close-btn {
         position: absolute;
-        right: 5px;
+        right: 25px;
         top: 25px;
-        font-size: 14px;
+        font-size: 40px;
+        color: #ffffff;
+        cursor: pointer;
     }
-}
-
-.parameter-name {
-    font-weight: bold;
 }
 
 .note {

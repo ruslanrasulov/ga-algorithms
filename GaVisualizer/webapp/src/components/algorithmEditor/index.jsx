@@ -41,11 +41,50 @@ class AlgorithmEdtor extends Component {
         this.props.setNewAlgorithm(a);
     }
 
+    renderTitle() {
+        return (
+            <div className='algorithm-editor__title'>
+                Добавить новый алгоритм
+                <i className='algorithm-editor__btn-help fa fa-question-circle'></i>
+                <div className="algorithm-editor__help-info">
+                    <span className="text-bold">Селекция</span> – выбор хромосом, которые будут участвовать в последующем скрещивании. У хромосом с большим значением приспособленности больший шанс быть отобранной. Различают следующие виды селекции
+                    <ul className="algorithm-editor__help-info__list">
+                        <li>
+                            <span className="text-bold">Турнирная селекция.</span> Хромосомы делятся на подгруппы, затем в подгруппах определяются наиболее приспособленные. Подгруппы обычно имеют размер 3-4 особи, но также могут иметь произвольный размер.
+                        </li>
+                        <li>
+                            <span className="text-bold">Отбор усечением.</span> Хромосомы сортируются по значению фитнес-функции и затем отбираются.
+                        </li>
+                        <li>
+                            <span className="text-bold">Пропорциональный отбор.</span> Вычисляется не только фитнес-функция для каждой хромосомы, но и среднее значение для всей популяции. Затем высчитывается отношение между значенем фитнес-функции хромосомы и средним значением по популяции. Если это значение больше 1, то особь допускается к скрещиванию.
+                        </li>
+                    </ul>
+                    <span className="text-bold">Скрещивание.</span> Происходит скрещивание между особями. Гены для новой хромосомы выбираются на основе двух выбранных родительских хромосом. Различают следующие виды скрещивания:
+                    <ul className='algorithm-editor__help-info__list'>
+                        <li>
+                            <span className="text-bold">Точечное скрещивание.</span> Выбирается некоторое число N таким образом, что для новой хромосомы наследуются первые N генов первого родителя и остальные гены второго родителя.
+                        </li>
+                        <li>
+                            <span className="text-bold">Двухточечное скрещивание.</span> Отличается от точечного скрещивание тем, что вместо одного числа N выбираются два числа N1 и N2, которые разбивают набор генов на три части.
+                        </li>
+                        <li>
+                            <span className="text-bold">Многоточечное скрещивание.</span> Выбираются несколько чисел N1,…Nm, которые разбивают хромосому на m+1 частей.
+                        </li>
+                        <li>
+                            <span className="text-bold">Равномерное скрещивание.</span> Этот тип скрещивания подразумевает, что заранее известно, какой ген у какого родителя будет унаследован.
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        )
+    }
+
     render() {
         const { onClick, onClose, setNewAlgorithm } = this.props;
 
         return (
-            <Modal title='Добавить новый алгоритм' onClick={onClick} onClose={onClose}>
+            <div className='algorithm-editor'>
+                <Modal title={this.renderTitle()} onClick={onClick} onClose={onClose}>
                 <div className='algorithm-editor'>
                     <div className='algorithm-editor__board'>
                         <Board editMode={true} currentState={0} />
@@ -78,6 +117,7 @@ class AlgorithmEdtor extends Component {
                     </div>
                 </div>
             </Modal>
+            </div>
         );  
     }
 }

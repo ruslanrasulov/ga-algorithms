@@ -11,6 +11,42 @@
         width: 400px;
     }
 
+    &__btn-help {
+        margin-left: 30px;
+        cursor: pointer;
+    }
+
+    &__title {
+        position: relative;
+    }
+
+    &__btn-help:hover ~ &__help-info {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    &__help-info {
+        transition: 0.3s;
+        opacity: 0;
+        visibility: hidden;
+        position: absolute;
+        width: 100%;
+        top: 50px;
+        z-index: 3;
+        background-color: #fff;
+        font-size: 14px;
+        text-align: left;
+        line-height: 14px;
+        padding: 20px;
+
+        &__list {
+            margin-top: 10px;
+            margin-bottom: 10px;
+            list-style-type: disc;
+            list-style-position: inside;
+        }
+    }
+
     &__panel {
         margin-left: 70px;
         width: 300px;
