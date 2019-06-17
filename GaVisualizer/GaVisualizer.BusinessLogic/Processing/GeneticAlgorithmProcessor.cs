@@ -449,16 +449,16 @@ namespace GaVisualizer.BusinessLogic.Processing
                 for (int j = 0; j < cells.GetLength(1); j++)
                 {
                     var currentElement = cells[i, j];
-                    var elementType = currentElement.GetType();
+                    var elementType = currentElement.ElementType;
                     var nearSimilarElementsCount = GetNearSimilarElementsCount(cells, i, j, elementType, elementsRange);
 
                     currentElement.NearSimilarElementsCount = nearSimilarElementsCount;
-                    currentElement.FitnessValue = (nearSimilarElementsCount * currentElement.SocialValue.Value) + currentElement.Productivity.Value;
+                    currentElement.FitnessValue = (nearSimilarElementsCount * currentElement.SocialValue.Value) - currentElement.Productivity.Value;
                 }
             }
         }
 
-        private int GetNearSimilarElementsCount(IPopulationElement[,] cells, int indexX, int indexY, Type elementType, int elementsRange)
+        private int GetNearSimilarElementsCount(IPopulationElement[,] cells, int indexX, int indexY, ElementType elementType, int elementsRange)
         {
             var count = 0;
 
@@ -466,11 +466,11 @@ namespace GaVisualizer.BusinessLogic.Processing
             {
                 for (int j = 0; j < cells.GetLength(1); j++)
                 {
-                    if (i != indexX && j != indexY)
+                    if (i != indexX || j != indexY)
                     {
                         if (Math.Abs(indexX - i) <= elementsRange && Math.Abs(indexY - j) <= elementsRange)
                         {
-                            if (elementType == cells[i, j].GetType())
+                            if (elementType == cells[i, j].ElementType)
                             {
                                 count++;
                             }

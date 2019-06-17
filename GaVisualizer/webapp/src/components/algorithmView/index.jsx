@@ -241,7 +241,7 @@ class AlgorithmView extends Component {
                 {selectedElement && selectedElement.fitnessValue !== 0
                     ? <div className='alg-container__element-info'>
                         <div>Вычисление фитнес-функции элемента {selectedElement.id}:</div>
-                        <div>(Э * С) + П = {`(${selectedElement.nearSimilarElementsCount} * ${selectedElement.socialValue.value.toFixed(3)}) + ${selectedElement.productivity.value.toFixed(3)}`} = {selectedElement.fitnessValue.toFixed(3)}</div>
+                        <div>(Э * С) - П = {`(${selectedElement.nearSimilarElementsCount} * ${selectedElement.socialValue.value.toFixed(3)}) - ${selectedElement.productivity.value.toFixed(3)}`} = {selectedElement.fitnessValue.toFixed(3)}</div>
                         <div>Где,</div>
                         <div>Э - количество однотипных элементов рядом</div>
                         <div>С - значение социальности</div>
