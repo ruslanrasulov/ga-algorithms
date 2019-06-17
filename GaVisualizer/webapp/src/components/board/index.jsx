@@ -98,6 +98,7 @@ class Board extends Component {
         //const { generation: { selectedElements } } = this.props;
         const { metaData, currentCrossoverElement } = this.props.algorithm;
         const newElements = metaData && metaData.newElements;
+
         ctx.save();
         for (let i = 0; i < cells.length; i++) { //TODO: For temproary purpose
             for (let j = 0; j < cells[0].length; j++) {
@@ -109,7 +110,7 @@ class Board extends Component {
                     continue;
                 }
 
-                ctx.globalAlpha = 0.5 + cells[i][j].fitnessValue * 0.05;
+                ctx.globalAlpha = 0.5 + cells[i][j].fitnessValue * 0.35;
 
                 const { x, y } = this.calculatePosition(i, j, cellWidth, cellHeight);
                 this.drawCell(ctx, cells[i][j], x, y, cellWidth, cellHeight);
@@ -434,7 +435,7 @@ class Board extends Component {
 
     mutateElement = (ctx, element, oldGene, cellWidth, cellHeight, step = 0) => {
         const { cell, x, y } = element;
-        ctx.globalAlpha = 0.5 + cell.fitnessValue * 0.08;
+        ctx.globalAlpha = 0.5 + cell.fitnessValue * 0.35;
 
         if (step < 100) {
             const oldGeneCell = oldGene.geneType === 1
